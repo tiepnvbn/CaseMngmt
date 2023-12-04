@@ -13,5 +13,8 @@ namespace CaseMngmt.Server.Models.Account
 
         [Display(Name = "Remember Me")]
         public bool RememberMe { get; set; }
+
+        [Required]
+        public string Username { get; set; }
     }
 }
