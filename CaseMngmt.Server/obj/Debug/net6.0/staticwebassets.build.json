@@ -1,0 +1,23 @@
+{
+  "Version": 1,
+  "Hash": "vmjII8NXY9Pj6la74PuTR7zAAnSg4mkPznOrVrnfENA=",
+  "Source": "CaseMngmt.Server",
+  "BasePath": "_content/CaseMngmt.Server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "A:\\Projects\\Freelance\\CaseMngmt\\casemngmt.client\\casemngmt.client.esproj",
+      "Version": 2,
+      "Source": "casemngmt.client",
+      "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained"
+    }
+  ],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
