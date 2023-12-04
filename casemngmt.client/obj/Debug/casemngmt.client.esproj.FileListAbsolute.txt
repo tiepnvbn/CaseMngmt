@@ -1,0 +1,1 @@
+A:\Projects\Freelance\CaseMngmt\casemngmt.client\obj\Debug\casemngmt.client.esproj.CoreCompileInputs.cache
