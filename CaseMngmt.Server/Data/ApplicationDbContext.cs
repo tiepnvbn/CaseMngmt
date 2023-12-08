@@ -1,4 +1,5 @@
 ﻿using CaseMngmt.Server.Models;
+using CaseMngmt.Server.Models.Customers;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 //using ContactManager.Models;
@@ -18,6 +19,8 @@ namespace CaseMngmt.Server.Data
             base.OnModelCreating(modelBuilder);
         }
         public DbSet<Contact> Contact { get; set; }
+
+        public DbSet<Customer> Customer { get; set; }
     }
 }
 

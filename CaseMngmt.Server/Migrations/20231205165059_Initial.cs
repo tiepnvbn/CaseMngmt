@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CaseMngmt.Server.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -66,6 +66,27 @@ namespace CaseMngmt.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Contact", x => x.ContactId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Customer",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: false),
+                    PostCode = table.Column<int>(type: "int", nullable: false),
+                    StateProvince = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    City = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Street = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    BuildingName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    RoomNuber = table.Column<int>(type: "int", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customer", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -233,6 +254,9 @@ namespace CaseMngmt.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Contact");
+
+            migrationBuilder.DropTable(
+                name: "Customer");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

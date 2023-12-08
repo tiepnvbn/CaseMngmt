@@ -1,13 +1,13 @@
 {
   "Version": 1,
-  "Hash": "vmjII8NXY9Pj6la74PuTR7zAAnSg4mkPznOrVrnfENA=",
+  "Hash": "FiM0iJjnnktWG2CFtutPvKwicvc2pM1IzbxWdZYUANM=",
   "Source": "CaseMngmt.Server",
   "BasePath": "_content/CaseMngmt.Server",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [
     {
-      "Identity": "A:\\Projects\\Freelance\\CaseMngmt\\casemngmt.client\\casemngmt.client.esproj",
+      "Identity": "D:\\CasePro\\CaseMngmt\\casemngmt.client\\casemngmt.client.esproj",
       "Version": 2,
       "Source": "casemngmt.client",
       "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
