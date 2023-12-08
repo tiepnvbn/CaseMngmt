@@ -1,5 +1,6 @@
-﻿using CaseMngmt.Server.Models.Customers;
-using CaseMngmt.Server.Service;
+﻿using CaseMngmt.Models.Customers;
+using CaseMngmt.Service;
+using CaseMngmt.Service.Customers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CaseMngmt.Server.Controllers
@@ -17,7 +18,7 @@ namespace CaseMngmt.Server.Controllers
         }
 
         [HttpGet, Route("getAll")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(string customerName, string phoneNumber)
         {
             try
             {
@@ -64,7 +65,7 @@ namespace CaseMngmt.Server.Controllers
                 if (ModelState.IsValid)
                 {
                     // TODO
-                    customer.CreatedBy = 0;
+                    customer.CreatedBy = Guid.Empty;
                     customer.CreatedDate = DateTime.UtcNow;
 
                     var result = await _service.AddCustomerAsync(customer);
@@ -86,7 +87,7 @@ namespace CaseMngmt.Server.Controllers
             try
             {
                 // TODO
-                model.UpdatedBy = 0;
+                model.UpdatedBy = Guid.Empty;
                 model.UpdatedDate = DateTime.UtcNow;
 
                 var result = await _service.UpdateCustomerAsync(model);

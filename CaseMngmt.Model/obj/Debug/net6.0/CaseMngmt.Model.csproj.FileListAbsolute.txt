@@ -1,0 +1,12 @@
+D:\CasePro\CaseMngmt\CaseMngmt.Model\bin\Debug\net6.0\CaseMngmt.Model.deps.json
+D:\CasePro\CaseMngmt\CaseMngmt.Model\bin\Debug\net6.0\CaseMngmt.Model.dll
+D:\CasePro\CaseMngmt\CaseMngmt.Model\bin\Debug\net6.0\CaseMngmt.Model.pdb
+D:\CasePro\CaseMngmt\CaseMngmt.Model\obj\Debug\net6.0\CaseMngmt.Model.GeneratedMSBuildEditorConfig.editorconfig
+D:\CasePro\CaseMngmt\CaseMngmt.Model\obj\Debug\net6.0\CaseMngmt.Model.AssemblyInfoInputs.cache
+D:\CasePro\CaseMngmt\CaseMngmt.Model\obj\Debug\net6.0\CaseMngmt.Model.AssemblyInfo.cs
+D:\CasePro\CaseMngmt\CaseMngmt.Model\obj\Debug\net6.0\CaseMngmt.Model.csproj.CoreCompileInputs.cache
+D:\CasePro\CaseMngmt\CaseMngmt.Model\obj\Debug\net6.0\CaseMngmt.Model.sourcelink.json
+D:\CasePro\CaseMngmt\CaseMngmt.Model\obj\Debug\net6.0\CaseMngmt.Model.dll
+D:\CasePro\CaseMngmt\CaseMngmt.Model\obj\Debug\net6.0\refint\CaseMngmt.Model.dll
+D:\CasePro\CaseMngmt\CaseMngmt.Model\obj\Debug\net6.0\CaseMngmt.Model.pdb
+D:\CasePro\CaseMngmt\CaseMngmt.Model\obj\Debug\net6.0\ref\CaseMngmt.Model.dll

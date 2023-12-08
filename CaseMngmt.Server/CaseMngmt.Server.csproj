@@ -32,10 +32,8 @@
     <ProjectReference Include="..\casemngmt.client\casemngmt.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
+    <ProjectReference Include="..\CaseMngmt.Model\CaseMngmt.Models.csproj" />
+    <ProjectReference Include="..\CaseMngmt.Service\CaseMngmt.Service.csproj" />
   </ItemGroup>
 
 </Project>

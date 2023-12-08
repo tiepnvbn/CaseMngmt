@@ -1,4 +1,4 @@
-﻿using CaseMngmt.Server.Models.Account;
+﻿using CaseMngmt.Models.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

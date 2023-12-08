@@ -1,4 +1,4 @@
-using CaseMngmt.Server.Data;
+using CaseMngmt.Models.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
@@ -6,8 +6,9 @@ using System;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using CaseMngmt.Server.Service;
-using CaseMngmt.Server.Repository.Customers;
+using CaseMngmt.Service;
+using CaseMngmt.Repository.Customers;
+using CaseMngmt.Service.Customers;
 
 var builder = WebApplication.CreateBuilder(args);
 
