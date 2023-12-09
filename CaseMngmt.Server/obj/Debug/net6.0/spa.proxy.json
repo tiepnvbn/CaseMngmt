@@ -1,8 +1,0 @@
-{
-"SpaProxyServer": {
-"ServerUrl": "https://localhost:5173",
-"LaunchCommand": "npm run dev",
-"WorkingDirectory": "D:\\CasePro\\CaseMngmt\\CaseMngmt.Server\\..\\casemngmt.client",
-"MaxTimeoutInSeconds": "120"
-}
-}
