@@ -1,3 +1,4 @@
 .vs
-CaseMngmt.Server/obj*
+CaseMngmt.Server/obj
 casemngmt.client/node_modules
+CaseMngmt.Server/bin
