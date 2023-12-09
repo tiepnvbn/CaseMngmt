@@ -2,3 +2,6 @@
 CaseMngmt.Server/obj
 casemngmt.client/node_modules
 CaseMngmt.Server/bin
+/CaseMngmt.Model/obj
+/CaseMngmt.Repository/obj
+/CaseMngmt.Service/obj
