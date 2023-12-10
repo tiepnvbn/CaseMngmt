@@ -5,6 +5,7 @@ namespace CaseMngmt.Models.Customers
     public class CustomerRequest
     {
         [MaxLength(256)]
+        [Required]
         public string? Name { get; set; }
 
         [MaxLength(12)]

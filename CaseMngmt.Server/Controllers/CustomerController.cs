@@ -66,14 +66,6 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                var isExist = await _service.CheckCustomerExistsAsync(customer.Name);
-                if (isExist)
-                {
-                    return BadRequest("Customer already exists");
-                }
-                // TODO
-                // customer.CreatedBy = Guid.Empty;
-
                 var result = await _service.AddCustomerAsync(customer);
 
                 return result > 0 ? Ok(result) : BadRequest();
@@ -86,25 +78,26 @@ namespace CaseMngmt.Server.Controllers
         }
 
         [HttpPut, Route("{Id}")]
-        public async Task<IActionResult> Update(Guid Id, CustomerRequest model)
+        public async Task<IActionResult> Update(Guid id, CustomerRequest model)
         {
-            if (Id == Guid.Empty)
+            if (id == Guid.Empty)
             {
                 return BadRequest();
             }
 
             try
             {
-                var isExist = await _service.CheckCustomerExistsAsync(model.Name);
-                if (isExist)
+                var isExist = await _service.CheckCustomerExistsAsync(id);
+                
+                if (!isExist)
                 {
-                    return BadRequest("Customer already exists");
+                    return BadRequest("Not found Customer");
                 }
 
                 // TODO
                 // model.UpdatedBy = Guid.Empty;
 
-                var result = await _service.UpdateCustomerAsync(Id, model);
+                var result = await _service.UpdateCustomerAsync(id, model);
                 return result > 0 ? Ok(result) : BadRequest();
             }
             catch (Exception e)

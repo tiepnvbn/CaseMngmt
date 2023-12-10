@@ -29,9 +29,9 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<bool> CheckCustomerExistsAsync(string customerName)
+        public async Task<bool> CheckCustomerExistsAsync(Guid customerId)
         {
-            return await _repository.CheckCustomerExistsAsync(customerName);
+            return await _repository.CheckCustomerExistsAsync(customerId);
         }
 
         public async Task<int> DeleteAsync(Guid id)

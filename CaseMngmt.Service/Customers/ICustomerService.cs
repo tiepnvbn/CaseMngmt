@@ -5,7 +5,7 @@ namespace CaseMngmt.Service.Customers
     public interface ICustomerService
     {
         Task<int> AddCustomerAsync(CustomerRequest customer);
-        Task<bool> CheckCustomerExistsAsync(string customerName);
+        Task<bool> CheckCustomerExistsAsync(Guid customerId);
         Task<IEnumerable<CustomerViewModel>> GetAllCustomersAsync(string customerName, string phoneNumber, int pageSize, int pageNumber);
         Task<CustomerViewModel> GetByIdAsync(Guid id);
         Task<int> DeleteAsync(Guid id);
