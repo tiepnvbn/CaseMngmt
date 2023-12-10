@@ -9,6 +9,7 @@ namespace CaseMngmt.Models.AutoMapper
         {
             CreateMap<CustomerViewModel, Customer>();
             CreateMap<Customer, CustomerViewModel>();
+
         }
     }
 }

@@ -2,8 +2,11 @@
 
 namespace CaseMngmt.Models.Customers
 {
-    public class Customer : BaseModel
+    public class CustomerRequest
     {
+        [MaxLength(256)]
+        public string? Name { get; set; }
+
         [MaxLength(12)]
         [Required]
         public string? PhoneNumber { get; set; }

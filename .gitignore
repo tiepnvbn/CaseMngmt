@@ -4,4 +4,6 @@
 /CaseMngmt.Repository/obj
 /CaseMngmt.Server/obj
 /CaseMngmt.Service/obj
-/CaseMngmt.Service/obj
+/CaseMngmt.Service/bin
+/CaseMngmt.Server/bin
+/CaseMngmt.Model/bin

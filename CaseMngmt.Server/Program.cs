@@ -9,6 +9,8 @@ using System.Text;
 using CaseMngmt.Service;
 using CaseMngmt.Repository.Customers;
 using CaseMngmt.Service.Customers;
+using AutoMapper;
+using CaseMngmt.Models.AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,7 +48,14 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddAutoMapper(typeof(Program)); // AppDomain.CurrentDomain.GetAssemblies()
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+var mappingConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new CustomProfile());
+});
+
+IMapper mapper = mappingConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 var app = builder.Build();
 

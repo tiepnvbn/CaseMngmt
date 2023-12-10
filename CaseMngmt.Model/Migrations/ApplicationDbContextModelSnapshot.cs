@@ -56,7 +56,7 @@ namespace CaseMngmt.Models.Migrations
 
                     b.HasKey("ContactId");
 
-                    b.ToTable("Contact");
+                    b.ToTable("Contact", (string)null);
                 });
 
             modelBuilder.Entity("CaseMngmt.Server.Models.Customers.Customer", b =>
@@ -108,7 +108,7 @@ namespace CaseMngmt.Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customer");
+                    b.ToTable("Customer", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

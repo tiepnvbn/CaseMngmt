@@ -7,18 +7,20 @@ namespace CaseMngmt.Service.Customers
     public class CustomerService : ICustomerService
     {
         private ICustomerRepository _repository;
-         private readonly IMapper _mapper;
+        private readonly IMapper _mapper;
         public CustomerService(ICustomerRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
-        public async Task<int> AddCustomerAsync(CustomerViewModel customer)
+        public async Task<int> AddCustomerAsync(CustomerRequest customer)
         {
             try
             {
                 var entity = _mapper.Map<Customer>(customer);
+                entity.CreatedDate = DateTime.UtcNow;
+                entity.UpdatedDate = DateTime.UtcNow;
                 return await _repository.AddCustomerAsync(entity);
             }
             catch (Exception)
@@ -32,7 +34,7 @@ namespace CaseMngmt.Service.Customers
             return await _repository.CheckCustomerExistsAsync(customerName);
         }
 
-        public async Task<int> DeleteAsync(int id)
+        public async Task<int> DeleteAsync(Guid id)
         {
             try
             {
@@ -40,8 +42,7 @@ namespace CaseMngmt.Service.Customers
             }
             catch (Exception)
             {
-
-                throw;
+                return 0;
             }
         }
 
@@ -55,7 +56,7 @@ namespace CaseMngmt.Service.Customers
             return result;
         }
 
-        public async Task<CustomerViewModel> GetByIdAsync(int id)
+        public async Task<CustomerViewModel> GetByIdAsync(Guid id)
         {
             try
             {
@@ -69,18 +70,29 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<int> UpdateCustomerAsync(CustomerViewModel customer)
+        public async Task<int> UpdateCustomerAsync(Guid Id, CustomerRequest customer)
         {
             try
             {
-                if (customer != null)
+                var entity = await _repository.GetByIdAsync(Id);
+                if (entity == null)
                 {
-                    var entity = _mapper.Map<Customer>(customer);
-                    await _repository.UpdateCustomerAsync(entity);
-                    return 1;
+                    return 0;
                 }
 
-                return 0;
+                entity.Name = customer.Name;
+                entity.RoomNumber = customer.RoomNumber;
+                entity.City = customer.City;
+                entity.PhoneNumber = customer.PhoneNumber;
+                entity.BuildingName = customer.BuildingName;
+                entity.City = customer.City;
+                entity.Note = customer.Note;
+                entity.PostCode1 = customer.PostCode1;
+                entity.PostCode2 = customer.PostCode2;
+                entity.StateProvince = customer.StateProvince;
+                entity.UpdatedDate = DateTime.UtcNow;
+                await _repository.UpdateCustomerAsync(entity);
+                return 1;
             }
             catch (Exception)
             {

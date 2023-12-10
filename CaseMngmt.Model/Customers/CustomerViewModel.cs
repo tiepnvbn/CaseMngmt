@@ -13,9 +13,11 @@ namespace CaseMngmt.Models.Customers
         [Required]
         public string? PhoneNumber { get; set; }
 
+        [MaxLength(50)]
         [Required]
         public string? PostCode1 { get; set; }
 
+        [MaxLength(50)]
         [Required]
         public string? PostCode2 { get; set; }
 
@@ -34,8 +36,10 @@ namespace CaseMngmt.Models.Customers
         [MaxLength(256)]
         [Required]
         public string? BuildingName { get; set; }
+
+        [MaxLength(50)]
         [Required]
-        public string? RoomNuber { get; set; }
+        public string? RoomNumber { get; set; }
 
         [MaxLength(3000)]
         public string? Note { get; set; }
