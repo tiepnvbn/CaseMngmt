@@ -7,3 +7,9 @@
 /CaseMngmt.Service/bin
 /CaseMngmt.Server/bin
 /CaseMngmt.Model/bin
+/CaseMngmt.Model/bin/Debug/net6.0/CaseMngmt.Models.dll
+/CaseMngmt.Model/bin/Debug/net6.0/CaseMngmt.Models.pdb
+/CaseMngmt.Repository/bin/Debug/net6.0/CaseMngmt.Models.dll
+/CaseMngmt.Repository/bin/Debug/net6.0/CaseMngmt.Models.pdb
+/CaseMngmt.Repository/bin/Debug/net6.0/CaseMngmt.Repository.dll
+/CaseMngmt.Repository/bin/Debug/net6.0/CaseMngmt.Repository.pdb
