@@ -9,7 +9,8 @@ namespace CaseMngmt.Models.AutoMapper
         {
             CreateMap<CustomerViewModel, Customer>();
             CreateMap<Customer, CustomerViewModel>();
-
+            CreateMap<Customer, CustomerRequest>();
+            CreateMap<CustomerRequest, Customer>().ForMember(x => x.Id, opt => opt.Ignore());
         }
     }
 }
