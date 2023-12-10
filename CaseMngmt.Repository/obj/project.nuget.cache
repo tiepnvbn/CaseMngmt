@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "/ThyqLtL80musnERo/fjQoivzPrmxQgjoGfVf/rA+sfaJ1aJ8bbbtxEVNqDY1AFP9ooS0ztHL5GkypTv3NgSuA==",
+  "dgSpecHash": "W2MC6zgdpw/a/pTXhcK6U4F+8noa8gYhK9Kg2/PcOELDl1/2E4/OjGfe8BGRxD4ptgt821JKDR2R3TTlARx5MQ==",
   "success": true,
   "projectFilePath": "D:\\CasePro\\CaseMngmt\\CaseMngmt.Repository\\CaseMngmt.Repository.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\tanbc1\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
+    "C:\\Users\\tanbc1\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\tanbc1\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",
     "C:\\Users\\tanbc1\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\6.0.25\\microsoft.aspnetcore.cryptography.internal.6.0.25.nupkg.sha512",
     "C:\\Users\\tanbc1\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\6.0.25\\microsoft.aspnetcore.cryptography.keyderivation.6.0.25.nupkg.sha512",

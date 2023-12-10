@@ -61,19 +61,32 @@ namespace CaseMngmt.Repository.Customers
             }
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomersAsync()
+        public async Task<IEnumerable<Customer>> GetAllCustomersAsync(string customerName, string phoneNumber, int pageSize, int pageNumber)
         {
-            return await _context.Customer.ToListAsync();
+            var IQueryableCustomer = (from tempCustomer in _context.Customer select tempCustomer);
+
+            if (!string.IsNullOrEmpty(customerName))
+            {
+                IQueryableCustomer = IQueryableCustomer.Where(m => m.Name == customerName.Trim());
+            }
+            if (!string.IsNullOrEmpty(phoneNumber))
+            {
+                IQueryableCustomer = IQueryableCustomer.Where(m => m.PhoneNumber == phoneNumber.Trim());
+            }
+            
+            IQueryableCustomer = IQueryableCustomer.OrderBy(m => m.Name);
+            var result = await IQueryableCustomer.Skip(pageNumber).Take(pageSize).ToListAsync();
+
+            return result;
         }
 
         public async Task<Customer> GetByIdAsync(int id)
         {
             try
             {
-                Customer result = await _context.Customer.FindAsync(id);
-                return result;
+                return await _context.Customer.FindAsync(id);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -87,7 +100,8 @@ namespace CaseMngmt.Repository.Customers
                 {
                     _context.Entry(customer).Property(x => x.Name).IsModified = true;
                     _context.Entry(customer).Property(x => x.PhoneNumber).IsModified = true;
-                    _context.Entry(customer).Property(x => x.PostCode).IsModified = true;
+                    _context.Entry(customer).Property(x => x.PostCode1).IsModified = true;
+                    _context.Entry(customer).Property(x => x.PostCode2).IsModified = true;
                     _context.Entry(customer).Property(x => x.StateProvince).IsModified = true;
                     _context.Entry(customer).Property(x => x.Street).IsModified = true;
                     _context.Entry(customer).Property(x => x.City).IsModified = true;
@@ -96,13 +110,15 @@ namespace CaseMngmt.Repository.Customers
                     _context.Entry(customer).Property(x => x.Note).IsModified = true;
                     _context.Entry(customer).Property(x => x.UpdatedBy).IsModified = true;
                     _context.Entry(customer).Property(x => x.UpdatedDate).IsModified = true;
+                    _context.Entry(customer).State = EntityState.Modified;
+                    _context.SaveChanges();
                     await _context.SaveChangesAsync();
                     return 1;
                 }
 
-                return 1;
+                return 0;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return 0;
             }

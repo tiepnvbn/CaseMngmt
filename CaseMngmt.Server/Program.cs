@@ -46,6 +46,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(Program)); // AppDomain.CurrentDomain.GetAssemblies()
 
 var app = builder.Build();
 
@@ -68,5 +69,11 @@ app.MapControllers();
 //app.UseRouting();
 
 app.MapFallbackToFile("/index.html");
+
+app.UseCors(builder => builder
+       .AllowAnyHeader()
+       .AllowAnyMethod()
+       .AllowAnyOrigin()
+    );
 
 app.Run();

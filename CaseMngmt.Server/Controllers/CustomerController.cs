@@ -2,6 +2,7 @@
 using CaseMngmt.Service;
 using CaseMngmt.Service.Customers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CaseMngmt.Server.Controllers
 {
@@ -18,11 +19,11 @@ namespace CaseMngmt.Server.Controllers
         }
 
         [HttpGet, Route("getAll")]
-        public async Task<IActionResult> GetAll(string customerName, string phoneNumber)
+        public async Task<IActionResult> GetAll(string customerName, string phoneNumber, int pageSize = 25, int pageNumber = 1)
         {
             try
             {
-                var result = await _service.GetAllCustomersAsync();
+                var result = await _service.GetAllCustomersAsync(customerName, phoneNumber, pageSize, pageNumber);
                 return Ok(result);
             }
             catch (Exception e)
@@ -42,7 +43,7 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                Customer result = await _service.GetByIdAsync(id.Value);
+                CustomerViewModel result = await _service.GetByIdAsync(id.Value);
 
                 if (result == null)
                 {
@@ -58,12 +59,17 @@ namespace CaseMngmt.Server.Controllers
         }
 
         [HttpPost, Route("create")]
-        public async Task<IActionResult> Create(Customer customer)
+        public async Task<IActionResult> Create(CustomerViewModel customer)
         {
             try
             {
-                if (ModelState.IsValid)
+                if (ModelState.IsValid && customer != null)
                 {
+                    var isExist = await _service.CheckCustomerExistsAsync(customer.Name);
+                    if (isExist)
+                    {
+                        return BadRequest("Customer already exists");
+                    }
                     // TODO
                     customer.CreatedBy = Guid.Empty;
                     customer.CreatedDate = DateTime.UtcNow;
@@ -82,7 +88,7 @@ namespace CaseMngmt.Server.Controllers
         }
 
         [HttpPut, Route("update/{newsId}")]
-        public async Task<IActionResult> Update(Guid newsId, Customer model)
+        public async Task<IActionResult> Update(Guid newsId, CustomerViewModel model)
         {
             try
             {

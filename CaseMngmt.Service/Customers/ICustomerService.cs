@@ -4,11 +4,11 @@ namespace CaseMngmt.Service.Customers
 {
     public interface ICustomerService
     {
-        Task<int> AddCustomerAsync(Customer customer);
+        Task<int> AddCustomerAsync(CustomerViewModel customer);
         Task<bool> CheckCustomerExistsAsync(string customerName);
-        Task<IEnumerable<Customer>> GetAllCustomersAsync();
-        Task<Customer> GetByIdAsync(int id);
+        Task<IEnumerable<CustomerViewModel>> GetAllCustomersAsync(string customerName, string phoneNumber, int pageSize, int pageNumber);
+        Task<CustomerViewModel> GetByIdAsync(int id);
         Task<int> DeleteAsync(int id);
-        Task<int> UpdateCustomerAsync(Customer customer);
+        Task<int> UpdateCustomerAsync(CustomerViewModel customer);
     }
 }

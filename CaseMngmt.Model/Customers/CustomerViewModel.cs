@@ -2,8 +2,13 @@
 
 namespace CaseMngmt.Models.Customers
 {
-    public class Customer : BaseModel
+    public class CustomerViewModel
     {
+        public Guid Id { get; set; }
+
+        [MaxLength(256)]
+        public string? Name { get; set; }
+
         [MaxLength(12)]
         [Required]
         public string? PhoneNumber { get; set; }
@@ -29,10 +34,14 @@ namespace CaseMngmt.Models.Customers
         [MaxLength(256)]
         [Required]
         public string? BuildingName { get; set; }
-
+        [Required]
         public string? RoomNuber { get; set; }
 
         [MaxLength(3000)]
         public string? Note { get; set; }
+        public Guid CreatedBy { get; set; }
+        public Guid UpdatedBy { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime UpdatedDate { get; set; }
     }
 }
