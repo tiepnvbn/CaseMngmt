@@ -1,3 +1,7 @@
 .vs
-CaseMngmt.Server/obj*
-casemngmt.client/node_modules
+/casemngmt.client/node_modules
+/CaseMngmt.Model/obj
+/CaseMngmt.Repository/obj
+/CaseMngmt.Server/obj
+/CaseMngmt.Service/obj
+/CaseMngmt.Service/obj
