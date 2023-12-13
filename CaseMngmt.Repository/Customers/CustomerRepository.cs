@@ -61,9 +61,14 @@ namespace CaseMngmt.Repository.Customers
             }
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomersAsync(string customerName, string phoneNumber, int pageSize, int pageNumber)
+        public async Task<IEnumerable<Customer>> GetAllCustomersAsync(string customerName, string phoneNumber, string companyId, int pageSize, int pageNumber)
         {
             var IQueryableCustomer = (from tempCustomer in _context.Customer select tempCustomer);
+            
+            if (!string.IsNullOrEmpty(companyId))
+            {
+                IQueryableCustomer = IQueryableCustomer.Where(m => m.CompanyId == Guid.Parse(companyId));
+            }
 
             if (!string.IsNullOrEmpty(customerName))
             {

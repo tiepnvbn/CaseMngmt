@@ -19,8 +19,11 @@ namespace CaseMngmt.Service.Customers
             try
             {
                 var entity = _mapper.Map<Customer>(customer);
+                entity.CompanyId = customer.CompanyId;
                 entity.CreatedDate = DateTime.UtcNow;
+                entity.CreatedBy = Guid.Parse(customer.CreatedBy);
                 entity.UpdatedDate = DateTime.UtcNow;
+                entity.UpdatedBy = Guid.Parse(customer.UpdatedBy);
                 return await _repository.AddCustomerAsync(entity);
             }
             catch (Exception)
@@ -46,10 +49,10 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<IEnumerable<CustomerViewModel>> GetAllCustomersAsync(string customerName, string phoneNumber, int pageSize, int pageNumber)
+        public async Task<IEnumerable<CustomerViewModel>> GetAllCustomersAsync(string customerName, string phoneNumber, string companyId, int pageSize, int pageNumber)
         {
 
-            var customersFromRepository = await _repository.GetAllCustomersAsync(customerName, phoneNumber, pageSize, pageNumber);
+            var customersFromRepository = await _repository.GetAllCustomersAsync(customerName, phoneNumber, companyId, pageSize, pageNumber);
 
             var result = _mapper.Map<List<CustomerViewModel>>(customersFromRepository);
 
@@ -90,6 +93,8 @@ namespace CaseMngmt.Service.Customers
                 entity.PostCode1 = customer.PostCode1;
                 entity.PostCode2 = customer.PostCode2;
                 entity.StateProvince = customer.StateProvince;
+                entity.CompanyId = customer.CompanyId;
+                entity.UpdatedBy = Guid.Parse(customer.UpdatedBy);
                 entity.UpdatedDate = DateTime.UtcNow;
                 await _repository.UpdateCustomerAsync(entity);
                 return 1;

@@ -1,5 +1,5 @@
-﻿using CaseMngmt.Models.Customers;
-using CaseMngmt.Service.Customers;
+﻿using CaseMngmt.Models.Companies;
+using CaseMngmt.Service.Companies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -9,28 +9,27 @@ namespace CaseMngmt.Server.Controllers
     [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     [Route("api/[controller]")]
-    public class CustomerController : ControllerBase
+    public class CompanyController : ControllerBase
     {
-        private readonly ILogger<CustomerController> _logger;
-        private readonly ICustomerService _service;
-        public CustomerController(ILogger<CustomerController> logger, ICustomerService service)
+        private readonly ILogger<CompanyController> _logger;
+        private readonly ICompanyService _service;
+        public CompanyController(ILogger<CompanyController> logger, ICompanyService service)
         {
             _logger = logger;
             _service = service;
         }
 
         [HttpGet, Route("getAll")]
-        public async Task<IActionResult> GetAll(string? customerName = null, string? phoneNumber = null, int? pageSize = 25, int? pageNumber = 1)
+        public async Task<IActionResult> GetAll(string? name = null, string? phoneNumber = null, int? pageSize = 25, int? pageNumber = 1)
         {
             try
             {
-                var currentCompanyId = User.FindFirst("CompanyId").Value;
-                var result = await _service.GetAllCustomersAsync(customerName, phoneNumber, currentCompanyId, pageSize.Value, pageNumber.Value);
+                var result = await _service.GetAllAsync(name, phoneNumber, pageSize.Value, pageNumber.Value);
                 return Ok(result);
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CompanyController), true, e);
                 return BadRequest();
             }
         }
@@ -45,7 +44,7 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                CustomerViewModel result = await _service.GetByIdAsync(id);
+                CompanyViewModel result = await _service.GetByIdAsync(id);
 
                 if (result == null)
                 {
@@ -55,36 +54,35 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CompanyController), true, e);
                 return BadRequest();
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CustomerRequest customer)
+        public async Task<IActionResult> Create(CompanyRequest Company)
         {
-            if (!ModelState.IsValid || customer == null)
+            if (!ModelState.IsValid || Company == null)
             {
                 return BadRequest(ModelState);
             }
 
             try
             {
-                customer.CreatedBy = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                customer.CompanyId = Guid.Parse(User.FindFirst("CompanyId").Value);
-                var result = await _service.AddCustomerAsync(customer);
+                Company.CreatedBy = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                var result = await _service.AddAsync(Company);
 
                 return result > 0 ? Ok(result) : BadRequest();
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CompanyController), true, e);
                 return BadRequest();
             }
         }
 
         [HttpPut, Route("{Id}")]
-        public async Task<IActionResult> Update(Guid Id, CustomerRequest model)
+        public async Task<IActionResult> Update(Guid Id, CompanyRequest model)
         {
             if (!ModelState.IsValid || Id == Guid.Empty)
             {
@@ -93,14 +91,13 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                model.CompanyId = Guid.Parse(User.FindFirst("CompanyId").Value);
-                model.UpdatedBy = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var result = await _service.UpdateCustomerAsync(Id, model);
+                model.UpdatedBy = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                var result = await _service.UpdateAsync(Id, model);
                 return result > 0 ? Ok(result) : BadRequest();
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CompanyController), true, e);
                 return BadRequest();
             }
         }
@@ -120,7 +117,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CompanyController), true, e);
                 return BadRequest();
             }
         }
