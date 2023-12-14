@@ -1,4 +1,6 @@
-﻿using CaseMngmt.Models.Account;
+﻿using CaseMngmt.Models;
+using CaseMngmt.Models.Account;
+using CaseMngmt.Models.ApplicationUsers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -15,72 +17,18 @@ namespace CaseMngmt.Server.Controllers
     public class AccountController : ControllerBase
     {
         private readonly ILogger<AccountController> _logger;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
-        public AccountController(ILogger<AccountController> logger, UserManager<IdentityUser> userManager,
-                              SignInManager<IdentityUser> signInManager, IConfiguration configuration, RoleManager<IdentityRole> roleManager)
+        public AccountController(ILogger<AccountController> logger, UserManager<ApplicationUser> userManager,
+                              SignInManager<ApplicationUser> signInManager, IConfiguration configuration, RoleManager<IdentityRole> roleManager)
         {
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _roleManager = roleManager;
-        }
-
-        [HttpPost(Name = "Register")]
-        public async Task<IActionResult> Register(RegisterModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = new IdentityUser
-                {
-                    UserName = model.Username,
-                    Email = model.Email,
-                };
-
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded)
-                {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-
-                    return Ok(result);
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
-
-                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
-
-                return BadRequest(ModelState);
-
-            }
-            return BadRequest(ModelState);
-        }
-
-        [HttpPost(Name = "Login")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginModel user)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _signInManager.PasswordSignInAsync(user.Username, user.Password, user.RememberMe, false);
-
-                if (result.Succeeded)
-                {
-                    return Ok(result);
-                }
-
-                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
-
-                return BadRequest(ModelState);
-
-            }
-            return BadRequest(user);
         }
 
         [AllowAnonymous]
@@ -92,10 +40,9 @@ namespace CaseMngmt.Server.Controllers
             return RedirectToAction("Login");
         }
 
-
         [HttpPost]
-        [Route("login2")]
-        public async Task<IActionResult> Login2([FromBody] LoginModel model)
+        [Route("login")]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
@@ -105,6 +52,8 @@ namespace CaseMngmt.Server.Controllers
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim("CompanyId", user.CompanyId.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
@@ -133,14 +82,14 @@ namespace CaseMngmt.Server.Controllers
         }
 
         [HttpPost]
-        [Route("register2")]
-        public async Task<IActionResult> Register2([FromBody] RegisterModel model)
+        [Route("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "User already exists!" });
 
-            IdentityUser user = new IdentityUser()
+            ApplicationUser user = new ApplicationUser()
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -154,31 +103,42 @@ namespace CaseMngmt.Server.Controllers
         }
 
         [HttpPost]
-        [Route("register-admin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
+        [Route("register-user")]
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterModel model)
         {
+            if (model.Role == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "User Role is required" });
+            }
+
+            if (model.CompanyId == Guid.Empty)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "Company is required" });
+            }
+
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "User already exists!" });
 
-            IdentityUser user = new IdentityUser()
+            ApplicationUser user = new ApplicationUser()
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                UserName = model.Username,
+                CompanyId = model.CompanyId
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new  { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "User creation failed! Please check user details and try again." });
 
             if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
             if (!await _roleManager.RoleExistsAsync(UserRoles.User))
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
 
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+            if (await _roleManager.RoleExistsAsync(model.Role))
             {
-                await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+                await _userManager.AddToRoleAsync(user, model.Role);
             }
 
             return Ok(new { Status = "Success", Message = "User created successfully!" });

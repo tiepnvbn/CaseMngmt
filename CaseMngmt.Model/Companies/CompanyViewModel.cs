@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CaseMngmt.Models.Customers
+namespace CaseMngmt.Models.Companies
 {
-    public class CustomerRequest
+    public class CompanyViewModel
     {
+        public Guid Id { get; set; }
+
         [MaxLength(256)]
-        [Required]
         public string? Name { get; set; }
 
         [MaxLength(12)]
@@ -42,10 +43,9 @@ namespace CaseMngmt.Models.Customers
 
         [MaxLength(3000)]
         public string? Note { get; set; }
-        [Required]
-        public Guid CompanyId { get; set; }
-
-        public string? CreatedBy { get; set; }
-        public string? UpdatedBy { get; set; }
+        public Guid CreatedBy { get; set; }
+        public Guid UpdatedBy { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime UpdatedDate { get; set; }
     }
 }

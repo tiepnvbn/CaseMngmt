@@ -18,5 +18,8 @@ namespace CaseMngmt.Models.Account
         [Display(Name = "Confirm Password")]
         [Compare("Password", ErrorMessage = "Password and confirmation password not match.")]
         public string ConfirmPassword { get; set; }
+
+        public string Role { get; set; }
+        public Guid CompanyId { get; set; }
     }
 }

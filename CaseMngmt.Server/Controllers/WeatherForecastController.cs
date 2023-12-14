@@ -25,6 +25,7 @@ namespace CaseMngmt.Server.Controllers
             _signInManager = signInManager;
         }
 
+        [Authorize]
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {

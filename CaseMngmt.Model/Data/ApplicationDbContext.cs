@@ -1,4 +1,5 @@
 ﻿using CaseMngmt.Models;
+using CaseMngmt.Models.Companies;
 using CaseMngmt.Models.Customers;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CaseMngmt.Models.Data
 {
-    public class ApplicationDbContext: IdentityDbContext
+    public class ApplicationDbContext: IdentityDbContext// <ApplicationUser>
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -18,9 +19,10 @@ namespace CaseMngmt.Models.Data
         {
             base.OnModelCreating(modelBuilder);
         }
-        public DbSet<Contact> Contact { get; set; }
 
+        public DbSet<Contact> Contact { get; set; }
         public DbSet<Customer> Customer { get; set; }
+        public DbSet<Company> Company { get; set; }
     }
 }
 

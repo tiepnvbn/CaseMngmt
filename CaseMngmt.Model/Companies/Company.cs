@@ -1,13 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CaseMngmt.Models.ApplicationUsers;
+using System.ComponentModel.DataAnnotations;
 
-namespace CaseMngmt.Models.Customers
+namespace CaseMngmt.Models.Companies
 {
-    public class CustomerRequest
+    public class Company : BaseModel
     {
-        [MaxLength(256)]
-        [Required]
-        public string? Name { get; set; }
-
         [MaxLength(12)]
         [Required]
         public string? PhoneNumber { get; set; }
@@ -42,10 +39,7 @@ namespace CaseMngmt.Models.Customers
 
         [MaxLength(3000)]
         public string? Note { get; set; }
-        [Required]
-        public Guid CompanyId { get; set; }
 
-        public string? CreatedBy { get; set; }
-        public string? UpdatedBy { get; set; }
+        public ICollection<ApplicationUser> Users { get; set; }
     }
 }
