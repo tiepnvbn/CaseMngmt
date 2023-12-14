@@ -1,4 +1,4 @@
-using CaseMngmt.Models.Data;
+using CaseMngmt.Models.Database;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using CaseMngmt.Service.Companies;
 using CaseMngmt.Repository.Companies;
 using CaseMngmt.Models.ApplicationUsers;
+using CaseMngmt.Models.ApplicationRoles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services
-    .AddIdentity<ApplicationUser, IdentityRole>()
+    .AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 

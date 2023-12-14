@@ -1,4 +1,4 @@
-﻿using CaseMngmt.Models.Data;
+﻿using CaseMngmt.Models.Database;
 using CaseMngmt.Models.Companies;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,4 +1,5 @@
 ﻿using CaseMngmt.Models.ApplicationUsers;
+using CaseMngmt.Models.Customers;
 using System.ComponentModel.DataAnnotations;
 
 namespace CaseMngmt.Models.Companies
@@ -41,5 +42,6 @@ namespace CaseMngmt.Models.Companies
         public string? Note { get; set; }
 
         public ICollection<ApplicationUser> Users { get; set; }
+        public ICollection<Customer> Customer { get; set; }
     }
 }
