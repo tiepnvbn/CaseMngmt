@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CaseMngmt.Models.Templates;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CaseMngmt.Models.ApplicationUsers
@@ -9,5 +10,6 @@ namespace CaseMngmt.Models.ApplicationUsers
     {
         public Guid CompanyId { get; set; }
         public Guid TemplateId { get; set; }
+        public Template Template { get; set; }
     }
 }

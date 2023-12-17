@@ -24,9 +24,9 @@ namespace CaseMngmt.Service.Customers
                 entity.CreatedBy = Guid.Parse(customer.CreatedBy);
                 entity.UpdatedDate = DateTime.UtcNow;
                 entity.UpdatedBy = Guid.Parse(customer.UpdatedBy);
-                return await _repository.AddCustomerAsync(entity);
+                return await _repository.AddAsync(entity);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return 0;
             }
@@ -43,7 +43,7 @@ namespace CaseMngmt.Service.Customers
             {
                 return await _repository.DeleteAsync(id);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return 0;
             }
@@ -52,7 +52,7 @@ namespace CaseMngmt.Service.Customers
         public async Task<IEnumerable<CustomerViewModel>> GetAllCustomersAsync(string customerName, string phoneNumber, string companyId, int pageSize, int pageNumber)
         {
 
-            var customersFromRepository = await _repository.GetAllCustomersAsync(customerName, phoneNumber, companyId, pageSize, pageNumber);
+            var customersFromRepository = await _repository.GetAllAsync(customerName, phoneNumber, companyId, pageSize, pageNumber);
 
             var result = _mapper.Map<List<CustomerViewModel>>(customersFromRepository);
 
@@ -67,7 +67,7 @@ namespace CaseMngmt.Service.Customers
                 var result = _mapper.Map<CustomerViewModel>(entity);
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -96,10 +96,10 @@ namespace CaseMngmt.Service.Customers
                 entity.CompanyId = customer.CompanyId;
                 entity.UpdatedBy = Guid.Parse(customer.UpdatedBy);
                 entity.UpdatedDate = DateTime.UtcNow;
-                await _repository.UpdateCustomerAsync(entity);
+                await _repository.UpdateAsync(entity);
                 return 1;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return 0;
             }

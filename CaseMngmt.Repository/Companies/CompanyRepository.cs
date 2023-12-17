@@ -22,7 +22,7 @@ namespace CaseMngmt.Repository.Companies
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return 0;
             }
@@ -39,7 +39,7 @@ namespace CaseMngmt.Repository.Companies
                 }
                 return _context.SaveChanges();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return 0;
             }
@@ -70,7 +70,7 @@ namespace CaseMngmt.Repository.Companies
             {
                 return await _context.Company.FindAsync(id);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }

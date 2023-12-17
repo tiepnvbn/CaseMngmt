@@ -1,24 +1,26 @@
 ﻿using AutoMapper;
 using CaseMngmt.Models.Companies;
+using CaseMngmt.Models.Templates;
 using CaseMngmt.Repository.Companies;
+using CaseMngmt.Repository.Templates;
 
-namespace CaseMngmt.Service.Companies
+namespace CaseMngmt.Service.Templates
 {
-    public class CompanyService : ICompanyService
+    public class TemplateService : ITemplateService
     {
-        private ICompanyRepository _repository;
+        private ITemplateRepository _repository;
         private readonly IMapper _mapper;
-        public CompanyService(ICompanyRepository repository, IMapper mapper)
+        public TemplateService(ITemplateRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
-        public async Task<int> AddAsync(CompanyRequest Company)
+        public async Task<int> AddAsync(TemplateRequest request)
         {
             try
             {
-                var entity = _mapper.Map<Company>(Company);
+                var entity = _mapper.Map<Template>(request);
                 entity.CreatedDate = DateTime.UtcNow;
                 entity.UpdatedDate = DateTime.UtcNow;
                 return await _repository.AddAsync(entity);
@@ -41,22 +43,21 @@ namespace CaseMngmt.Service.Companies
             }
         }
 
-        public async Task<IEnumerable<CompanyViewModel>> GetAllAsync(string CompanyName, string phoneNumber, int pageSize, int pageNumber)
+        public async Task<IEnumerable<TemplateViewModel>> GetAllAsync(int pageSize, int pageNumber)
         {
+            var templatesFromRepository = await _repository.GetAllAsync(pageSize, pageNumber);
 
-            var CompanysFromRepository = await _repository.GetAllAsync(CompanyName, phoneNumber, pageSize, pageNumber);
-
-            var result = _mapper.Map<List<CompanyViewModel>>(CompanysFromRepository);
+            var result = _mapper.Map<List<TemplateViewModel>>(templatesFromRepository);
 
             return result;
         }
 
-        public async Task<CompanyViewModel> GetByIdAsync(Guid id)
+        public async Task<TemplateViewModel> GetByIdAsync(Guid id)
         {
             try
             {
                 var entity = await _repository.GetByIdAsync(id);
-                var result = _mapper.Map<CompanyViewModel>(entity);
+                var result = _mapper.Map<TemplateViewModel>(entity);
                 return result;
             }
             catch (Exception ex)
@@ -65,7 +66,7 @@ namespace CaseMngmt.Service.Companies
             }
         }
 
-        public async Task<int> UpdateAsync(Guid Id, CompanyRequest Company)
+        public async Task<int> UpdateAsync(Guid Id, TemplateRequest request)
         {
             try
             {
@@ -75,16 +76,7 @@ namespace CaseMngmt.Service.Companies
                     return 0;
                 }
 
-                entity.Name = Company.Name;
-                entity.RoomNumber = Company.RoomNumber;
-                entity.City = Company.City;
-                entity.PhoneNumber = Company.PhoneNumber;
-                entity.BuildingName = Company.BuildingName;
-                entity.City = Company.City;
-                entity.Note = Company.Note;
-                entity.PostCode1 = Company.PostCode1;
-                entity.PostCode2 = Company.PostCode2;
-                entity.StateProvince = Company.StateProvince;
+                entity.Name = request.Name;
                 entity.UpdatedDate = DateTime.UtcNow;
                 await _repository.UpdateAsync(entity);
                 return 1;

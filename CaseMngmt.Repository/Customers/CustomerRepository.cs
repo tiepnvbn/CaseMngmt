@@ -1,6 +1,7 @@
 ﻿using CaseMngmt.Models.Database;
 using CaseMngmt.Models.Customers;
 using Microsoft.EntityFrameworkCore;
+using CaseMngmt.Models.Templates;
 
 namespace CaseMngmt.Repository.Customers
 {
@@ -13,7 +14,7 @@ namespace CaseMngmt.Repository.Customers
             _context = context;
         }
 
-        public async Task<int> AddCustomerAsync(Customer customer)
+        public async Task<int> AddAsync(Customer customer)
         {
             try
             {
@@ -22,7 +23,7 @@ namespace CaseMngmt.Repository.Customers
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return 0;
             }
@@ -51,17 +52,19 @@ namespace CaseMngmt.Repository.Customers
                 Customer customer = await _context.Customer.FindAsync(id);
                 if (customer != null)
                 {
-                    _context.Customer.Remove(customer);
+                    customer.Deleted = true;
+                    await _context.SaveChangesAsync();
+                    return 1;
                 }
-                return _context.SaveChanges();
+                return 0;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return 0;
             }
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomersAsync(string customerName, string phoneNumber, string companyId, int pageSize, int pageNumber)
+        public async Task<IEnumerable<Customer>> GetAllAsync(string customerName, string phoneNumber, string companyId, int pageSize, int pageNumber)
         {
             var IQueryableCustomer = (from tempCustomer in _context.Customer select tempCustomer);
             
@@ -91,13 +94,13 @@ namespace CaseMngmt.Repository.Customers
             {
                 return await _context.Customer.FindAsync(id);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }
         }
 
-        public async Task<int> UpdateCustomerAsync(Customer customer)
+        public async Task<int> UpdateAsync(Customer customer)
         {
             try
             {

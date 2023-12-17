@@ -1,3 +1,9 @@
+D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.csproj.AssemblyReference.cache
+D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.GeneratedMSBuildEditorConfig.editorconfig
+D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.AssemblyInfoInputs.cache
+D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.AssemblyInfo.cs
+D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.csproj.CoreCompileInputs.cache
+D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.sourcelink.json
 D:\CasePro\CaseMngmt\CaseMngmt.Service\bin\Debug\net6.0\CaseMngmt.Service.deps.json
 D:\CasePro\CaseMngmt\CaseMngmt.Service\bin\Debug\net6.0\CaseMngmt.Service.runtimeconfig.json
 D:\CasePro\CaseMngmt\CaseMngmt.Service\bin\Debug\net6.0\CaseMngmt.Service.dll
@@ -6,12 +12,6 @@ D:\CasePro\CaseMngmt\CaseMngmt.Service\bin\Debug\net6.0\CaseMngmt.Models.dll
 D:\CasePro\CaseMngmt\CaseMngmt.Service\bin\Debug\net6.0\CaseMngmt.Repository.dll
 D:\CasePro\CaseMngmt\CaseMngmt.Service\bin\Debug\net6.0\CaseMngmt.Models.pdb
 D:\CasePro\CaseMngmt\CaseMngmt.Service\bin\Debug\net6.0\CaseMngmt.Repository.pdb
-D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.csproj.AssemblyReference.cache
-D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.GeneratedMSBuildEditorConfig.editorconfig
-D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.AssemblyInfoInputs.cache
-D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.AssemblyInfo.cs
-D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.csproj.CoreCompileInputs.cache
-D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.sourcelink.json
 D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.csproj.CopyComplete
 D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\CaseMngmt.Service.dll
 D:\CasePro\CaseMngmt\CaseMngmt.Service\obj\Debug\net6.0\refint\CaseMngmt.Service.dll

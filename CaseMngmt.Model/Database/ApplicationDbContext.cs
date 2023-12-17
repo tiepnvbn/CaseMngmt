@@ -6,6 +6,7 @@ using CaseMngmt.Models.Companies;
 using CaseMngmt.Models.Customers;
 using CaseMngmt.Models.Keywords;
 using CaseMngmt.Models.Metadatas;
+using CaseMngmt.Models.TemplateKeywords;
 using CaseMngmt.Models.Templates;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -32,17 +33,26 @@ namespace CaseMngmt.Models.Database
                     r => r.HasOne<Case>().WithMany().HasForeignKey(e => e.CaseId))
                 .HasKey(e => e.Id);
 
-            modelBuilder.Entity<Keyword>()
-                .HasMany(e => e.Templates)
-                .WithMany(e => e.Keywords)
-                .UsingEntity<TemplateKeyword>(
-                    l => l.HasOne<Template>().WithMany().HasForeignKey(e => e.TemplateId),
-                    r => r.HasOne<Keyword>().WithMany().HasForeignKey(e => e.KeywordId))
-                .HasKey(m => new { m.TemplateId , m.KeywordId });
+            modelBuilder.Entity<Template>()
+               .HasMany(e => e.Keywords)
+               .WithMany(e => e.Templates)
+               .UsingEntity<TemplateKeyword>(
+                   l => l.HasOne<Keyword>().WithMany().HasForeignKey(e => e.KeywordId),
+                   r => r.HasOne<Template>().WithMany().HasForeignKey(e => e.TemplateId),
+                   z => z.HasOne<ApplicationRole>().WithMany().HasForeignKey(e => e.RoleId))
+               .HasKey(e => e.Id);
 
-            modelBuilder.Entity<TemplateKeyword>()
-                .Property(e => e.RoleId)
-                .HasColumnName("RoleId");
+            //modelBuilder.Entity<Keyword>()
+            //    .HasMany(e => e.Templates)
+            //    .WithMany(e => e.Keywords)
+            //    .UsingEntity<TemplateKeyword>(
+            //        l => l.HasOne<Template>().WithMany().HasForeignKey(e => e.TemplateId),
+            //        r => r.HasOne<Keyword>().WithMany().HasForeignKey(e => e.KeywordId))
+            //    .HasKey(m => new { m.TemplateId , m.KeywordId });
+
+            //modelBuilder.Entity<TemplateKeyword>()
+            //    .Property(e => e.RoleId)
+            //    .HasColumnName("RoleId");
 
             base.OnModelCreating(modelBuilder);
         }
