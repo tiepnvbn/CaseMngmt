@@ -28,6 +28,21 @@ builder.Services
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("LocalhostPolicy",builder =>
+        {
+            builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
+            builder.AllowAnyHeader();
+            builder.AllowAnyMethod();
+            builder.AllowCredentials();
+        });
+    });
+}
+
+
 #region Register Service & Repository
 
 builder.Services.AddTransient<ICustomerService, CustomerService>();
@@ -128,10 +143,6 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 
-app.UseCors(builder => builder
-       .AllowAnyHeader()
-       .AllowAnyMethod()
-       .AllowAnyOrigin()
-    );
+app.UseCors("LocalhostPolicy");
 
 app.Run();

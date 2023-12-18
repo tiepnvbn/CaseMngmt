@@ -8,6 +8,5 @@ namespace CaseMngmt.Models.ApplicationUsers
     public class ApplicationUser : IdentityUser<Guid>
     {
         public Guid CompanyId { get; set; }
-        public Guid TemplateId { get; set; }
     }
 }

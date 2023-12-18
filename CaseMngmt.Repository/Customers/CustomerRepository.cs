@@ -28,10 +28,10 @@ namespace CaseMngmt.Repository.Customers
             }
         }
 
-        public async Task<bool> CheckCustomerExistsAsync(Guid customerId)
+        public async Task<bool> CheckCustomerExistsAsync(string customerName)
         {
             var customerCount = await (from customer in _context.Customer
-                                       where customer.Id == customerId
+                                       where customer.Name == customerName
                                        select customer).CountAsync();
 
             if (customerCount > 0)

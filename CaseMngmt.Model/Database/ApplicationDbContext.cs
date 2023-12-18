@@ -3,6 +3,7 @@ using CaseMngmt.Models.ApplicationUsers;
 using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.Cases;
 using CaseMngmt.Models.Companies;
+using CaseMngmt.Models.CompanyTemplates;
 using CaseMngmt.Models.Customers;
 using CaseMngmt.Models.Keywords;
 using CaseMngmt.Models.Metadatas;
@@ -44,6 +45,9 @@ namespace CaseMngmt.Models.Database
                 .Property(e => e.RoleId)
                 .HasColumnName("RoleId");
 
+            modelBuilder.Entity<CompanyTemplate>()
+                .HasKey(e => new { e.CompanyId, e.TemplateId });
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -56,23 +60,6 @@ namespace CaseMngmt.Models.Database
         public DbSet<Keyword> Keyword { get; set; }
         public DbSet<TemplateKeyword> TemplateKeyword { get; set; }
         public DbSet<CaseKeyword> CaseKeyword { get; set; }
+        public DbSet<CompanyTemplate> CompanyTemplate { get; set; }
     }
 }
-
-
-//using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-//using Microsoft.EntityFrameworkCore;
-//using ContactManager.Models;
-
-//namespace ContactManager.Data;
-
-//public class ApplicationDbContext : IdentityDbContext
-//{
-//#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-//    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-//#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-//        : base(options)
-//    {
-//    }
-//    public DbSet<Contact> Contact { get; set; }
-//}

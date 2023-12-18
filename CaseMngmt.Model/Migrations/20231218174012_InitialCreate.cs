@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CaseMngmt.Models.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -123,7 +123,6 @@ namespace CaseMngmt.Models.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TemplateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -178,6 +177,30 @@ namespace CaseMngmt.Models.Migrations
                         name: "FK_Customer_Company_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Company",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompanyTemplate",
+                columns: table => new
+                {
+                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TemplateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanyTemplate", x => new { x.CompanyId, x.TemplateId });
+                    table.ForeignKey(
+                        name: "FK_CompanyTemplate_Company_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Company",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CompanyTemplate_Template_TemplateId",
+                        column: x => x.TemplateId,
+                        principalTable: "Template",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -427,6 +450,11 @@ namespace CaseMngmt.Models.Migrations
                 column: "KeywordId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CompanyTemplate_TemplateId",
+                table: "CompanyTemplate",
+                column: "TemplateId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Customer_CompanyId",
                 table: "Customer",
                 column: "CompanyId");
@@ -471,6 +499,9 @@ namespace CaseMngmt.Models.Migrations
 
             migrationBuilder.DropTable(
                 name: "CaseKeyword");
+
+            migrationBuilder.DropTable(
+                name: "CompanyTemplate");
 
             migrationBuilder.DropTable(
                 name: "Customer");

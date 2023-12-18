@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CaseMngmt.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231214152455_Initial")]
-    partial class Initial
+    [Migration("20231218174012_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -100,9 +100,6 @@ namespace CaseMngmt.Models.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("TemplateId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -276,6 +273,21 @@ namespace CaseMngmt.Models.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Company");
+                });
+
+            modelBuilder.Entity("CaseMngmt.Models.CompanyTemplates.CompanyTemplate", b =>
+                {
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TemplateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CompanyId", "TemplateId");
+
+                    b.HasIndex("TemplateId");
+
+                    b.ToTable("CompanyTemplate");
                 });
 
             modelBuilder.Entity("CaseMngmt.Models.Customers.Customer", b =>
@@ -618,6 +630,21 @@ namespace CaseMngmt.Models.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CaseMngmt.Models.CompanyTemplates.CompanyTemplate", b =>
+                {
+                    b.HasOne("CaseMngmt.Models.Companies.Company", null)
+                        .WithMany("CompanyTemplate")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CaseMngmt.Models.Templates.Template", null)
+                        .WithMany("CompanyTemplate")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CaseMngmt.Models.Customers.Customer", b =>
                 {
                     b.HasOne("CaseMngmt.Models.Companies.Company", null)
@@ -703,9 +730,16 @@ namespace CaseMngmt.Models.Migrations
 
             modelBuilder.Entity("CaseMngmt.Models.Companies.Company", b =>
                 {
+                    b.Navigation("CompanyTemplate");
+
                     b.Navigation("Customer");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("CaseMngmt.Models.Templates.Template", b =>
+                {
+                    b.Navigation("CompanyTemplate");
                 });
 
             modelBuilder.Entity("CaseMngmt.Models.Types.Type", b =>
