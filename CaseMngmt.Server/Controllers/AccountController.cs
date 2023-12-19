@@ -102,7 +102,7 @@ namespace CaseMngmt.Server.Controllers
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "User creation failed! Please check user details and try again." });
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.SuperAdmin))
+             if (!await _roleManager.RoleExistsAsync(UserRoles.SuperAdmin))
                 await _roleManager.CreateAsync(new ApplicationRole(UserRoles.SuperAdmin));
             if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
                 await _roleManager.CreateAsync(new ApplicationRole(UserRoles.Admin));

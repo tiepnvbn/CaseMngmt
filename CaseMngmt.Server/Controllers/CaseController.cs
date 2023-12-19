@@ -40,7 +40,10 @@ namespace CaseMngmt.Server.Controllers
                 }
 
                 var currentCompanyId = User.FindFirst("CompanyId").Value;
+                var currentTemplateId = User.FindFirst("TemplateId").Value;
                 searchRequest.CompanyId = Guid.Parse(currentCompanyId);
+                searchRequest.TemplateId = Guid.Parse(currentTemplateId);
+
                 var result = await _caseKeywordService.GetAllAsync(searchRequest);
                 return Ok(result);
             }
@@ -98,7 +101,7 @@ namespace CaseMngmt.Server.Controllers
                 return BadRequest();
             }
         }
-
+         // TODO : integrate with image/file
         [HttpPut, Route("{Id}")]
         public async Task<IActionResult> Update(CaseKeywordRequest request)
         {

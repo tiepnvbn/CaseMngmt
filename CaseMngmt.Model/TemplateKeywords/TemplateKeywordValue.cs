@@ -13,5 +13,6 @@ namespace CaseMngmt.Models.TemplateKeywords
         public bool? Searchable { get; set; } = false;
         public Guid? TypeId { get; set; }
         public string? TypeName { get; set; }
+        public string? TypeValue { get; set; }
     }
 }

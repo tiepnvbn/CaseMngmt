@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.TemplateKeywords;
 using CaseMngmt.Models.Templates;
 using CaseMngmt.Repository.Keywords;
@@ -23,27 +22,17 @@ namespace CaseMngmt.Service.TemplateKeywords
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<TemplateKeywordViewModel>> GetAllAsync(TemplateKeywordSearchRequest searchRequest)
-        {
-
-            var customersFromRepository = await _templateKeywordRepository.GetAllAsync(searchRequest.PageSize ?? 25, searchRequest.PageNumber ?? 1);
-
-            //var result = _mapper.Map<IEnumerable<CustomerViewModel>>(customersFromRepository);
-
-            return null;
-        }
-
         public async Task<TemplateKeywordViewModel?> GetByIdAsync(Guid templateId)
         {
             try
             {
-                var caseKeywordValues = await _templateKeywordRepository.GetByIdAsync(templateId);
-                if (caseKeywordValues != null)
+                var templateKeywordValues = await _templateKeywordRepository.GetByIdAsync(templateId);
+                if (templateKeywordValues != null)
                 {
                     var result = new TemplateKeywordViewModel
                     {
                         TemplateId = templateId,
-                        TemplateKeywordValues = caseKeywordValues.ToList()
+                        TemplateKeywordValues = templateKeywordValues.ToList()
                     };
                     return result;
                 }
@@ -63,9 +52,9 @@ namespace CaseMngmt.Service.TemplateKeywords
                 {
                     Name = $"Case - {DateTime.UtcNow}"
                 };
-                var caseResult = await _templateRepository.AddAsync(templateModel);
+                var templateResult = await _templateRepository.AddAsync(templateModel);
 
-                if (caseResult <= 0)
+                if (templateResult <= 0)
                 {
                     return 0;
                 }
@@ -101,14 +90,14 @@ namespace CaseMngmt.Service.TemplateKeywords
 
                 var templateKeywords = request.KeywordValues.Select(x => new TemplateKeyword
                 {
-                    TemplateId = request.TemplateId,
+                    TemplateId = entity.Id,
                     KeywordId = x.KeywordId,
                     Order = x.Order,
                     RoleId = x.RoleId,
                     Searchable = x.Searchable ?? false
                 }).ToList();
 
-                var templateKeywordResult = await _templateKeywordRepository.UpdateMultiAsync(request.TemplateId, templateKeywords);
+                var templateKeywordResult = await _templateKeywordRepository.UpdateMultiAsync(entity.Id, templateKeywords);
 
                 return templateKeywordResult;
             }

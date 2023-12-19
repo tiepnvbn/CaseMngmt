@@ -6,9 +6,9 @@ namespace CaseMngmt.Repository.Cases
     {
         Task<int> AddMultiAsync(List<CaseKeyword> caseKeys);
         Task<int> AddAsync(CaseKeyword caseKey);
-        Task<IEnumerable<CaseKeyword>> GetAllAsync(int pageSize, int pageNumber);
-        Task<IEnumerable<CaseKeywordValue>> GetByIdAsync(Guid id);
-        Task<int> DeleteAsync(Guid id);
+        Task<IEnumerable<CaseKeyword>> GetAllAsync(CaseKeywordSearchRequest searchRequest);
+        Task<IEnumerable<CaseKeywordValue>> GetByIdAsync(Guid caseId);
+        Task<int> DeleteAsync(Guid caseId);
         Task<int> DeleteByCaseIdAsync(Guid caseId);
         Task<int> UpdateAsync(CaseKeyword caseKey);
         Task<int> UpdateMultiAsync(Guid caseId, List<CaseKeyword> caseKeys);

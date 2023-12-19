@@ -6,7 +6,6 @@ namespace CaseMngmt.Models.CaseKeywords
     {
         [Required]
         public List<KeywordValue> KeywordValues { get; set; }
-        [Required]
         public Guid TemplateId { get; set; }
         public Guid? CompanyId { get; set; }
         public int? PageSize { get; set; } = 25;

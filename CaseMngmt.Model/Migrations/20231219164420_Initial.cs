@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CaseMngmt.Models.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -88,6 +88,7 @@ namespace CaseMngmt.Models.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -117,6 +118,38 @@ namespace CaseMngmt.Models.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_Company_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Company",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -155,44 +188,6 @@ namespace CaseMngmt.Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_Company_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Company",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_Template_TemplateId",
-                        column: x => x.TemplateId,
-                        principalTable: "Template",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CompanyTemplate",
                 columns: table => new
                 {
@@ -222,6 +217,9 @@ namespace CaseMngmt.Models.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TemplateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Searchable = table.Column<bool>(type: "bit", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -233,31 +231,13 @@ namespace CaseMngmt.Models.Migrations
                 {
                     table.PrimaryKey("PK_Keyword", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Keyword_Type_TypeId",
-                        column: x => x.TypeId,
-                        principalTable: "Type",
+                        name: "FK_Keyword_Template_TemplateId",
+                        column: x => x.TemplateId,
+                        principalTable: "Template",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Metadata",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Metadata", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Metadata_Type_TypeId",
+                        name: "FK_Keyword_Type_TypeId",
                         column: x => x.TypeId,
                         principalTable: "Type",
                         principalColumn: "Id",
@@ -377,36 +357,25 @@ namespace CaseMngmt.Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TemplateKeyword",
+                name: "KeywordRole",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TemplateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     KeywordId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Searchable = table.Column<bool>(type: "bit", nullable: false),
-                    Order = table.Column<int>(type: "int", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false)
+                    ApplicationRoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TemplateKeyword", x => x.Id);
+                    table.PrimaryKey("PK_KeywordRole", x => new { x.KeywordId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_TemplateKeyword_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
+                        name: "FK_KeywordRole_AspNetRoles_ApplicationRoleId",
+                        column: x => x.ApplicationRoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_TemplateKeyword_Keyword_KeywordId",
+                        name: "FK_KeywordRole_Keyword_KeywordId",
                         column: x => x.KeywordId,
                         principalTable: "Keyword",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TemplateKeyword_Template_TemplateId",
-                        column: x => x.TemplateId,
-                        principalTable: "Template",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -449,12 +418,6 @@ namespace CaseMngmt.Models.Migrations
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_TemplateId",
-                table: "AspNetUsers",
-                column: "TemplateId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
@@ -482,29 +445,19 @@ namespace CaseMngmt.Models.Migrations
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Keyword_TemplateId",
+                table: "Keyword",
+                column: "TemplateId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Keyword_TypeId",
                 table: "Keyword",
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Metadata_TypeId",
-                table: "Metadata",
-                column: "TypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TemplateKeyword_KeywordId",
-                table: "TemplateKeyword",
-                column: "KeywordId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TemplateKeyword_RoleId",
-                table: "TemplateKeyword",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TemplateKeyword_TemplateId",
-                table: "TemplateKeyword",
-                column: "TemplateId");
+                name: "IX_KeywordRole_ApplicationRoleId",
+                table: "KeywordRole",
+                column: "ApplicationRoleId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -534,10 +487,7 @@ namespace CaseMngmt.Models.Migrations
                 name: "Customer");
 
             migrationBuilder.DropTable(
-                name: "Metadata");
-
-            migrationBuilder.DropTable(
-                name: "TemplateKeyword");
+                name: "KeywordRole");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

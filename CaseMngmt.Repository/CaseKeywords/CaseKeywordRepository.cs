@@ -1,5 +1,4 @@
 ﻿using CaseMngmt.Models.Database;
-using CaseMngmt.Models.Cases;
 using Microsoft.EntityFrameworkCore;
 using CaseMngmt.Models.CaseKeywords;
 
@@ -44,14 +43,14 @@ namespace CaseMngmt.Repository.Cases
             }
         }
 
-        public async Task<IEnumerable<CaseKeywordValue>> GetByIdAsync(Guid id)
+        public async Task<IEnumerable<CaseKeywordValue>> GetByIdAsync(Guid caseId)
         {
             try
             {
                 var IQueryable = (from caseKeyword in _context.CaseKeyword
                                   join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
                                   join type in _context.Type on keyword.TypeId equals type.Id
-                                  where caseKeyword.CaseId == id
+                                  where caseKeyword.CaseId == caseId
                                   select new CaseKeywordValue
                                   {
                                       KeywordId = caseKeyword.KeywordId,
@@ -69,12 +68,24 @@ namespace CaseMngmt.Repository.Cases
             }
         }
 
-        public async Task<IEnumerable<CaseKeyword>> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<IEnumerable<CaseKeyword>> GetAllAsync(CaseKeywordSearchRequest searchRequest)
         {
-            var IQueryableCase = (from tempCase in _context.CaseKeyword select tempCase);
-            var result = await IQueryableCase.Skip(pageNumber - 1).Take(pageSize).ToListAsync();
+            //var IQueryableCase = (from caseKeyword in _context.CaseKeyword 
+            //                      join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
+            //                      join type in _context.Type on keyword.TypeId equals type.Id
+            //                      where caseKeyword.CaseId == searchRequest.TemplateId
+            //                      select new CaseKeywordValue
+            //                      {
+            //                          KeywordId = caseKeyword.KeywordId,
+            //                          KeywordName = keyword.Name,
+            //                          TypeId = type.Id,
+            //                          TypeName = type.Name,
+            //                          Value = caseKeyword.Value
+            //                      });
+            //var result = await IQueryableCase.Skip(searchRequest.PageNumber.Value - 1).Take(searchRequest.PageSize.Value).ToListAsync();
 
-            return result;
+            //return result;
+            return null;
         }
 
         public async Task<int> UpdateAsync(CaseKeyword caseKey)
@@ -96,11 +107,11 @@ namespace CaseMngmt.Repository.Cases
             }
         }
 
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<int> DeleteAsync(Guid caseId)
         {
             try
             {
-                CaseKeyword model = await _context.CaseKeyword.FindAsync(id);
+                CaseKeyword? model = await _context.CaseKeyword.FindAsync(caseId);
                 if (model != null)
                 {
                     _context.CaseKeyword.Remove(model);
