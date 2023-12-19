@@ -5,7 +5,8 @@ namespace CaseMngmt.Models.ApplicationRoles
 {
     public class ApplicationRole : IdentityRole<Guid>
     {
-        public override Guid Id { get; set; }
-        //public virtual ICollection<TemplateKeyword> TemplateKeyword { get; set; }
+        public ApplicationRole() : base() { }
+        public ApplicationRole(string name) : base(name) { }
+        public virtual ICollection<TemplateKeyword> TemplateKeyword { get; set; }
     }
 }

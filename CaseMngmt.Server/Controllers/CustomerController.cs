@@ -83,10 +83,10 @@ namespace CaseMngmt.Server.Controllers
             }
         }
 
-        [HttpPut, Route("{Id}")]
-        public async Task<IActionResult> Update(Guid Id, CustomerRequest model)
+        [HttpPut, Route("{id}")]
+        public async Task<IActionResult> Update(Guid id, CustomerRequest model)
         {
-            if (!ModelState.IsValid || Id == Guid.Empty)
+            if (!ModelState.IsValid || id == Guid.Empty)
             {
                 return BadRequest();
             }
@@ -95,7 +95,7 @@ namespace CaseMngmt.Server.Controllers
             {
                 model.CompanyId = Guid.Parse(User.FindFirst("CompanyId").Value);
                 model.UpdatedBy = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var result = await _service.UpdateCustomerAsync(Id, model);
+                var result = await _service.UpdateCustomerAsync(id, model);
                 return result > 0 ? Ok(result) : BadRequest();
             }
             catch (Exception e)
