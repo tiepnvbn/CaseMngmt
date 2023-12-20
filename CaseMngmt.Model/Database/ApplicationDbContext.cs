@@ -38,7 +38,10 @@ namespace CaseMngmt.Models.Database
                 .HasKey(e => new { e.CompanyId, e.TemplateId });
             modelBuilder.Entity<KeywordRole>()
                 .HasKey(e => new { e.KeywordId, e.RoleId });
-
+            modelBuilder.Entity<KeywordRole>()
+                .HasOne(e => e.ApplicationRole)
+                .WithMany(e => e.KeywordRole)
+                .HasForeignKey(e => new { e.RoleId });
             base.OnModelCreating(modelBuilder);
         }
 
