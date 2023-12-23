@@ -23,8 +23,8 @@ namespace CaseMngmt.Models.AutoMapper
             // TODO mapping
             CreateMap<TemplateViewModel, Template>();
             CreateMap<Template, TemplateViewModel>();
-            CreateMap<Template, TemplateRequest>();
-            CreateMap<TemplateRequest, Template>().ForMember(x => x.Id, opt => opt.Ignore());
+            CreateMap<Template, TemplateViewRequest>();
+            CreateMap<TemplateViewRequest, Template>().ForMember(x => x.Id, opt => opt.Ignore());
 
 
             CreateMap<Keyword, KeywordRequest>();

@@ -123,8 +123,8 @@ namespace CaseMngmt.Service.Customers
         {
             try
             {
-                await _caseRepository.DeleteAsync(caseId);
                 await _caseKeywordRepository.DeleteByCaseIdAsync(caseId);
+                await _caseRepository.DeleteAsync(caseId);
 
                 return 1;
             }

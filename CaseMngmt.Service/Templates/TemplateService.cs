@@ -21,7 +21,7 @@ namespace CaseMngmt.Service.Templates
             _mapper = mapper;
         }
 
-        public async Task<int> AddAsync(TemplateAddRequest request)
+        public async Task<int> AddAsync(TemplateRequest request)
         {
             try
             {
@@ -36,10 +36,10 @@ namespace CaseMngmt.Service.Templates
                     return 0;
                 }
 
-                var types = request.KeywordRequests.Select(x => new Models.Types.Type()
+                var types = request.KeywordRequests.Where(x => !string.IsNullOrEmpty(x.Metadata)).Select(x => new Models.Types.Type()
                 {
                     Name = $"{x.TypeName} - {x.Name}",
-                    Value = x.Metadata ?? string.Empty
+                    Value = x.Metadata
                 }).ToList();
                 await _typeRepository.AddMultiAsync(types);
 
@@ -62,7 +62,7 @@ namespace CaseMngmt.Service.Templates
             }
         }
 
-        public async Task<int> UpdateAsync(TemplateRequest request)
+        public async Task<int> UpdateAsync(TemplateViewRequest request)
         {
             try
             {
@@ -78,10 +78,10 @@ namespace CaseMngmt.Service.Templates
                     await _typeRepository.DeleteByIdsAsync(currentKeywords.Select(x => x.TypeId).ToList());
                 }
 
-                var types = request.KeywordRequests.Select(x => new Models.Types.Type()
+                var types = request.KeywordRequests.Where(x => !string.IsNullOrEmpty(x.Metadata)).Select(x => new Models.Types.Type()
                 {
                     Name = $"{x.TypeName} - {x.Name}",
-                    Value = x.Metadata ?? string.Empty
+                    Value = x.Metadata
                 }).ToList();
                 await _typeRepository.AddMultiAsync(types);
 
@@ -115,7 +115,14 @@ namespace CaseMngmt.Service.Templates
                     return 0;
                 }
 
+                var currentKeywords = await _keywordRepository.GetByTemplateIdAsync(templateId);
                 await _keywordRepository.DeleteMultiByTemplateIdAsync(templateId);
+
+                if (currentKeywords != null && currentKeywords.Any())
+                {
+                    await _typeRepository.DeleteByIdsAsync(currentKeywords.Select(x => x.TypeId).ToList());
+                }
+
                 await _repository.DeleteAsync(templateId);
 
                 return 1;

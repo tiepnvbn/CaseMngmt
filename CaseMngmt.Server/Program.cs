@@ -15,6 +15,15 @@ using CaseMngmt.Service.Companies;
 using CaseMngmt.Repository.Companies;
 using CaseMngmt.Models.ApplicationUsers;
 using CaseMngmt.Models.ApplicationRoles;
+using CaseMngmt.Service.Types;
+using CaseMngmt.Repository.Types;
+using CaseMngmt.Service.Keywords;
+using CaseMngmt.Repository.Keywords;
+using CaseMngmt.Repository.Templates;
+using CaseMngmt.Service.Templates;
+using CaseMngmt.Service.Cases;
+using CaseMngmt.Repository.Cases;
+using CaseMngmt.Service.CaseKeywords;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,7 +58,16 @@ builder.Services.AddTransient<ICustomerService, CustomerService>();
 builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
 builder.Services.AddTransient<ICompanyService, CompanyService>();
 builder.Services.AddTransient<ICompanyRepository, CompanyRepository>();
-
+builder.Services.AddTransient<ITypeService, TypeService>();
+builder.Services.AddTransient<ITypeRepository, TypeRepository>();
+builder.Services.AddTransient<IKeywordService, KeywordService>();
+builder.Services.AddTransient<IKeywordRepository, KeywordRepository>();
+builder.Services.AddTransient<ITemplateService, TemplateService>();
+builder.Services.AddTransient<ITemplateRepository, TemplateRepository>();
+builder.Services.AddTransient<ICaseService, CaseService>();
+builder.Services.AddTransient<ICaseRepository, CaseRepository>();
+builder.Services.AddTransient<ICaseKeywordService, CaseKeywordService>();
+builder.Services.AddTransient<ICaseKeywordRepository, CaseKeywordRepository>();
 #endregion
 
 

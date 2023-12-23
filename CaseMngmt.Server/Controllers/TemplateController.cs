@@ -12,7 +12,7 @@ namespace CaseMngmt.Server.Controllers
     [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     [Route("api/[controller]")]
-    [ClaimRequirement(ClaimTypes.Role, "Admin")]
+    [ClaimRequirement(ClaimTypes.Role, "SuperAdmin")]
     public class TemplateController : ControllerBase
     {
         private readonly ILogger<TemplateController> _logger;
@@ -52,17 +52,49 @@ namespace CaseMngmt.Server.Controllers
             }
         }
 
+        //[HttpGet]
+        //public async Task<IActionResult> GetTemplate()
+        //{
+        //    try
+        //    {
+        //        var companyId = User.FindFirst("CompanyId")?.Value;
+        //        if (string.IsNullOrEmpty(companyId))
+        //        {
+        //            return BadRequest();
+        //        }
+
+        //        var company = await _companyService.GetByIdAsync(Guid.Parse(companyId));
+        //        if (company == null)
+        //        {
+        //            return BadRequest();
+        //        }
+        //        TemplateViewModel? result = await _templateService.GetByIdAsync(templateId);
+
+        //        if (result == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        return Ok(result);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _logger.LogError(e.Message, nameof(CustomerController), true, e);
+        //        return BadRequest();
+        //    }
+        //}
+
         [HttpGet]
-        public async Task<IActionResult> Details(Guid caseId)
+        public async Task<IActionResult> Details(Guid templateId)
         {
-            if (caseId == Guid.Empty)
+            if (templateId == Guid.Empty)
             {
                 return BadRequest(ModelState);
             }
 
             try
             {
-                KeywordViewModel? result = await _keywordService.GetByIdAsync(caseId);
+                TemplateViewModel? result = await _templateService.GetByIdAsync(templateId);
 
                 if (result == null)
                 {
@@ -78,8 +110,9 @@ namespace CaseMngmt.Server.Controllers
             }
         }
 
+        // TODO : integrate with image/file
         [HttpPost]
-        public async Task<IActionResult> Create(TemplateAddRequest request)
+        public async Task<IActionResult> Create(TemplateRequest request)
         {
             if (!ModelState.IsValid || request == null)
             {
@@ -92,6 +125,9 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
+                // TODO : add user infomation
+                var loggedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
                 var company = await _companyService.GetByIdAsync(request.CompanyId);
                 if (company == null)
                 {
@@ -110,7 +146,7 @@ namespace CaseMngmt.Server.Controllers
         }
         // TODO : integrate with image/file
         [HttpPut, Route("{Id}")]
-        public async Task<IActionResult> Update(TemplateRequest request)
+        public async Task<IActionResult> Update(TemplateViewRequest request)
         {
             if (!ModelState.IsValid || request == null || request.TemplateId == Guid.Empty)
             {
@@ -123,6 +159,9 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
+                // TODO : add user infomation
+                var loggedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
                 var company = await _companyService.GetByIdAsync(request.CompanyId);
                 if (company == null)
                 {

@@ -55,9 +55,14 @@ namespace CaseMngmt.Repository.Cases
                                   {
                                       KeywordId = caseKeyword.KeywordId,
                                       KeywordName = keyword.Name,
+                                      Value = caseKeyword.Value,
+                                      IsRequired = keyword.IsRequired,
+                                      MaxLength = keyword.MaxLength,
+                                      Searchable = keyword.Searchable,
+                                      Order = keyword.Order,
                                       TypeId = type.Id,
                                       TypeName = type.Name,
-                                      Value = caseKeyword.Value
+
                                   });
                 var result = await IQueryable.ToListAsync();
                 return result;
@@ -77,10 +82,14 @@ namespace CaseMngmt.Repository.Cases
             //                      select new CaseKeywordValue
             //                      {
             //                          KeywordId = caseKeyword.KeywordId,
-            //                          KeywordName = keyword.Name,
-            //                          TypeId = type.Id,
-            //                          TypeName = type.Name,
-            //                          Value = caseKeyword.Value
+                                        //KeywordName = keyword.Name,
+                                        //  Value = caseKeyword.Value,
+                                        //  IsRequired = keyword.IsRequired,
+                                        //  MaxLength = keyword.MaxLength,
+                                        //  Searchable = keyword.Searchable,
+                                        //  Order = keyword.Order,
+                                        //  TypeId = type.Id,
+                                        //  TypeName = type.Name
             //                      });
             //var result = await IQueryableCase.Skip(searchRequest.PageNumber.Value - 1).Take(searchRequest.PageSize.Value).ToListAsync();
 
