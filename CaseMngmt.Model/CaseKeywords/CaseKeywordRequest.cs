@@ -13,6 +13,8 @@ namespace CaseMngmt.Models.CaseKeywords
     public class CaseKeywordAddRequest
     {
         [Required]
+        public Guid TemplateId { get; set; }
+        [Required]
         public List<CaseKeywordValue> KeywordValues { get; set; }
     }
 }

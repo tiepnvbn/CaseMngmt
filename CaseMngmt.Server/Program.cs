@@ -68,6 +68,8 @@ builder.Services.AddTransient<ICaseService, CaseService>();
 builder.Services.AddTransient<ICaseRepository, CaseRepository>();
 builder.Services.AddTransient<ICaseKeywordService, CaseKeywordService>();
 builder.Services.AddTransient<ICaseKeywordRepository, CaseKeywordRepository>();
+builder.Services.AddTransient<ITypeService, TypeService>();
+builder.Services.AddTransient<ITypeRepository, TypeRepository>();
 #endregion
 
 

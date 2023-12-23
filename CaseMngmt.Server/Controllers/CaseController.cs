@@ -91,6 +91,21 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
+                var userTemplate = await _templateService.GetByIdAsync(request.TemplateId);
+                if (userTemplate == null)
+                {
+                    return BadRequest();
+                }
+
+                var userKeywordSetting = userTemplate.Keywords.Select(x => x.Id).ToList();
+                var requestKeywords = request.KeywordValues.Select(x => x.KeywordId).ToList();
+
+                var isSameKeyword = userKeywordSetting.All(requestKeywords.Contains);
+                if (!isSameKeyword)
+                {
+                    return BadRequest("KeywordValues is wrong");
+                }
+
                 var result = await _caseKeywordService.AddAsync(request);
 
                 return result > 0 ? Ok(result) : BadRequest();
@@ -101,6 +116,7 @@ namespace CaseMngmt.Server.Controllers
                 return BadRequest();
             }
         }
+
         // TODO : integrate with image/file
         [HttpPut, Route("{Id}")]
         public async Task<IActionResult> Update(CaseKeywordRequest request)
