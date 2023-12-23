@@ -164,6 +164,7 @@ namespace CaseMngmt.Models.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -204,6 +205,7 @@ namespace CaseMngmt.Models.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -296,6 +298,7 @@ namespace CaseMngmt.Models.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -354,12 +357,9 @@ namespace CaseMngmt.Models.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ApplicationRoleId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("KeywordId", "RoleId");
 
-                    b.HasIndex("ApplicationRoleId");
+                    b.HasIndex("RoleId");
 
                     b.ToTable("KeywordRole");
                 });
@@ -379,7 +379,14 @@ namespace CaseMngmt.Models.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MaxLength")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -426,6 +433,7 @@ namespace CaseMngmt.Models.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -456,6 +464,7 @@ namespace CaseMngmt.Models.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -627,15 +636,19 @@ namespace CaseMngmt.Models.Migrations
 
             modelBuilder.Entity("CaseMngmt.Models.KeywordRoles.KeywordRole", b =>
                 {
-                    b.HasOne("CaseMngmt.Models.ApplicationRoles.ApplicationRole", null)
-                        .WithMany("KeywordRole")
-                        .HasForeignKey("ApplicationRoleId");
-
                     b.HasOne("CaseMngmt.Models.Keywords.Keyword", null)
                         .WithMany("KeywordRole")
                         .HasForeignKey("KeywordId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("CaseMngmt.Models.ApplicationRoles.ApplicationRole", "ApplicationRole")
+                        .WithMany("KeywordRole")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationRole");
                 });
 
             modelBuilder.Entity("CaseMngmt.Models.Keywords.Keyword", b =>
@@ -646,11 +659,13 @@ namespace CaseMngmt.Models.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CaseMngmt.Models.Types.Type", null)
+                    b.HasOne("CaseMngmt.Models.Types.Type", "Type")
                         .WithMany("Keywords")
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

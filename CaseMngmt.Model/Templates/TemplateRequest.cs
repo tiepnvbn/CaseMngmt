@@ -1,14 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CaseMngmt.Models.Keywords;
+using System.ComponentModel.DataAnnotations;
 
 namespace CaseMngmt.Models.Templates
 {
+    public class TemplateAddRequest
+    {
+        [Required]
+        public Guid CompanyId { get; set; }
+        [Required]
+        public List<KeywordRequest> KeywordRequests { get; set; }
+    }
+
     public class TemplateRequest
     {
-        [MaxLength(256)]
         [Required]
-        public string? Name { get; set; }
-
-        public Guid? CreatedBy { get; set; }
-        public Guid? UpdatedBy { get; set; }
+        public Guid TemplateId { get; set; }
+        [Required]
+        public Guid CompanyId { get; set; }
+        [Required]
+        public List<KeywordRequest> KeywordRequests { get; set; }
     }
 }

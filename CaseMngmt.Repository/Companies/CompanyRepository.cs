@@ -1,6 +1,7 @@
 ﻿using CaseMngmt.Models.Database;
 using CaseMngmt.Models.Companies;
 using Microsoft.EntityFrameworkCore;
+using CaseMngmt.Models;
 
 namespace CaseMngmt.Repository.Companies
 {
@@ -32,12 +33,14 @@ namespace CaseMngmt.Repository.Companies
         {
             try
             {
-                Company Company = await _context.Company.FindAsync(id);
-                if (Company != null)
+                Company? company = await _context.Company.FindAsync(id);
+                if (company != null)
                 {
-                    _context.Company.Remove(Company);
+                    company.Deleted = true;
+                    await _context.SaveChangesAsync();
+                    return 1;
                 }
-                return _context.SaveChanges();
+                return 0;
             }
             catch (Exception ex)
             {
@@ -47,7 +50,7 @@ namespace CaseMngmt.Repository.Companies
 
         public async Task<IEnumerable<Company>> GetAllAsync(string CompanyName, string phoneNumber, int pageSize, int pageNumber)
         {
-            var IQueryableCompany = (from tempCompany in _context.Company select tempCompany);
+            var IQueryableCompany = (from tempCompany in _context.Company select tempCompany).Where(x => !x.Deleted);
 
             if (!string.IsNullOrEmpty(CompanyName))
             {
@@ -64,7 +67,7 @@ namespace CaseMngmt.Repository.Companies
             return result;
         }
 
-        public async Task<Company> GetByIdAsync(Guid id)
+        public async Task<Company?> GetByIdAsync(Guid id)
         {
             try
             {
@@ -76,13 +79,13 @@ namespace CaseMngmt.Repository.Companies
             }
         }
 
-        public async Task<int> UpdateAsync(Company Company)
+        public async Task<int> UpdateAsync(Company company)
         {
             try
             {
-                if (Company != null)
+                if (company != null)
                 {
-                    _context.Company.Update(Company);
+                    _context.Company.Update(company);
                     await _context.SaveChangesAsync();
                     return 1;
                 }

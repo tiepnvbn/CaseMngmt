@@ -9,4 +9,10 @@ namespace CaseMngmt.Models.CaseKeywords
         [Required]
         public List<CaseKeywordValue> KeywordValues { get; set; }
     }
+
+    public class CaseKeywordAddRequest
+    {
+        [Required]
+        public List<CaseKeywordValue> KeywordValues { get; set; }
+    }
 }

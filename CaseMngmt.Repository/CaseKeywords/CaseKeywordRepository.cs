@@ -50,7 +50,7 @@ namespace CaseMngmt.Repository.Cases
                 var IQueryable = (from caseKeyword in _context.CaseKeyword
                                   join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
                                   join type in _context.Type on keyword.TypeId equals type.Id
-                                  where caseKeyword.CaseId == caseId
+                                  where !caseKeyword.Deleted && caseKeyword.CaseId == caseId
                                   select new CaseKeywordValue
                                   {
                                       KeywordId = caseKeyword.KeywordId,
@@ -73,7 +73,7 @@ namespace CaseMngmt.Repository.Cases
             //var IQueryableCase = (from caseKeyword in _context.CaseKeyword 
             //                      join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
             //                      join type in _context.Type on keyword.TypeId equals type.Id
-            //                      where caseKeyword.CaseId == searchRequest.TemplateId
+            //                      where !caseKeyword.Deleted && caseKeyword.CaseId == searchRequest.TemplateId
             //                      select new CaseKeywordValue
             //                      {
             //                          KeywordId = caseKeyword.KeywordId,
@@ -128,7 +128,7 @@ namespace CaseMngmt.Repository.Cases
         {
             try
             {
-                var data = _context.CaseKeyword.Where(a => a.CaseId == caseId).ToList();
+                var data = _context.CaseKeyword.Where(a => !a.Deleted && a.CaseId == caseId).ToList();
                 foreach (var item in data)
                 {
                     item.Deleted = true;
@@ -148,7 +148,7 @@ namespace CaseMngmt.Repository.Cases
         {
             try
             {
-                var data = _context.CaseKeyword.Where(a => a.CaseId == caseId).ToList();
+                var data = _context.CaseKeyword.Where(a => !a.Deleted && a.CaseId == caseId).ToList();
                 foreach (var item in data)
                 {
                     item.Deleted = true;

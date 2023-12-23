@@ -1,7 +1,6 @@
 ﻿using CaseMngmt.Models.Database;
 using CaseMngmt.Models.Customers;
 using Microsoft.EntityFrameworkCore;
-using CaseMngmt.Models.Templates;
 
 namespace CaseMngmt.Repository.Customers
 {
@@ -32,7 +31,7 @@ namespace CaseMngmt.Repository.Customers
         public async Task<bool> CheckCustomerExistsAsync(string customerName)
         {
             var customerCount = await (from customer in _context.Customer
-                                       where customer.Name == customerName
+                                       where !customer.Deleted && customer.Name == customerName
                                        select customer).CountAsync();
 
             if (customerCount > 0)
@@ -49,7 +48,7 @@ namespace CaseMngmt.Repository.Customers
         {
             try
             {
-                Customer customer = await _context.Customer.FindAsync(id);
+                Customer? customer = await _context.Customer.FindAsync(id);
                 if (customer != null)
                 {
                     customer.Deleted = true;
@@ -66,7 +65,7 @@ namespace CaseMngmt.Repository.Customers
 
         public async Task<IEnumerable<Customer>> GetAllAsync(string customerName, string phoneNumber, string companyId, int pageSize, int pageNumber)
         {
-            var IQueryableCustomer = (from tempCustomer in _context.Customer select tempCustomer);
+            var IQueryableCustomer = (from tempCustomer in _context.Customer select tempCustomer).Where(x => !x.Deleted);
             
             if (!string.IsNullOrEmpty(companyId))
             {
@@ -88,7 +87,7 @@ namespace CaseMngmt.Repository.Customers
             return result;
         }
 
-        public async Task<Customer> GetByIdAsync(Guid id)
+        public async Task<Customer?> GetByIdAsync(Guid id)
         {
             try
             {

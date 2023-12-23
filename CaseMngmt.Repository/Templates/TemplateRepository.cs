@@ -27,12 +27,13 @@ namespace CaseMngmt.Repository.Templates
                 return 0;
             }
         }
-        
+
         public async Task<Template?> GetByIdAsync(Guid id)
         {
             try
             {
                 var result = await _context.Template.FindAsync(id);
+
                 return result;
             }
             catch (Exception ex)
@@ -41,15 +42,101 @@ namespace CaseMngmt.Repository.Templates
             }
         }
 
-        public async Task<IEnumerable<Template>> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<TemplateViewModel?> GetTemplateViewModelByIdAsync(Guid templateId)
         {
-            var IQueryableTemplate = (from tempTemplate in _context.Template select tempTemplate);
-            IQueryableTemplate = IQueryableTemplate.OrderBy(m => m.Name);
-            var result = await IQueryableTemplate.Skip(pageNumber - 1).Take(pageSize).ToListAsync();
+            try
+            {
+                var IQueryableTemplate = (from tempTemplate in _context.Template
+                                          join keyword in _context.Keyword on tempTemplate.Id equals keyword.TemplateId
+                                          join type in _context.Type on keyword.TypeId equals type.Id
+                                          where !tempTemplate.Deleted && tempTemplate.Id == templateId
+                                          select new TemplateViewModel
+                                          {
+                                              Id = templateId,
+                                              CreatedBy = tempTemplate.CreatedBy,
+                                              CreatedDate = tempTemplate.CreatedDate,
+                                              Name = tempTemplate.Name,
+                                              UpdatedBy = tempTemplate.UpdatedBy,
+                                              UpdatedDate = tempTemplate.UpdatedDate,
+                                              Keywords = tempTemplate.Keywords.Select(x => new Models.Keywords.KeywordViewModel
+                                              {
+                                                  Name = x.Name,
+                                                  UpdatedBy = x.UpdatedBy,
+                                                  UpdatedDate = x.UpdatedDate,
+                                                  CreatedBy = x.CreatedBy,
+                                                  CreatedDate = x.CreatedDate,
+                                                  Id = x.Id,
+                                                  IsRequired = x.IsRequired,
+                                                  MaxLength = x.MaxLength,
+                                                  Order = x.Order,
+                                                  Searchable = x.Searchable,
+                                                  TemplateId = templateId,
+                                                  TypeId = x.Type.Id,
+                                                  TypeName = x.Type.Name
+                                              }).ToList()
+                                          });
 
-            return result;
+                var result = await IQueryableTemplate.FirstOrDefaultAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
-        
+
+        public async Task<IEnumerable<TemplateViewModel>> GetAllAsync(Guid? companyId, int pageSize, int pageNumber)
+        {
+            try
+            {
+                var IQueryableTemplate = (from tempTemplate in _context.Template
+                                          join companyTemplate in _context.CompanyTemplate on tempTemplate.Id equals companyTemplate.TemplateId
+                                          join keyword in _context.Keyword on tempTemplate.Id equals keyword.TemplateId
+                                          join type in _context.Type on keyword.TypeId equals type.Id
+                                          where !tempTemplate.Deleted
+                                          select new TemplateViewModel
+                                          {
+                                              Id = tempTemplate.Id,
+                                              Name = tempTemplate.Name,
+                                              CreatedBy = tempTemplate.CreatedBy,
+                                              CreatedDate = tempTemplate.CreatedDate,
+                                              UpdatedBy = tempTemplate.UpdatedBy,
+                                              UpdatedDate = tempTemplate.UpdatedDate,
+                                              Keywords = tempTemplate.Keywords.Select(x => new Models.Keywords.KeywordViewModel
+                                              {
+                                                  Name = x.Name,
+                                                  UpdatedBy = x.UpdatedBy,
+                                                  UpdatedDate = x.UpdatedDate,
+                                                  CreatedBy = x.CreatedBy,
+                                                  CreatedDate = x.CreatedDate,
+                                                  Id = x.Id,
+                                                  IsRequired = x.IsRequired,
+                                                  MaxLength = x.MaxLength,
+                                                  Order = x.Order,
+                                                  Searchable = x.Searchable,
+                                                  TemplateId = tempTemplate.Id,
+                                                  TypeId = x.Type.Id,
+                                                  TypeName = x.Type.Name
+                                              }).ToList()
+                                          });
+
+                //// TODO if have time
+                //if (companyId != Guid.Empty)
+                //{
+                //    IQueryableTemplate = IQueryableTemplate.Where(x => x).OrderBy(m => m.Name);
+                //}
+
+                IQueryableTemplate = IQueryableTemplate.OrderBy(m => m.Name);
+                var result = await IQueryableTemplate.Skip(pageNumber - 1).Take(pageSize).ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         public async Task<int> UpdateAsync(Template template)
         {
             try
@@ -68,7 +155,7 @@ namespace CaseMngmt.Repository.Templates
                 return 0;
             }
         }
-        
+
         public async Task<int> DeleteAsync(Guid id)
         {
             try

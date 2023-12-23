@@ -4,7 +4,7 @@ namespace CaseMngmt.Service.CaseKeywords
 {
     public interface ICaseKeywordService
     {
-        Task<int> AddAsync(CaseKeywordRequest request);
+        Task<int> AddAsync(CaseKeywordAddRequest request);
         Task<IEnumerable<CaseKeywordViewModel?>> GetAllAsync(CaseKeywordSearchRequest searchRequest);
         Task<CaseKeywordViewModel?> GetByIdAsync(Guid caseId);
         Task<int> DeleteAsync(Guid caseId);

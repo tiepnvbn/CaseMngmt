@@ -19,8 +19,6 @@ namespace CaseMngmt.Service.Companies
             try
             {
                 var entity = _mapper.Map<Company>(Company);
-                entity.CreatedDate = DateTime.UtcNow;
-                entity.UpdatedDate = DateTime.UtcNow;
                 return await _repository.AddAsync(entity);
             }
             catch (Exception ex)

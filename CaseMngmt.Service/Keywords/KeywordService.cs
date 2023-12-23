@@ -1,26 +1,24 @@
 ﻿using AutoMapper;
-using CaseMngmt.Models.Cases;
-using CaseMngmt.Repository.Cases;
+using CaseMngmt.Models.Keywords;
+using CaseMngmt.Repository.Keywords;
 
-namespace CaseMngmt.Service.Cases
+namespace CaseMngmt.Service.Keywords
 {
-    public class CaseService : ICaseService
+    public class KeywordService : IKeywordService
     {
-        private ICaseRepository _repository;
+        private IKeywordRepository _repository;
         private readonly IMapper _mapper;
-        public CaseService(ICaseRepository repository, IMapper mapper)
+        public KeywordService(IKeywordRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
-        public async Task<int> AddAsync(string caseName)
+        public async Task<int> AddAsync(KeywordRequest request)
         {
             try
             {
-                Case entity = new Case() { 
-                    Name = caseName
-                };
+                var entity = _mapper.Map<Keyword>(request);
                 return await _repository.AddAsync(entity);
             }
             catch (Exception ex)
@@ -41,17 +39,21 @@ namespace CaseMngmt.Service.Cases
             }
         }
 
-        public async Task<IEnumerable<Case>> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<IEnumerable<KeywordViewModel>> GetAllAsync(int pageSize, int pageNumber)
         {
-            var result = await _repository.GetAllAsync(pageSize, pageNumber);
+            var keywordsFromRepository = await _repository.GetAllAsync(pageSize, pageNumber);
+
+            var result = _mapper.Map<List<KeywordViewModel>>(keywordsFromRepository);
+
             return result;
         }
 
-        public async Task<Case?> GetByIdAsync(Guid id)
+        public async Task<KeywordViewModel?> GetByIdAsync(Guid id)
         {
             try
             {
-                var result = await _repository.GetByIdAsync(id);
+                var entity = await _repository.GetByIdAsync(id);
+                var result = _mapper.Map<KeywordViewModel>(entity);
                 return result;
             }
             catch (Exception ex)
@@ -60,7 +62,7 @@ namespace CaseMngmt.Service.Cases
             }
         }
 
-        public async Task<int> UpdateAsync(Guid Id, string caseName)
+        public async Task<int> UpdateAsync(Guid Id, KeywordRequest request)
         {
             try
             {
@@ -70,7 +72,11 @@ namespace CaseMngmt.Service.Cases
                     return 0;
                 }
 
-                entity.Name = caseName;
+                entity.Name = request.Name;
+                entity.MaxLength = request.MaxLength;
+                entity.IsRequired = request.IsRequired;
+                entity.Order = request.Order;
+                entity.Searchable = request.Searchable;
                 entity.UpdatedDate = DateTime.UtcNow;
                 await _repository.UpdateAsync(entity);
                 return 1;

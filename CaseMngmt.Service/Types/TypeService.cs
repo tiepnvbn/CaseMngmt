@@ -1,26 +1,25 @@
 ﻿using AutoMapper;
-using CaseMngmt.Models.Cases;
-using CaseMngmt.Repository.Cases;
+using CaseMngmt.Models.Types;
+using CaseMngmt.Repository.Types;
+using Type = CaseMngmt.Models.Types.Type;
 
-namespace CaseMngmt.Service.Cases
+namespace CaseMngmt.Service.Types
 {
-    public class CaseService : ICaseService
+    public class TypeService : ITypeService
     {
-        private ICaseRepository _repository;
+        private ITypeRepository _repository;
         private readonly IMapper _mapper;
-        public CaseService(ICaseRepository repository, IMapper mapper)
+        public TypeService(ITypeRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
-        public async Task<int> AddAsync(string caseName)
+        public async Task<int> AddAsync(TypeRequest request)
         {
             try
             {
-                Case entity = new Case() { 
-                    Name = caseName
-                };
+                var entity = _mapper.Map<Type>(request);
                 return await _repository.AddAsync(entity);
             }
             catch (Exception ex)
@@ -41,17 +40,21 @@ namespace CaseMngmt.Service.Cases
             }
         }
 
-        public async Task<IEnumerable<Case>> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<IEnumerable<TypeViewModel>> GetAllAsync(int pageSize, int pageNumber)
         {
-            var result = await _repository.GetAllAsync(pageSize, pageNumber);
+            var TypesFromRepository = await _repository.GetAllAsync(pageSize, pageNumber);
+
+            var result = _mapper.Map<List<TypeViewModel>>(TypesFromRepository);
+
             return result;
         }
 
-        public async Task<Case?> GetByIdAsync(Guid id)
+        public async Task<TypeViewModel?> GetByIdAsync(Guid id)
         {
             try
             {
-                var result = await _repository.GetByIdAsync(id);
+                var entity = await _repository.GetByIdAsync(id);
+                var result = _mapper.Map<TypeViewModel>(entity);
                 return result;
             }
             catch (Exception ex)
@@ -60,7 +63,7 @@ namespace CaseMngmt.Service.Cases
             }
         }
 
-        public async Task<int> UpdateAsync(Guid Id, string caseName)
+        public async Task<int> UpdateAsync(Guid Id, TypeRequest request)
         {
             try
             {
@@ -70,7 +73,7 @@ namespace CaseMngmt.Service.Cases
                     return 0;
                 }
 
-                entity.Name = caseName;
+                entity.Name = request.Name;
                 entity.UpdatedDate = DateTime.UtcNow;
                 await _repository.UpdateAsync(entity);
                 return 1;
