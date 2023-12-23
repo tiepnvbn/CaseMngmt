@@ -43,7 +43,7 @@ namespace CaseMngmt.Repository.Cases
             }
         }
 
-        public async Task<IEnumerable<CaseKeywordValue>> GetByIdAsync(Guid caseId)
+        public async Task<IEnumerable<CaseKeywordBaseValue>> GetByIdAsync(Guid caseId)
         {
             try
             {

@@ -14,7 +14,7 @@ namespace CaseMngmt.Models.CaseKeywords
         [Required]
         public Guid KeywordId { get; set; }
 
-        public string? Value { get; set; }
+        public string Value { get; set; }
         public bool Deleted { get; set; }
     }
 }

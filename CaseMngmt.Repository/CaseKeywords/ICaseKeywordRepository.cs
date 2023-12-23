@@ -7,7 +7,7 @@ namespace CaseMngmt.Repository.Cases
         Task<int> AddMultiAsync(List<CaseKeyword> caseKeys);
         Task<int> AddAsync(CaseKeyword caseKey);
         Task<IEnumerable<CaseKeyword>> GetAllAsync(CaseKeywordSearchRequest searchRequest);
-        Task<IEnumerable<CaseKeywordValue>> GetByIdAsync(Guid caseId);
+        Task<IEnumerable<CaseKeywordBaseValue>> GetByIdAsync(Guid caseId);
         Task<int> DeleteAsync(Guid caseId);
         Task<int> DeleteByCaseIdAsync(Guid caseId);
         Task<int> UpdateAsync(CaseKeyword caseKey);
