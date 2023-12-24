@@ -15,31 +15,20 @@ namespace CaseMngmt.Models.CaseKeywords
 
         public bool Validate()
         {
-            // TODO : register generic type
             try
             {
                 if (IsRequired && string.IsNullOrEmpty(Value))
                 {
                     return false;
                 }
-                if (!DataTypeDictionary.DataTypeAlias.TryGetValue(TypeName, out var type))
+                Type type;
+                if (!DataTypeDictionary.DataTypeAlias.TryGetValue(TypeName, out type))
                 {
                     return false;
                 }
 
                 var genericValidator = new GenericValidator();
-                if (MaxLength != null)
-                {
-                    genericValidator.Register<string>(t => t.Length <= MaxLength);
-                }
-                else
-                {
-                    genericValidator.Register<string>(t => true);
-                }
-
-                var validator = genericValidator.Retrieve(type);
-
-                return validator(Value);
+                return genericValidator.IsValid(type, Value, MaxLength);
             }
             catch (Exception ex)
             {
@@ -50,6 +39,8 @@ namespace CaseMngmt.Models.CaseKeywords
 
     public class CaseKeywordValue : CaseKeywordBaseValue
     {
+        [Required]
+        public Guid CaseId { get; set; }
         public string KeywordName { get; set; }
         public Guid TypeId { get; set; }
         public int Order { get; set; }

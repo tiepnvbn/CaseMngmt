@@ -24,6 +24,8 @@ using CaseMngmt.Service.Templates;
 using CaseMngmt.Service.Cases;
 using CaseMngmt.Repository.Cases;
 using CaseMngmt.Service.CaseKeywords;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +43,7 @@ if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddCors(options =>
     {
-        options.AddPolicy("LocalhostPolicy",builder =>
+        options.AddPolicy("LocalhostPolicy", builder =>
         {
             builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
             builder.AllowAnyHeader();
@@ -96,7 +98,13 @@ builder.Services.AddAuthentication(x =>
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.IgnoreNullValues = true;
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

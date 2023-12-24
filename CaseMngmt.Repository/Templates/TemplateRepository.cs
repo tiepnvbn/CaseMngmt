@@ -72,7 +72,10 @@ namespace CaseMngmt.Repository.Templates
                                                   Searchable = x.Searchable,
                                                   TemplateId = templateId,
                                                   TypeId = x.Type.Id,
-                                                  TypeName = x.Type.Name
+                                                  TypeName = x.Type.Name,
+                                                  Metadata = !string.IsNullOrEmpty(x.Type.Value) 
+                                                    ? x.Type.Value.Split(',', StringSplitOptions.None).ToList() 
+                                                    : new List<string>()
                                               }).ToList()
                                           });
 

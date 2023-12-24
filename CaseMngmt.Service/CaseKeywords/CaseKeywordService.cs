@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using CaseMngmt.Models.CaseKeywords;
+using CaseMngmt.Models.Cases;
+using CaseMngmt.Models.Repository;
 using CaseMngmt.Repository.Cases;
 using CaseMngmt.Repository.Keywords;
 using CaseMngmt.Service.CaseKeywords;
@@ -21,15 +23,17 @@ namespace CaseMngmt.Service.Customers
             _mapper = mapper;
         }
 
-        // TODO
-        public async Task<IEnumerable<CaseKeywordViewModel?>> GetAllAsync(CaseKeywordSearchRequest searchRequest)
+        public async Task<IEnumerable<CaseKeywordValue>?> GetAllAsync(CaseKeywordSearchRequest searchRequest)
         {
-
-            var customersFromRepository = await _caseKeywordRepository.GetAllAsync(searchRequest);
-
-            //var result = _mapper.Map<IEnumerable<CustomerViewModel>>(customersFromRepository);
-
-            return null;
+            try
+            {
+                var result = await _caseKeywordRepository.GetAllAsync(searchRequest);
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async Task<CaseKeywordViewModel?> GetByIdAsync(Guid caseId)

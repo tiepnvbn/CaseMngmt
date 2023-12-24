@@ -22,10 +22,10 @@ namespace CaseMngmt.Server.Controllers
             _templateService = templateService;
         }
 
-        [HttpGet, Route("getAll")]
-        public async Task<IActionResult> GetAll(CaseKeywordSearchRequest searchRequest)
+        [HttpPost, Route("getAll")]
+        public async Task<IActionResult> GetAll(CaseKeywordSearch request)
         {
-            if (!ModelState.IsValid || searchRequest == null)
+            if (!ModelState.IsValid || request == null || !request.KeywordValues.Any())
             {
                 return BadRequest(ModelState);
             }
@@ -41,8 +41,14 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest("Wrong Claim");
                 }
 
-                searchRequest.CompanyId = Guid.Parse(currentCompanyId);
-                searchRequest.TemplateId = Guid.Parse(currentTemplateId);
+                var searchRequest = new CaseKeywordSearchRequest
+                {
+                    CompanyId = Guid.Parse(currentCompanyId),
+                    TemplateId = Guid.Parse(currentTemplateId),
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    KeywordValues = request.KeywordValues
+                };
 
                 var result = await _caseKeywordService.GetAllAsync(searchRequest);
                 return Ok(result);
@@ -97,7 +103,7 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                var isInValidModel = request.KeywordValues.Any(x => !x.Validate()); 
+                var isInValidModel = request.KeywordValues.Any(x => !x.Validate());
                 if (isInValidModel)
                 {
                     return BadRequest("KeywordValues is wrong format");

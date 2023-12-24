@@ -1,6 +1,5 @@
 ﻿using CaseMngmt.Models.Cases;
 using CaseMngmt.Models.KeywordRoles;
-using CaseMngmt.Models.Types;
 using Type = CaseMngmt.Models.Types.Type;
 
 namespace CaseMngmt.Models.Keywords

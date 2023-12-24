@@ -2,37 +2,29 @@
 {
     public class GenericValidator
     {
-        private Dictionary<Type, Delegate> _validators = new Dictionary<Type, Delegate>();
-
-        public void Register<T>(Func<T, bool> validator)
+        public bool IsValid(Type type, string value, int? maxlength)
         {
-            _validators[typeof(T)] = validator;
-        }
-
-        public Func<T, bool> Retrieve<T>()
-        {
-            if (_validators.ContainsKey(typeof(T)))
+            try
             {
-                return (Func<T, bool>)_validators[typeof(T)];
+                object result = Activator.CreateInstance(type);
+
+                // Get a reference to the TryParse method for this type
+                var tryParseMethod = type.GetMethod("TryParse", new[] { typeof(string), type.MakeByRefType() });
+                // Call TryParse
+                var success = tryParseMethod.Invoke(null, new[] { value, result }) is bool;
+                if (success)
+                {
+                    if (maxlength != null)
+                    {
+                        return value.Length <= maxlength;
+                    }
+                    return true;
+                }
+                return false;
             }
-            return t => false;
-        }
-
-        public Func<object, bool> Retrieve(Type type)
-        {
-            Delegate x = (Delegate)GetType()
-                .GetMethod("Retrieve", new Type[] { })
-                .MakeGenericMethod(type).Invoke(this, null);
-            Func<object, bool> y = o => (bool)x.DynamicInvoke(o);
-            Console.WriteLine(1);
-            return y;
-        }
-
-        public void Deregister<T>()
-        {
-            if (_validators.ContainsKey(typeof(T)))
+            catch (Exception)
             {
-                _validators.Remove(typeof(T));
+                return false;
             }
         }
     }

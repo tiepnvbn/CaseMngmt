@@ -73,28 +73,35 @@ namespace CaseMngmt.Repository.Cases
             }
         }
 
-        public async Task<IEnumerable<CaseKeyword>> GetAllAsync(CaseKeywordSearchRequest searchRequest)
+        public async Task<IEnumerable<CaseKeywordValue>> GetAllAsync(CaseKeywordSearchRequest searchRequest)
         {
-            //var IQueryableCase = (from caseKeyword in _context.CaseKeyword 
-            //                      join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
-            //                      join type in _context.Type on keyword.TypeId equals type.Id
-            //                      where !caseKeyword.Deleted && caseKeyword.CaseId == searchRequest.TemplateId
-            //                      select new CaseKeywordValue
-            //                      {
-            //                          KeywordId = caseKeyword.KeywordId,
-                                        //KeywordName = keyword.Name,
-                                        //  Value = caseKeyword.Value,
-                                        //  IsRequired = keyword.IsRequired,
-                                        //  MaxLength = keyword.MaxLength,
-                                        //  Searchable = keyword.Searchable,
-                                        //  Order = keyword.Order,
-                                        //  TypeId = type.Id,
-                                        //  TypeName = type.Name
-            //                      });
-            //var result = await IQueryableCase.Skip(searchRequest.PageNumber.Value - 1).Take(searchRequest.PageSize.Value).ToListAsync();
+            try
+            {
+                var IQueryableCase = (from caseKeyword in _context.CaseKeyword
+                                      join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
+                                      join type in _context.Type on keyword.TypeId equals type.Id
+                                      where !caseKeyword.Deleted && caseKeyword.CaseId == searchRequest.TemplateId
+                                      select new CaseKeywordValue
+                                      {
+                                          CaseId = caseKeyword.CaseId,
+                                          KeywordId = caseKeyword.KeywordId,
+                                          KeywordName = keyword.Name,
+                                          Value = caseKeyword.Value,
+                                          IsRequired = keyword.IsRequired,
+                                          MaxLength = keyword.MaxLength,
+                                          Searchable = keyword.Searchable,
+                                          Order = keyword.Order,
+                                          TypeId = type.Id,
+                                          TypeName = type.Name
+                                      });
+                var result = await IQueryableCase.Skip(searchRequest.PageNumber - 1).Take(searchRequest.PageSize).ToListAsync();
 
-            //return result;
-            return null;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<int> UpdateAsync(CaseKeyword caseKey)

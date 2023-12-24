@@ -144,8 +144,7 @@ namespace CaseMngmt.Service.Templates
         {
             try
             {
-                var entity = await _repository.GetTemplateViewModelByIdAsync(id);
-                var result = _mapper.Map<TemplateViewModel>(entity);
+                var result = await _repository.GetTemplateViewModelByIdAsync(id);
                 return result;
             }
             catch (Exception ex)

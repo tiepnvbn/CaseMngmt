@@ -7,6 +7,6 @@ namespace CaseMngmt.Models.CaseKeywords
         [Required]
         public Guid KeywordId { get; set; }
         [Required]
-        public string? Value { get; set; }
+        public string Value { get; set; }
     }
 }

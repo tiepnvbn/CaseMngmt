@@ -41,10 +41,7 @@ namespace CaseMngmt.Service.Keywords
 
         public async Task<IEnumerable<KeywordViewModel>> GetAllAsync(int pageSize, int pageNumber)
         {
-            var keywordsFromRepository = await _repository.GetAllAsync(pageSize, pageNumber);
-
-            var result = _mapper.Map<List<KeywordViewModel>>(keywordsFromRepository);
-
+            var result = await _repository.GetAllAsync(pageSize, pageNumber);
             return result;
         }
 
