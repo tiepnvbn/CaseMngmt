@@ -1,6 +1,6 @@
 ﻿using CaseMngmt.Models.CaseKeywords;
 
-namespace CaseMngmt.Repository.Cases
+namespace CaseMngmt.Repository.CaseKeywords
 {
     public interface ICaseKeywordRepository
     {

@@ -222,6 +222,8 @@ namespace CaseMngmt.Models.Migrations
                     IsRequired = table.Column<bool>(type: "bit", nullable: false),
                     Searchable = table.Column<bool>(type: "bit", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
+                    Source = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Metadata = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),

@@ -4,9 +4,9 @@ namespace CaseMngmt.Models.Keywords
 {
     public class KeywordViewModel
     {
-        public Guid Id { get; set; }
+        public Guid KeywordId { get; set; }
         [MaxLength(256)]
-        public string? Name { get; set; }
+        public string? KeywordName { get; set; }
         public Guid TypeId { get; set; }
         public string? TypeName { get; set; }
         public Guid TemplateId { get; set; }

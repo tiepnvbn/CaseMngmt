@@ -1,6 +1,6 @@
-﻿using CaseMngmt.Models.Keywords;
-using CaseMngmt.Models.Templates;
+﻿using CaseMngmt.Models.Templates;
 using CaseMngmt.Service.Companies;
+using CaseMngmt.Service.CompanyTemplates;
 using CaseMngmt.Service.Keywords;
 using CaseMngmt.Service.Templates;
 using Microsoft.AspNetCore.Authorization;
@@ -12,20 +12,22 @@ namespace CaseMngmt.Server.Controllers
     [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     [Route("api/[controller]")]
-    [ClaimRequirement(ClaimTypes.Role, "SuperAdmin")]
+    [ClaimRequirement(ClaimTypes.Role, "Admin")]
     public class TemplateController : ControllerBase
     {
         private readonly ILogger<TemplateController> _logger;
         private readonly IKeywordService _keywordService;
         private readonly ITemplateService _templateService;
         private readonly ICompanyService _companyService;
+        private readonly ICompanyTemplateService _companyTemplateService;
 
-        public TemplateController(ILogger<TemplateController> logger, IKeywordService keywordService, ITemplateService templateService, ICompanyService companyService)
+        public TemplateController(ILogger<TemplateController> logger, IKeywordService keywordService, ITemplateService templateService, ICompanyService companyService, ICompanyTemplateService companyTemplateService)
         {
             _logger = logger;
             _keywordService = keywordService;
             _templateService = templateService;
             _companyService = companyService;
+            _companyTemplateService = companyTemplateService;
         }
 
         [HttpGet, Route("getAll")]
@@ -52,37 +54,38 @@ namespace CaseMngmt.Server.Controllers
             }
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetTemplate()
-        //{
-        //    try
-        //    {
-        //        var companyId = User.FindFirst("CompanyId")?.Value;
-        //        if (string.IsNullOrEmpty(companyId))
-        //        {
-        //            return BadRequest();
-        //        }
+        [HttpGet("template")]
+        public async Task<IActionResult> GetTemplate()
+        {
+            try
+            {
+                var companyId = User.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(companyId))
+                {
+                    return BadRequest();
+                }
+                var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
+                var templateId = companyTemplate.First().TemplateId;
+                var template = await _templateService.GetByIdAsync(templateId);
+                if (template == null)
+                {
+                    return BadRequest();
+                }
+                TemplateViewModel? result = await _templateService.GetByIdAsync(templateId);
 
-        //        var company = await _companyService.GetByIdAsync(Guid.Parse(companyId));
-        //        if (company == null)
-        //        {
-        //            return BadRequest();
-        //        }
-        //        TemplateViewModel? result = await _templateService.GetByIdAsync(templateId);
+                if (result == null)
+                {
+                    return NotFound();
+                }
 
-        //        if (result == null)
-        //        {
-        //            return NotFound();
-        //        }
-
-        //        return Ok(result);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError(e.Message, nameof(CustomerController), true, e);
-        //        return BadRequest();
-        //    }
-        //}
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                return BadRequest();
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> Details(Guid templateId)
@@ -144,6 +147,7 @@ namespace CaseMngmt.Server.Controllers
                 return BadRequest();
             }
         }
+        
         // TODO : integrate with image/file
         [HttpPut, Route("{Id}")]
         public async Task<IActionResult> Update(TemplateViewRequest request)

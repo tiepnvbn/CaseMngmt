@@ -12,7 +12,9 @@ namespace CaseMngmt.Models.Keywords
         public bool IsRequired { get; set; }
         public bool Searchable { get; set; }
         public int Order { get; set; }
-
+        // TODO Source
+        public string? Source { get; set; }
+        public string? Metadata { get; set; }
         public Type Type { get; set; }
         public virtual ICollection<Case> Cases { get; set; }
         public virtual ICollection<KeywordRole> KeywordRole { get; set; }
