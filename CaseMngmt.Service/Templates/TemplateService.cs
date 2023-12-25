@@ -35,7 +35,7 @@ namespace CaseMngmt.Service.Templates
                 {
                     return 0;
                 }
-
+                // TODO : move source + metadata
                 var types = request.KeywordRequests.Where(x => !string.IsNullOrEmpty(x.Metadata)).Select(x => new Models.Types.Type()
                 {
                     Name = $"{x.TypeName} - {x.Name}",
@@ -52,6 +52,8 @@ namespace CaseMngmt.Service.Templates
                     MaxLength = x.MaxLength,
                     Order = x.Order,
                     Searchable = x.Searchable,
+                    Metadata = x.Metadata,
+                    Source = x.Source,
                 }).ToList();
                 response = await _keywordRepository.AddMultiAsync(keywordEntities);
                 return response;
@@ -78,6 +80,7 @@ namespace CaseMngmt.Service.Templates
                     await _typeRepository.DeleteByIdsAsync(currentKeywords.Select(x => x.TypeId).ToList());
                 }
 
+                // TODO : move source + metadata
                 var types = request.KeywordRequests.Where(x => !string.IsNullOrEmpty(x.Metadata)).Select(x => new Models.Types.Type()
                 {
                     Name = $"{x.TypeName} - {x.Name}",
@@ -94,6 +97,8 @@ namespace CaseMngmt.Service.Templates
                     MaxLength = x.MaxLength,
                     Order = x.Order,
                     Searchable = x.Searchable,
+                    Metadata = x.Metadata,
+                    Source = x.Source,
                 }).ToList();
                 await _keywordRepository.AddMultiAsync(keywordEntities);
 

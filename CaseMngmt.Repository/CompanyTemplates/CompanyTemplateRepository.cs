@@ -1,23 +1,24 @@
 ﻿using CaseMngmt.Models.Database;
 using Microsoft.EntityFrameworkCore;
 using CaseMngmt.Models.CaseKeywords;
+using CaseMngmt.Models.CompanyTemplates;
 
-namespace CaseMngmt.Repository.CaseKeywords
+namespace CaseMngmt.Repository.CompanyTemplates
 {
-    public class CaseKeywordRepository : ICaseKeywordRepository
+    public class CompanyTemplateRepository : ICompanyTemplateRepository
     {
         private ApplicationDbContext _context;
 
-        public CaseKeywordRepository(ApplicationDbContext context)
+        public CompanyTemplateRepository(ApplicationDbContext context)
         {
             _context = context;
         }
-
-        public async Task<int> AddAsync(CaseKeyword caseKey)
+       
+        public async Task<int> AddAsync(CompanyTemplate request)
         {
             try
             {
-                await _context.CaseKeyword.AddAsync(caseKey);
+                await _context.CompanyTemplate.AddAsync(request);
                 var result = _context.SaveChanges();
 
                 return result;
@@ -28,11 +29,11 @@ namespace CaseMngmt.Repository.CaseKeywords
             }
         }
 
-        public async Task<int> AddMultiAsync(List<CaseKeyword> caseKeys)
+        public async Task<int> AddMultiAsync(List<CompanyTemplate> request)
         {
             try
             {
-                await _context.CaseKeyword.AddRangeAsync(caseKeys);
+                await _context.CompanyTemplate.AddRangeAsync(request);
                 var result = _context.SaveChanges();
 
                 return result;
@@ -62,8 +63,8 @@ namespace CaseMngmt.Repository.CaseKeywords
                                       Order = keyword.Order,
                                       TypeId = type.Id,
                                       TypeName = type.Name,
-                                      Metadata = !string.IsNullOrEmpty(keyword.Metadata)
-                                                ? keyword.Metadata.Split(',', StringSplitOptions.None).ToList()
+                                      Metadata = !string.IsNullOrEmpty(type.Value)
+                                                ? type.Value.Split(',', StringSplitOptions.None).ToList()
                                                 : new List<string>()
                                   });
                 var result = await IQueryable.ToListAsync();

@@ -11,7 +11,6 @@ using CaseMngmt.Models.Templates;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Type = CaseMngmt.Models.Types.Type;
-//using ContactManager.Models;
 
 namespace CaseMngmt.Models.Database
 {
@@ -23,6 +22,8 @@ namespace CaseMngmt.Models.Database
             : base(options)
         {
         }
+
+
         public virtual DbSet<ApplicationRole> ApplicationRole { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,6 +44,8 @@ namespace CaseMngmt.Models.Database
                 .WithMany(e => e.KeywordRole)
                 .HasForeignKey(e => new { e.RoleId });
             base.OnModelCreating(modelBuilder);
+
+            //new DbInitializer(modelBuilder).Seed();
         }
 
         public DbSet<Company> Company { get; set; }

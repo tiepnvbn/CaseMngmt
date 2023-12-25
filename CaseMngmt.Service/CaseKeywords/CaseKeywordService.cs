@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CaseMngmt.Models.CaseKeywords;
-using CaseMngmt.Models.Cases;
-using CaseMngmt.Models.Repository;
+using CaseMngmt.Repository.CaseKeywords;
 using CaseMngmt.Repository.Cases;
 using CaseMngmt.Repository.Keywords;
 using CaseMngmt.Service.CaseKeywords;

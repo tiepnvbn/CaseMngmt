@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using CaseMngmt.Models.Keywords;
 using CaseMngmt.Models.Templates;
+using CaseMngmt.Models.CaseKeywords;
 
 namespace CaseMngmt.Repository.Keywords
 {
@@ -63,26 +64,27 @@ namespace CaseMngmt.Repository.Keywords
             try
             {
                 var IQueryableKeyword = (from tempKeyword in _context.Keyword
+                                         join tempType in _context.Type on tempKeyword.TypeId equals tempType.Id
                                          where !tempKeyword.Deleted 
                                          select new KeywordViewModel
                                          {
-                                             Name = tempKeyword.Name,
+                                             KeywordName = tempKeyword.Name,
                                              UpdatedBy = tempKeyword.UpdatedBy,
                                              UpdatedDate = tempKeyword.UpdatedDate,
                                              CreatedBy = tempKeyword.CreatedBy,
                                              CreatedDate = tempKeyword.CreatedDate,
-                                             Id = tempKeyword.Id,
+                                             KeywordId = tempKeyword.Id,
                                              IsRequired = tempKeyword.IsRequired,
                                              MaxLength = tempKeyword.MaxLength,
                                              Order = tempKeyword.Order,
                                              Searchable = tempKeyword.Searchable,
                                              TypeId = tempKeyword.Type.Id,
                                              TypeName = tempKeyword.Type.Name,
-                                             Metadata = !string.IsNullOrEmpty(tempKeyword.Type.Value)
-                                                ? tempKeyword.Type.Value.Split(',', StringSplitOptions.None).ToList()
+                                             Metadata = !string.IsNullOrEmpty(tempKeyword.Metadata)
+                                                ? tempKeyword.Metadata.Split(',', StringSplitOptions.None).ToList()
                                                 : new List<string>()
                                          });
-                IQueryableKeyword = IQueryableKeyword.OrderBy(m => m.Name);
+                IQueryableKeyword = IQueryableKeyword.OrderBy(m => m.KeywordName);
                 var result = await IQueryableKeyword.Skip(pageNumber - 1).Take(pageSize).ToListAsync();
 
                 return result;

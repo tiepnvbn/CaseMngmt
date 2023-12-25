@@ -109,7 +109,7 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest("KeywordValues is wrong format");
                 }
 
-                var userKeywordSetting = userTemplate.Keywords.Select(x => x.Id).ToList();
+                var userKeywordSetting = userTemplate.Keywords.Select(x => x.KeywordId).ToList();
                 var requestKeywords = request.KeywordValues.Select(x => x.KeywordId).ToList();
 
                 var isSameKeyword = userKeywordSetting.All(requestKeywords.Contains);

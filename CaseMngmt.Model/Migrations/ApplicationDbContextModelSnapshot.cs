@@ -137,6 +137,7 @@ namespace CaseMngmt.Models.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Value")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -385,6 +386,9 @@ namespace CaseMngmt.Models.Migrations
                     b.Property<int?>("MaxLength")
                         .HasColumnType("int");
 
+                    b.Property<string>("Metadata")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -395,6 +399,9 @@ namespace CaseMngmt.Models.Migrations
 
                     b.Property<bool>("Searchable")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Source")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("TemplateId")
                         .HasColumnType("uniqueidentifier");

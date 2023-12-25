@@ -1,5 +1,4 @@
-﻿using CaseMngmt.Models.Keywords;
-using CaseMngmt.Models.Templates;
+﻿using CaseMngmt.Models.Templates;
 using CaseMngmt.Service.Companies;
 using CaseMngmt.Service.Keywords;
 using CaseMngmt.Service.Templates;
@@ -52,37 +51,37 @@ namespace CaseMngmt.Server.Controllers
             }
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetTemplate()
-        //{
-        //    try
-        //    {
-        //        var companyId = User.FindFirst("CompanyId")?.Value;
-        //        if (string.IsNullOrEmpty(companyId))
-        //        {
-        //            return BadRequest();
-        //        }
+        [HttpGet("template")]
+        public async Task<IActionResult> GetTemplate()
+        {
+            try
+            {
+                var templateId = User.FindFirst("TemplateId")?.Value;
+                if (string.IsNullOrEmpty(templateId))
+                {
+                    return BadRequest();
+                }
 
-        //        var company = await _companyService.GetByIdAsync(Guid.Parse(companyId));
-        //        if (company == null)
-        //        {
-        //            return BadRequest();
-        //        }
-        //        TemplateViewModel? result = await _templateService.GetByIdAsync(templateId);
+                var template = await _templateService.GetByIdAsync(Guid.Parse(templateId));
+                if (template == null)
+                {
+                    return BadRequest();
+                }
+                TemplateViewModel? result = await _templateService.GetByIdAsync(Guid.Parse(templateId));
 
-        //        if (result == null)
-        //        {
-        //            return NotFound();
-        //        }
+                if (result == null)
+                {
+                    return NotFound();
+                }
 
-        //        return Ok(result);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError(e.Message, nameof(CustomerController), true, e);
-        //        return BadRequest();
-        //    }
-        //}
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                return BadRequest();
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> Details(Guid templateId)
@@ -144,6 +143,7 @@ namespace CaseMngmt.Server.Controllers
                 return BadRequest();
             }
         }
+        
         // TODO : integrate with image/file
         [HttpPut, Route("{Id}")]
         public async Task<IActionResult> Update(TemplateViewRequest request)

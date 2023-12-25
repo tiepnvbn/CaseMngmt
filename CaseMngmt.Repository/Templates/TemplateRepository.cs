@@ -60,12 +60,12 @@ namespace CaseMngmt.Repository.Templates
                                               UpdatedDate = tempTemplate.UpdatedDate,
                                               Keywords = tempTemplate.Keywords.Select(x => new Models.Keywords.KeywordViewModel
                                               {
-                                                  Name = x.Name,
+                                                  KeywordName = x.Name,
                                                   UpdatedBy = x.UpdatedBy,
                                                   UpdatedDate = x.UpdatedDate,
                                                   CreatedBy = x.CreatedBy,
                                                   CreatedDate = x.CreatedDate,
-                                                  Id = x.Id,
+                                                  KeywordId = x.Id,
                                                   IsRequired = x.IsRequired,
                                                   MaxLength = x.MaxLength,
                                                   Order = x.Order,
@@ -73,8 +73,8 @@ namespace CaseMngmt.Repository.Templates
                                                   TemplateId = templateId,
                                                   TypeId = x.Type.Id,
                                                   TypeName = x.Type.Name,
-                                                  Metadata = !string.IsNullOrEmpty(x.Type.Value) 
-                                                    ? x.Type.Value.Split(',', StringSplitOptions.None).ToList() 
+                                                  Metadata = !string.IsNullOrEmpty(x.Metadata) 
+                                                    ? x.Metadata.Split(',', StringSplitOptions.None).ToList() 
                                                     : new List<string>()
                                               }).ToList()
                                           });
@@ -107,12 +107,12 @@ namespace CaseMngmt.Repository.Templates
                                               UpdatedDate = tempTemplate.UpdatedDate,
                                               Keywords = tempTemplate.Keywords.Select(x => new Models.Keywords.KeywordViewModel
                                               {
-                                                  Name = x.Name,
+                                                  KeywordName = x.Name,
                                                   UpdatedBy = x.UpdatedBy,
                                                   UpdatedDate = x.UpdatedDate,
                                                   CreatedBy = x.CreatedBy,
                                                   CreatedDate = x.CreatedDate,
-                                                  Id = x.Id,
+                                                  KeywordId = x.Id,
                                                   IsRequired = x.IsRequired,
                                                   MaxLength = x.MaxLength,
                                                   Order = x.Order,

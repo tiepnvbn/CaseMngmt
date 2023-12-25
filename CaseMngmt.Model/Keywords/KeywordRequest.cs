@@ -14,6 +14,7 @@ namespace CaseMngmt.Models.Keywords
         public bool Searchable { get; set; }
         public int Order { get; set; }
         public string? Metadata { get; set; }
+        public string? Source { get; set; }
     }
 
     public class KeywordEditRequest : KeywordRequest

@@ -1,7 +1,6 @@
 using CaseMngmt.Models.Database;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -26,6 +25,9 @@ using CaseMngmt.Repository.Cases;
 using CaseMngmt.Service.CaseKeywords;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using CaseMngmt.Server;
+using CaseMngmt.Repository.CaseKeywords;
+using CaseMngmt.Repository.CompanyTemplates;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +74,9 @@ builder.Services.AddTransient<ICaseKeywordService, CaseKeywordService>();
 builder.Services.AddTransient<ICaseKeywordRepository, CaseKeywordRepository>();
 builder.Services.AddTransient<ITypeService, TypeService>();
 builder.Services.AddTransient<ITypeRepository, TypeRepository>();
+
+builder.Services.AddTransient<ICompanyTemplateRepository, CompanyTemplateRepository>();
+
 #endregion
 
 
@@ -141,6 +146,8 @@ builder.Services.AddSwaggerGen(c =>
 );
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new CustomProfile());
@@ -150,6 +157,13 @@ IMapper mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
 var app = builder.Build();
+
+//Configure the HTTP-request pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseItToSeedSqlServer();    //custom extension method to seed the DB
+    //configure other services
+}
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
@@ -174,3 +188,5 @@ app.MapFallbackToFile("/index.html");
 app.UseCors("LocalhostPolicy");
 
 app.Run();
+
+
