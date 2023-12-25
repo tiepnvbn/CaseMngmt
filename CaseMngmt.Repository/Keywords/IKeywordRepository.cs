@@ -5,9 +5,13 @@ namespace CaseMngmt.Repository.Keywords
     public interface IKeywordRepository
     {
         Task<int> AddAsync(Keyword keyword);
-        Task<IEnumerable<Keyword>> GetAllAsync(int pageSize, int pageNumber);
-        Task<Keyword> GetByIdAsync(Guid id);
+        Task<int> AddMultiAsync(List<Keyword> keywords);
+        Task<List<KeywordViewModel>> GetAllAsync(int pageSize, int pageNumber);
+        Task<Keyword?> GetByIdAsync(Guid id);
+        Task<List<Keyword>> GetByTemplateIdAsync(Guid templateId);
         Task<int> DeleteAsync(Guid id);
+        Task<int> DeleteMultiByTemplateIdAsync(Guid templateId);
         Task<int> UpdateAsync(Keyword keyword);
+        Task<int> UpdateMultiAsync(Guid templateId, List<Keyword> keywords);
     }
 }

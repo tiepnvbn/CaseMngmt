@@ -20,9 +20,7 @@ namespace CaseMngmt.Service.Customers
             {
                 var entity = _mapper.Map<Customer>(customer);
                 entity.CompanyId = customer.CompanyId;
-                entity.CreatedDate = DateTime.UtcNow;
                 entity.CreatedBy = Guid.Parse(customer.CreatedBy);
-                entity.UpdatedDate = DateTime.UtcNow;
                 entity.UpdatedBy = Guid.Parse(customer.UpdatedBy);
                 return await _repository.AddAsync(entity);
             }
@@ -59,7 +57,7 @@ namespace CaseMngmt.Service.Customers
             return result;
         }
 
-        public async Task<CustomerViewModel> GetByIdAsync(Guid id)
+        public async Task<CustomerViewModel?> GetByIdAsync(Guid id)
         {
             try
             {

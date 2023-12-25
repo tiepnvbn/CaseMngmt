@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using CaseMngmt.Models.CaseKeywords;
+using CaseMngmt.Models.Cases;
+using CaseMngmt.Models.Repository;
 using CaseMngmt.Repository.Cases;
 using CaseMngmt.Repository.Keywords;
 using CaseMngmt.Service.CaseKeywords;
-using CaseMngmt.Service.TemplateKeywords;
 
 namespace CaseMngmt.Service.Customers
 {
@@ -12,43 +13,50 @@ namespace CaseMngmt.Service.Customers
         private ICaseRepository _caseRepository;
         private ICaseKeywordRepository _caseKeywordRepository;
         private IKeywordRepository _keywordRepository;
-        private ITemplateKeywordService _templateKeywordService;
 
         private readonly IMapper _mapper;
-        public CaseKeywordService(ICaseRepository caseRepository, ICaseKeywordRepository caseKeywordRepository, IKeywordRepository keywordRepository, ITemplateKeywordService templateKeywordService, IMapper mapper)
+        public CaseKeywordService(ICaseRepository caseRepository, ICaseKeywordRepository caseKeywordRepository, IKeywordRepository keywordRepository, IMapper mapper)
         {
             _caseRepository = caseRepository;
             _caseKeywordRepository = caseKeywordRepository;
             _keywordRepository = keywordRepository;
-            _templateKeywordService = templateKeywordService;
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<CaseKeywordViewModel?>> GetAllAsync(CaseKeywordSearchRequest searchRequest)
+        public async Task<IEnumerable<CaseKeywordValue>?> GetAllAsync(CaseKeywordSearchRequest searchRequest)
         {
-
-            var customersFromRepository = await _caseKeywordRepository.GetAllAsync(searchRequest);
-
-            //var result = _mapper.Map<IEnumerable<CustomerViewModel>>(customersFromRepository);
-
-            return null;
+            try
+            {
+                var result = await _caseKeywordRepository.GetAllAsync(searchRequest);
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async Task<CaseKeywordViewModel?> GetByIdAsync(Guid caseId)
         {
             try
             {
-                var caseKeywordValues = await _caseKeywordRepository.GetByIdAsync(caseId);
-                if (caseKeywordValues != null)
+                var caseEntity = await _caseRepository.GetByIdAsync(caseId);
+                if (caseEntity == null)
                 {
-                    var result = new CaseKeywordViewModel
-                    {
-                        CaseId = caseId,
-                        CaseKeywordValues = caseKeywordValues.ToList()
-                    };
-                    return result;
+                    return null;
                 }
-                return null;
+                var caseKeywordValues = await _caseKeywordRepository.GetByIdAsync(caseId);
+                if (caseKeywordValues == null)
+                {
+                    return null;
+                }
+
+                var result = new CaseKeywordViewModel
+                {
+                    CaseId = caseId,
+                    CaseKeywordValues = caseKeywordValues.ToList()
+                };
+                return result;
             }
             catch (Exception ex)
             {
@@ -56,7 +64,7 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<int> AddAsync(CaseKeywordRequest request)
+        public async Task<int> AddAsync(CaseKeywordAddRequest request)
         {
             try
             {
@@ -119,8 +127,8 @@ namespace CaseMngmt.Service.Customers
         {
             try
             {
-                await _caseRepository.DeleteAsync(caseId);
                 await _caseKeywordRepository.DeleteByCaseIdAsync(caseId);
+                await _caseRepository.DeleteAsync(caseId);
 
                 return 1;
             }

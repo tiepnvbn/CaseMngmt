@@ -9,6 +9,7 @@ namespace CaseMngmt.Server.Controllers
     [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     [Route("api/[controller]")]
+    [ClaimRequirement(ClaimTypes.Role, "SuperAdmin")]
     public class CustomerController : ControllerBase
     {
         private readonly ILogger<CustomerController> _logger;

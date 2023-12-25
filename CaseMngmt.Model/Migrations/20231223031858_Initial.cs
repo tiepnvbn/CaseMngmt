@@ -28,7 +28,7 @@ namespace CaseMngmt.Models.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -54,7 +54,7 @@ namespace CaseMngmt.Models.Migrations
                     BuildingName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     RoomNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Note = table.Column<string>(type: "nvarchar(3000)", maxLength: 3000, nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -71,7 +71,7 @@ namespace CaseMngmt.Models.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -89,7 +89,7 @@ namespace CaseMngmt.Models.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -169,7 +169,7 @@ namespace CaseMngmt.Models.Migrations
                     RoomNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Note = table.Column<string>(type: "nvarchar(3000)", maxLength: 3000, nullable: true),
                     CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -218,9 +218,11 @@ namespace CaseMngmt.Models.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TemplateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MaxLength = table.Column<int>(type: "int", nullable: true),
+                    IsRequired = table.Column<bool>(type: "bit", nullable: false),
                     Searchable = table.Column<bool>(type: "bit", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -361,17 +363,17 @@ namespace CaseMngmt.Models.Migrations
                 columns: table => new
                 {
                     KeywordId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ApplicationRoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_KeywordRole", x => new { x.KeywordId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_KeywordRole_AspNetRoles_ApplicationRoleId",
-                        column: x => x.ApplicationRoleId,
+                        name: "FK_KeywordRole_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_KeywordRole_Keyword_KeywordId",
                         column: x => x.KeywordId,
@@ -455,9 +457,9 @@ namespace CaseMngmt.Models.Migrations
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_KeywordRole_ApplicationRoleId",
+                name: "IX_KeywordRole_RoleId",
                 table: "KeywordRole",
-                column: "ApplicationRoleId");
+                column: "RoleId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

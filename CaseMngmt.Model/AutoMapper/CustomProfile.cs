@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CaseMngmt.Models.Companies;
 using CaseMngmt.Models.Customers;
-using CaseMngmt.Models.Templates;
+using CaseMngmt.Models.Keywords;
+using CaseMngmt.Models.Types;
+using Type = CaseMngmt.Models.Types.Type;
 
 namespace CaseMngmt.Models.AutoMapper
 {
@@ -19,10 +21,14 @@ namespace CaseMngmt.Models.AutoMapper
             CreateMap<Company, CompanyRequest>();
             CreateMap<CompanyRequest, Company>().ForMember(x => x.Id, opt => opt.Ignore());
 
-            CreateMap<TemplateViewModel, Template>();
-            CreateMap<Template, TemplateViewModel>();
-            CreateMap<Template, TemplateRequest>();
-            CreateMap<TemplateRequest, Template>().ForMember(x => x.Id, opt => opt.Ignore());
+            CreateMap<TypeViewModel, Type>();
+            CreateMap<Type, TypeViewModel>();
+            CreateMap<Type, TypeRequest>();
+            CreateMap<TypeRequest, Type>().ForMember(x => x.Id, opt => opt.Ignore());
+
+            CreateMap<Keyword, KeywordRequest>();
+            CreateMap<KeywordRequest, Keyword>().ForMember(x => x.Id, opt => opt.Ignore());
+
         }
     }
 }

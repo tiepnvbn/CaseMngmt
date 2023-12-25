@@ -22,10 +22,10 @@ namespace CaseMngmt.Server.Controllers
             _templateService = templateService;
         }
 
-        [HttpGet, Route("getAll")]
-        public async Task<IActionResult> GetAll(CaseKeywordSearchRequest searchRequest)
+        [HttpPost, Route("getAll")]
+        public async Task<IActionResult> GetAll(CaseKeywordSearch request)
         {
-            if (!ModelState.IsValid || searchRequest == null)
+            if (!ModelState.IsValid || request == null || !request.KeywordValues.Any())
             {
                 return BadRequest(ModelState);
             }
@@ -34,15 +34,21 @@ namespace CaseMngmt.Server.Controllers
             {
                 // Get Template to check role of user
                 var currentUserRole = User.FindAll(ClaimTypes.Role).Select(x => x.Value).ToList();
-                if (currentUserRole == null || currentUserRole.Count < 1)
+                var currentCompanyId = User.FindFirst("CompanyId")?.Value;
+                var currentTemplateId = User.FindFirst("TemplateId")?.Value;
+                if (currentUserRole == null || currentUserRole.Count < 1 || string.IsNullOrEmpty(currentCompanyId) || string.IsNullOrEmpty(currentTemplateId))
                 {
-                    return BadRequest("Wrong User Role");
+                    return BadRequest("Wrong Claim");
                 }
 
-                var currentCompanyId = User.FindFirst("CompanyId").Value;
-                var currentTemplateId = User.FindFirst("TemplateId").Value;
-                searchRequest.CompanyId = Guid.Parse(currentCompanyId);
-                searchRequest.TemplateId = Guid.Parse(currentTemplateId);
+                var searchRequest = new CaseKeywordSearchRequest
+                {
+                    CompanyId = Guid.Parse(currentCompanyId),
+                    TemplateId = Guid.Parse(currentTemplateId),
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    KeywordValues = request.KeywordValues
+                };
 
                 var result = await _caseKeywordService.GetAllAsync(searchRequest);
                 return Ok(result);
@@ -64,7 +70,7 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                CaseKeywordViewModel result = await _caseKeywordService.GetByIdAsync(caseId);
+                CaseKeywordViewModel? result = await _caseKeywordService.GetByIdAsync(caseId);
 
                 if (result == null)
                 {
@@ -82,7 +88,7 @@ namespace CaseMngmt.Server.Controllers
 
         // TODO : integrate with image/file
         [HttpPost]
-        public async Task<IActionResult> Create(CaseKeywordRequest request)
+        public async Task<IActionResult> Create(CaseKeywordAddRequest request)
         {
             if (!ModelState.IsValid || request == null)
             {
@@ -91,6 +97,27 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
+                var userTemplate = await _templateService.GetByIdAsync(request.TemplateId);
+                if (userTemplate == null)
+                {
+                    return BadRequest();
+                }
+
+                var isInValidModel = request.KeywordValues.Any(x => !x.Validate());
+                if (isInValidModel)
+                {
+                    return BadRequest("KeywordValues is wrong format");
+                }
+
+                var userKeywordSetting = userTemplate.Keywords.Select(x => x.Id).ToList();
+                var requestKeywords = request.KeywordValues.Select(x => x.KeywordId).ToList();
+
+                var isSameKeyword = userKeywordSetting.All(requestKeywords.Contains);
+                if (!isSameKeyword)
+                {
+                    return BadRequest("KeywordValues is wrong");
+                }
+
                 var result = await _caseKeywordService.AddAsync(request);
 
                 return result > 0 ? Ok(result) : BadRequest();
@@ -101,7 +128,8 @@ namespace CaseMngmt.Server.Controllers
                 return BadRequest();
             }
         }
-         // TODO : integrate with image/file
+
+        // TODO : integrate with image/file
         [HttpPut, Route("{Id}")]
         public async Task<IActionResult> Update(CaseKeywordRequest request)
         {
