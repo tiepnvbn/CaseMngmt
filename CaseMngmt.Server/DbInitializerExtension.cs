@@ -319,17 +319,17 @@ namespace CaseMngmt.Server
                         Source = string.Empty
                     }
                 };
-                keywordManager.AddAsync( new Keyword
-                    {
-                        Name = "Customer Name",
-                        TypeId = defaultAlphanumericTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 20,
-                        IsRequired =true,
-                        Searchable =true,
-                        Order = 1,
-                        Source = string.Empty
-                    });
+                keywordManager.AddAsync(new Keyword
+                {
+                    Name = "Customer Name",
+                    TypeId = defaultAlphanumericTypeGuid,
+                    TemplateId = defaultTemplateId,
+                    MaxLength = 20,
+                    IsRequired = true,
+                    Searchable = true,
+                    Order = 1,
+                    Source = string.Empty
+                });
                 keywordManager.AddMultiAsync(listKeywordDefault).ConfigureAwait(false);
 
                 #endregion
@@ -339,23 +339,15 @@ namespace CaseMngmt.Server
                 {
                     roleManager.CreateAsync(new ApplicationRole(UserRoles.SuperAdmin));
                 }
-                var userSuperAdminGuid = Guid.NewGuid();
                 var userExists = userManager.FindByNameAsync("SuperAdmin");
                 if (userExists.Result == null)
                 {
                     var user = new ApplicationUser
                     {
-                        Id = userSuperAdminGuid,
-                        UserName = "SuperAdmin",
-                        CompanyId = defaultCompanyGuid,
-                        AccessFailedCount = 0,
                         Email = "hoangthanhduong@gmail.com",
-                        NormalizedEmail = "hoangthanhduong@gmail.com",
-                        NormalizedUserName = "SuperAdmin",
-                        PhoneNumber = "1234567890",
-                        PhoneNumberConfirmed = true,
-                        LockoutEnabled = false,
-                        SecurityStamp = Guid.NewGuid().ToString()
+                        SecurityStamp = Guid.NewGuid().ToString(),
+                        UserName = "SuperAdmin",
+                        CompanyId = defaultCompanyGuid
                     };
 
                     var result = userManager.CreateAsync(user, "Admin@123");
