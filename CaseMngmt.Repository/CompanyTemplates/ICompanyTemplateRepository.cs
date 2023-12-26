@@ -12,5 +12,6 @@ namespace CaseMngmt.Repository.CompanyTemplates
         //Task<int> DeleteByCaseIdAsync(Guid caseId);
         //Task<int> UpdateAsync(CaseKeyword caseKey);
         //Task<int> UpdateMultiAsync(Guid caseId, List<CaseKeyword> caseKeys);
+        Task<List<CompanyTemplate>> GetTemplateByCompanyIdAsync(Guid companyId);
     }
 }

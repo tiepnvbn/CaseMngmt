@@ -28,6 +28,7 @@ using System.Text.Json;
 using CaseMngmt.Server;
 using CaseMngmt.Repository.CaseKeywords;
 using CaseMngmt.Repository.CompanyTemplates;
+using CaseMngmt.Service.CompanyTemplates;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,7 +75,7 @@ builder.Services.AddTransient<ICaseKeywordService, CaseKeywordService>();
 builder.Services.AddTransient<ICaseKeywordRepository, CaseKeywordRepository>();
 builder.Services.AddTransient<ITypeService, TypeService>();
 builder.Services.AddTransient<ITypeRepository, TypeRepository>();
-
+builder.Services.AddTransient<ICompanyTemplateService, CompanyTemplateService>();
 builder.Services.AddTransient<ICompanyTemplateRepository, CompanyTemplateRepository>();
 
 #endregion

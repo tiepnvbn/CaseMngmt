@@ -196,5 +196,19 @@ namespace CaseMngmt.Repository.CompanyTemplates
                 return 0;
             }
         }
+
+        public async Task<List<CompanyTemplate>> GetTemplateByCompanyIdAsync(Guid companyId)
+        {
+            try
+            {
+                List<CompanyTemplate> companyTemplateawait = await _context.CompanyTemplate.Where(x => x.CompanyId.Equals(companyId)).ToListAsync();
+                return companyTemplateawait;
+            }
+            catch (Exception)
+            {
+                return new List<CompanyTemplate>();
+                throw;
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CaseMngmt.Models.Templates;
 using CaseMngmt.Service.Companies;
+using CaseMngmt.Service.CompanyTemplates;
 using CaseMngmt.Service.Keywords;
 using CaseMngmt.Service.Templates;
 using Microsoft.AspNetCore.Authorization;
@@ -11,20 +12,22 @@ namespace CaseMngmt.Server.Controllers
     [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     [Route("api/[controller]")]
-    [ClaimRequirement(ClaimTypes.Role, "SuperAdmin")]
+    [ClaimRequirement(ClaimTypes.Role, "Admin")]
     public class TemplateController : ControllerBase
     {
         private readonly ILogger<TemplateController> _logger;
         private readonly IKeywordService _keywordService;
         private readonly ITemplateService _templateService;
         private readonly ICompanyService _companyService;
+        private readonly ICompanyTemplateService _companyTemplateService;
 
-        public TemplateController(ILogger<TemplateController> logger, IKeywordService keywordService, ITemplateService templateService, ICompanyService companyService)
+        public TemplateController(ILogger<TemplateController> logger, IKeywordService keywordService, ITemplateService templateService, ICompanyService companyService, ICompanyTemplateService companyTemplateService)
         {
             _logger = logger;
             _keywordService = keywordService;
             _templateService = templateService;
             _companyService = companyService;
+            _companyTemplateService = companyTemplateService;
         }
 
         [HttpGet, Route("getAll")]
@@ -56,18 +59,19 @@ namespace CaseMngmt.Server.Controllers
         {
             try
             {
-                var templateId = User.FindFirst("TemplateId")?.Value;
-                if (string.IsNullOrEmpty(templateId))
+                var companyId = User.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(companyId))
                 {
                     return BadRequest();
                 }
-
-                var template = await _templateService.GetByIdAsync(Guid.Parse(templateId));
+                var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
+                var templateId = companyTemplate.First().TemplateId;
+                var template = await _templateService.GetByIdAsync(templateId);
                 if (template == null)
                 {
                     return BadRequest();
                 }
-                TemplateViewModel? result = await _templateService.GetByIdAsync(Guid.Parse(templateId));
+                TemplateViewModel? result = await _templateService.GetByIdAsync(templateId);
 
                 if (result == null)
                 {

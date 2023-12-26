@@ -76,7 +76,7 @@ namespace CaseMngmt.Server.Controllers
                 return Ok(new
                 {
                     accessToken = new JwtSecurityTokenHandler().WriteToken(token),
-                    roles = new int[] { 5150 },
+                    roles = userRoles,
                     expiration = token.ValidTo
                 });
             }
@@ -104,6 +104,7 @@ namespace CaseMngmt.Server.Controllers
 
              if (!await _roleManager.RoleExistsAsync(UserRoles.SuperAdmin))
                 await _roleManager.CreateAsync(new ApplicationRole(UserRoles.SuperAdmin));
+            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
             if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
                 await _roleManager.CreateAsync(new ApplicationRole(UserRoles.Admin));
 
