@@ -9,6 +9,7 @@ namespace CaseMngmt.Models.Keywords
         public string? KeywordName { get; set; }
         public Guid TypeId { get; set; }
         public string? TypeName { get; set; }
+        public string? TypeValue { get; set; }
         public Guid TemplateId { get; set; }
         public int? MaxLength { get; set; }
         public bool IsRequired { get; set; }

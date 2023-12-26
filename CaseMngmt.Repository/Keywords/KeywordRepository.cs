@@ -78,8 +78,9 @@ namespace CaseMngmt.Repository.Keywords
                                              MaxLength = tempKeyword.MaxLength,
                                              Order = tempKeyword.Order,
                                              Searchable = tempKeyword.Searchable,
-                                             TypeId = tempKeyword.Type.Id,
-                                             TypeName = tempKeyword.Type.Name,
+                                             TypeId = tempType.Id,
+                                             TypeName = tempType.Name,
+                                             TypeValue = tempType.Value,
                                              Metadata = !string.IsNullOrEmpty(tempKeyword.Metadata)
                                                 ? tempKeyword.Metadata.Split(',', StringSplitOptions.None).ToList()
                                                 : new List<string>()

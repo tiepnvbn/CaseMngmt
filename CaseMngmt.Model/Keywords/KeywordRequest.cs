@@ -8,7 +8,7 @@ namespace CaseMngmt.Models.Keywords
         [Required]
         public string Name { get; set; }
         [Required]
-        public string TypeName { get; set; }
+        public Guid TypeId { get; set; }
         public int MaxLength { get; set; }
         public bool IsRequired { get; set; }
         public bool Searchable { get; set; }

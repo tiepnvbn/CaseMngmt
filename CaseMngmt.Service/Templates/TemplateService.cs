@@ -3,7 +3,6 @@ using CaseMngmt.Models.Templates;
 using CaseMngmt.Repository.Keywords;
 using CaseMngmt.Repository.Templates;
 using CaseMngmt.Models.Keywords;
-using CaseMngmt.Repository.Types;
 
 namespace CaseMngmt.Service.Templates
 {
@@ -11,13 +10,11 @@ namespace CaseMngmt.Service.Templates
     {
         private ITemplateRepository _repository;
         private IKeywordRepository _keywordRepository;
-        private ITypeRepository _typeRepository;
         private readonly IMapper _mapper;
-        public TemplateService(ITemplateRepository repository, IKeywordRepository keywordRepository, ITypeRepository typeRepository, IMapper mapper)
+        public TemplateService(ITemplateRepository repository, IKeywordRepository keywordRepository, IMapper mapper)
         {
             _repository = repository;
             _keywordRepository = keywordRepository;
-            _typeRepository = typeRepository;
             _mapper = mapper;
         }
 
@@ -35,18 +32,11 @@ namespace CaseMngmt.Service.Templates
                 {
                     return 0;
                 }
-                // TODO : move source + metadata
-                var types = request.KeywordRequests.Where(x => !string.IsNullOrEmpty(x.Metadata)).Select(x => new Models.Types.Type()
-                {
-                    Name = $"{x.TypeName} - {x.Name}",
-                    Value = x.Metadata
-                }).ToList();
-                await _typeRepository.AddMultiAsync(types);
 
                 var keywordEntities = request.KeywordRequests.Select(x => new Keyword()
                 {
                     Name = x.Name,
-                    TypeId = types.FirstOrDefault(z => z.Name == $"{x.TypeName} - {x.Name}").Id,
+                    TypeId = x.TypeId,
                     TemplateId = template.Id,
                     IsRequired = x.IsRequired,
                     MaxLength = x.MaxLength,
@@ -77,21 +67,13 @@ namespace CaseMngmt.Service.Templates
                 var currentKeywords = await _keywordRepository.GetByTemplateIdAsync(request.TemplateId);
                 if (currentKeywords != null && currentKeywords.Any())
                 {
-                    await _typeRepository.DeleteByIdsAsync(currentKeywords.Select(x => x.TypeId).ToList());
+                    await _keywordRepository.DeleteMultiByTemplateIdAsync(request.TemplateId);
                 }
-
-                // TODO : move source + metadata
-                var types = request.KeywordRequests.Where(x => !string.IsNullOrEmpty(x.Metadata)).Select(x => new Models.Types.Type()
-                {
-                    Name = $"{x.TypeName} - {x.Name}",
-                    Value = x.Metadata
-                }).ToList();
-                await _typeRepository.AddMultiAsync(types);
 
                 var keywordEntities = request.KeywordRequests.Select(x => new Keyword()
                 {
                     Name = x.Name,
-                    TypeId = types.FirstOrDefault(z => z.Name == $"{x.TypeName} - {x.Name}").Id,
+                    TypeId = x.TypeId,
                     TemplateId = request.TemplateId,
                     IsRequired = x.IsRequired,
                     MaxLength = x.MaxLength,
@@ -121,11 +103,9 @@ namespace CaseMngmt.Service.Templates
                 }
 
                 var currentKeywords = await _keywordRepository.GetByTemplateIdAsync(templateId);
-                await _keywordRepository.DeleteMultiByTemplateIdAsync(templateId);
-
                 if (currentKeywords != null && currentKeywords.Any())
                 {
-                    await _typeRepository.DeleteByIdsAsync(currentKeywords.Select(x => x.TypeId).ToList());
+                      await _keywordRepository.DeleteMultiByTemplateIdAsync(templateId);
                 }
 
                 await _repository.DeleteAsync(templateId);
@@ -138,11 +118,18 @@ namespace CaseMngmt.Service.Templates
             }
         }
 
-        public async Task<IEnumerable<TemplateViewModel>> GetAllAsync(Guid? companyId, int pageSize, int pageNumber)
+        public async Task<IEnumerable<TemplateViewModel>?> GetAllAsync(Guid? companyId, int pageSize, int pageNumber)
         {
-            var result = await _repository.GetAllAsync(companyId, pageSize, pageNumber);
+            try
+            {
+                var result = await _repository.GetAllAsync(companyId, pageSize, pageNumber);
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<TemplateViewModel?> GetByIdAsync(Guid id)

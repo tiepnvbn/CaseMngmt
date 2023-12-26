@@ -12,13 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CaseMngmt.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<<< HEAD:CaseMngmt.Model/Migrations/20231225114556_InitialCreate.Designer.cs
     [Migration("20231225114556_InitialCreate")]
     partial class InitialCreate
-========
-    [Migration("20231225121557_Initial")]
-    partial class Initial
->>>>>>>> origin/tan/initial-database:CaseMngmt.Model/Migrations/20231225121557_Initial.Designer.cs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

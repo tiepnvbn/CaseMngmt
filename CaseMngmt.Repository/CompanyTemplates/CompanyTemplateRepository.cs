@@ -63,8 +63,8 @@ namespace CaseMngmt.Repository.CompanyTemplates
                                       Order = keyword.Order,
                                       TypeId = type.Id,
                                       TypeName = type.Name,
-                                      Metadata = !string.IsNullOrEmpty(type.Value)
-                                                ? type.Value.Split(',', StringSplitOptions.None).ToList()
+                                      Metadata = !string.IsNullOrEmpty(keyword.Metadata)
+                                                ? keyword.Metadata.Split(',', StringSplitOptions.None).ToList()
                                                 : new List<string>()
                                   });
                 var result = await IQueryable.ToListAsync();
@@ -100,8 +100,8 @@ namespace CaseMngmt.Repository.CompanyTemplates
                                           Order = keyword.Order,
                                           TypeId = type.Id,
                                           TypeName = type.Name,
-                                          Metadata = !string.IsNullOrEmpty(type.Value)
-                                                ? type.Value.Split(',', StringSplitOptions.None).ToList()
+                                          Metadata = !string.IsNullOrEmpty(keyword.Metadata)
+                                                ? keyword.Metadata.Split(',', StringSplitOptions.None).ToList()
                                                 : new List<string>()
                                       });
                 var result = await IQueryableCase.Skip(searchRequest.PageNumber - 1).Take(searchRequest.PageSize).ToListAsync();

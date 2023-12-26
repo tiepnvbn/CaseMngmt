@@ -10,7 +10,6 @@ using CaseMngmt.Repository.Keywords;
 using CaseMngmt.Repository.Templates;
 using CaseMngmt.Repository.Types;
 using Microsoft.AspNetCore.Identity;
-using System.Runtime.InteropServices;
 
 namespace CaseMngmt.Server
 {
@@ -36,6 +35,7 @@ namespace CaseMngmt.Server
                 var companyTemplateManager = scope.ServiceProvider.GetRequiredService<ICompanyTemplateRepository>();
 
                 var defaultCompanyGuid = Guid.Parse("A4B11694-A5C9-48D7-BF6D-F12C019482DE");
+                var defaultCompany2Guid = Guid.Parse("A4B11694-A5C9-48D7-BF6D-F12C019482DD");
                 var checkData = companyManager.GetByIdAsync(defaultCompanyGuid);
                 if (checkData.Result != null)
                 {
@@ -55,6 +55,24 @@ namespace CaseMngmt.Server
                     CreatedBy = Guid.Empty,
                     UpdatedBy = Guid.Empty,
                     PhoneNumber = "0904752252",
+                    PostCode1 = "1",
+                    PostCode2 = "2",
+                    Deleted = false,
+                });
+                companyManager.AddAsync(new Models.Companies.Company
+                {
+                    Id = defaultCompany2Guid,
+                    Name = "CASE Company",
+                    BuildingName = "CASE Company",
+                    City = "Ha Noi",
+                    StateProvince = "Cau Giay",
+                    Street = "Pham Van Bach",
+                    RoomNumber = "10",
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now,
+                    CreatedBy = Guid.Empty,
+                    UpdatedBy = Guid.Empty,
+                    PhoneNumber = "09099999999",
                     PostCode1 = "1",
                     PostCode2 = "2",
                     Deleted = false,
@@ -121,6 +139,16 @@ namespace CaseMngmt.Server
 
                 var defaultTemplateId = Guid.NewGuid();
                 templateManager.AddAsync(new Template { Id = defaultTemplateId, Name = "Default Template" });
+
+                #endregion
+
+                #region CompanyTemplate
+
+                companyTemplateManager.AddAsync(new Models.CompanyTemplates.CompanyTemplate
+                {
+                    CompanyId = defaultCompany2Guid,
+                    TemplateId = defaultTemplateId
+                });
 
                 #endregion
 
@@ -333,12 +361,6 @@ namespace CaseMngmt.Server
                 keywordManager.AddMultiAsync(listKeywordDefault).ConfigureAwait(false);
 
                 #endregion
-
-                var roleCheck = roleManager.RoleExistsAsync("SuperAdmin");
-                if (!roleCheck.Result)
-                {
-                    roleManager.CreateAsync(new ApplicationRole(UserRoles.SuperAdmin));
-                }
                 var userExists = userManager.FindByNameAsync("SuperAdmin");
                 if (userExists.Result == null)
                 {
@@ -350,12 +372,38 @@ namespace CaseMngmt.Server
                         CompanyId = defaultCompanyGuid
                     };
 
-                    var result = userManager.CreateAsync(user, "Admin@123");
+                    userManager.CreateAsync(user, "Admin@123");
 
+                    var user2 = new ApplicationUser
+                    {
+                        Email = "tanbc0901@gmail.com",
+                        SecurityStamp = Guid.NewGuid().ToString(),
+                        UserName = "Admin",
+                        CompanyId = defaultCompany2Guid
+                    };
+
+                    userManager.CreateAsync(user2, "Admin@123");
+
+                    System.Threading.Thread.Sleep(2000);
+
+                    var roleSuperAdminCheck = roleManager.RoleExistsAsync("SuperAdmin");
+                    if (!roleSuperAdminCheck.Result)
+                    {
+                        roleManager.CreateAsync(new ApplicationRole(UserRoles.SuperAdmin));
+                    }
+                    var roleAdminCheck = roleManager.RoleExistsAsync("Admin");
+                    if (!roleAdminCheck.Result)
+                    {
+                        roleManager.CreateAsync(new ApplicationRole(UserRoles.Admin));
+                    }
+
+                    System.Threading.Thread.Sleep(2000);
                     userManager.AddToRoleAsync(user, "SuperAdmin");
+                    
+                    System.Threading.Thread.Sleep(2000);
+                    userManager.AddToRoleAsync(user2, "Admin");
+                     System.Threading.Thread.Sleep(2000);
                 }
-
-                System.Threading.Thread.Sleep(5000);
             }
             catch (Exception ex)
             {
