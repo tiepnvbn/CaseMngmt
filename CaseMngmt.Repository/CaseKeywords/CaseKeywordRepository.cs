@@ -80,6 +80,7 @@ namespace CaseMngmt.Repository.CaseKeywords
             try
             {
                 var IQueryableCase = (from caseKeyword in _context.CaseKeyword
+                                      join tempCase in _context.Case on caseKeyword.CaseId equals tempCase.Id
                                       join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
                                       join template in _context.Template on keyword.TemplateId equals template.Id
                                       join companyTemplate in _context.CompanyTemplate on template.Id equals companyTemplate.TemplateId
@@ -90,6 +91,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                                       select new CaseKeywordValue
                                       {
                                           CaseId = caseKeyword.CaseId,
+                                          CaseName = tempCase.Name,
                                           KeywordId = caseKeyword.KeywordId,
                                           KeywordName = keyword.Name,
                                           Value = caseKeyword.Value,
