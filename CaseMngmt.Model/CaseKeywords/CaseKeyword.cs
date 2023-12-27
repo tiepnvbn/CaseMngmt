@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CaseMngmt.Models.Cases;
+using CaseMngmt.Models.Keywords;
+using System.ComponentModel.DataAnnotations;
 
 namespace CaseMngmt.Models.CaseKeywords
 {
@@ -16,5 +18,8 @@ namespace CaseMngmt.Models.CaseKeywords
 
         public string Value { get; set; }
         public bool Deleted { get; set; }
+
+        public Case Case { get; set; }
+        public Keyword Keyword { get; set; }
     }
 }

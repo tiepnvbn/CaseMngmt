@@ -1,5 +1,6 @@
 ﻿using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Service.CaseKeywords;
+using CaseMngmt.Service.CompanyTemplates;
 using CaseMngmt.Service.Templates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,14 @@ namespace CaseMngmt.Server.Controllers
         private readonly ILogger<CaseController> _logger;
         private readonly ICaseKeywordService _caseKeywordService;
         private readonly ITemplateService _templateService;
-        public CaseController(ILogger<CaseController> logger, ICaseKeywordService caseKeywordService, ITemplateService templateService)
+        private readonly ICompanyTemplateService _companyTemplateService;
+        public CaseController(ILogger<CaseController> logger, ICaseKeywordService caseKeywordService, 
+            ITemplateService templateService, ICompanyTemplateService companyTemplateService)
         {
             _logger = logger;
             _caseKeywordService = caseKeywordService;
             _templateService = templateService;
+            _companyTemplateService = companyTemplateService;
         }
 
         [HttpPost, Route("getAll")]
@@ -35,16 +39,27 @@ namespace CaseMngmt.Server.Controllers
                 // Get Template to check role of user
                 var currentUserRole = User.FindAll(ClaimTypes.Role).Select(x => x.Value).ToList();
                 var currentCompanyId = User.FindFirst("CompanyId")?.Value;
-                var currentTemplateId = User.FindFirst("TemplateId")?.Value;
-                if (currentUserRole == null || currentUserRole.Count < 1 || string.IsNullOrEmpty(currentCompanyId) || string.IsNullOrEmpty(currentTemplateId))
+                if (currentUserRole == null || currentUserRole.Count < 1 || string.IsNullOrEmpty(currentCompanyId))
                 {
                     return BadRequest("Wrong Claim");
+                }
+
+                var companyId = User.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(companyId))
+                {
+                    return BadRequest();
+                }
+                var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
+                var templateId = companyTemplate.FirstOrDefault()?.TemplateId;
+                if (templateId == null || templateId == Guid.Empty)
+                {
+                    return BadRequest();
                 }
 
                 var searchRequest = new CaseKeywordSearchRequest
                 {
                     CompanyId = Guid.Parse(currentCompanyId),
-                    TemplateId = Guid.Parse(currentTemplateId),
+                    TemplateId = templateId,
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
                     KeywordValues = request.KeywordValues

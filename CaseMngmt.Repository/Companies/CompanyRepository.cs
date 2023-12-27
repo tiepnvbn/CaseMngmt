@@ -1,7 +1,6 @@
 ﻿using CaseMngmt.Models.Database;
 using CaseMngmt.Models.Companies;
 using Microsoft.EntityFrameworkCore;
-using CaseMngmt.Models;
 
 namespace CaseMngmt.Repository.Companies
 {
@@ -48,23 +47,30 @@ namespace CaseMngmt.Repository.Companies
             }
         }
 
-        public async Task<IEnumerable<Company>> GetAllAsync(string CompanyName, string phoneNumber, int pageSize, int pageNumber)
+        public async Task<IEnumerable<Company>> GetAllAsync(string companyName, string phoneNumber, int pageSize, int pageNumber)
         {
-            var IQueryableCompany = (from tempCompany in _context.Company select tempCompany).Where(x => !x.Deleted);
-
-            if (!string.IsNullOrEmpty(CompanyName))
+            try
             {
-                IQueryableCompany = IQueryableCompany.Where(m => m.Name.Contains(CompanyName.Trim()));
-            }
-            if (!string.IsNullOrEmpty(phoneNumber))
-            {
-                IQueryableCompany = IQueryableCompany.Where(m => m.PhoneNumber.Contains(phoneNumber.Trim()));
-            }
-            
-            IQueryableCompany = IQueryableCompany.OrderBy(m => m.Name);
-            var result = await IQueryableCompany.Skip(pageNumber - 1).Take(pageSize).ToListAsync();
+                var IQueryableCompany = (from tempCompany in _context.Company select tempCompany).Where(x => !x.Deleted);
 
-            return result;
+                if (!string.IsNullOrEmpty(companyName))
+                {
+                    IQueryableCompany = IQueryableCompany.Where(m => m.Name.Contains(companyName.Trim()));
+                }
+                if (!string.IsNullOrEmpty(phoneNumber))
+                {
+                    IQueryableCompany = IQueryableCompany.Where(m => m.PhoneNumber.Contains(phoneNumber.Trim()));
+                }
+
+                IQueryableCompany = IQueryableCompany.OrderBy(m => m.Name);
+                var result = await IQueryableCompany.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<Company?> GetByIdAsync(Guid id)

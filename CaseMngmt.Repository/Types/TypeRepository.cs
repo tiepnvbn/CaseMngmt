@@ -43,11 +43,18 @@ namespace CaseMngmt.Repository.Types
 
         public async Task<IEnumerable<Type>> GetAllAsync(int pageSize, int pageNumber)
         {
-            var IQueryableType = (from tempType in _context.Type select tempType);
-            IQueryableType = IQueryableType.Where(x => !x.Deleted).OrderBy(m => m.Name);
-            var result = await IQueryableType.Skip(pageNumber - 1).Take(pageSize).ToListAsync();
+            try
+            {
+                var IQueryableType = (from tempType in _context.Type select tempType);
+                IQueryableType = IQueryableType.Where(x => !x.Deleted).OrderBy(m => m.Name);
+                var result = await IQueryableType.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<int> UpdateAsync(Type typeModel)

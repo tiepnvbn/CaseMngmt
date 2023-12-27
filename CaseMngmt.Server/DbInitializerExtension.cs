@@ -104,13 +104,13 @@ namespace CaseMngmt.Server
                     {
                         Id=defaultDateTypeGuid,
                         Name = "Date",
-                        Value = "DateTime"
+                        Value = "datetime"
                     },
                     new Models.Types.Type
                     {
                         Id= defaultDatetimeTypeGuid,
                         Name = "Datetime",
-                        Value = "DateTime"
+                        Value = "datetime"
                     },
                     new Models.Types.Type
                     {
@@ -128,7 +128,7 @@ namespace CaseMngmt.Server
                     {
                         Id = defaultListTypeGuid,
                         Name = "List (Alphanumeric)",
-                        Value = "string"
+                        Value = "list"
                     }
                 };
                 typeManager.AddMultiAsync(listType).ConfigureAwait(false);

@@ -43,11 +43,18 @@ namespace CaseMngmt.Repository.Cases
 
         public async Task<IEnumerable<Case>> GetAllAsync(int pageSize, int pageNumber)
         {
-            var IQueryableCase = (from tempCase in _context.Case select tempCase);
-            IQueryableCase = IQueryableCase.Where(x => !x.Deleted).OrderBy(m => m.Name);
-            var result = await IQueryableCase.Skip(pageNumber - 1).Take(pageSize).ToListAsync();
+            try
+            {
+                var IQueryableCase = (from tempCase in _context.Case select tempCase);
+                IQueryableCase = IQueryableCase.Where(x => !x.Deleted).OrderBy(m => m.Name);
+                var result = await IQueryableCase.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<int> UpdateAsync(Case caseModel)

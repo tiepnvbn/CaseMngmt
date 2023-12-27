@@ -44,11 +44,10 @@ namespace CaseMngmt.Models.CaseKeywords
             }
         }
     }
-
-    public class CaseKeywordValue : CaseKeywordBaseValue
-    {
-        [Required]
-        public Guid CaseId { get; set; }
-        public string CaseName { get; set; }
-    }
+    //public class CaseKeywordValue : CaseKeywordBaseValue
+    //{
+    //    [Required]
+    //    public Guid CaseId { get; set; }
+    //    public string CaseName { get; set; }
+    //}
 }
