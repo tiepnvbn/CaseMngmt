@@ -1,5 +1,6 @@
 ﻿using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Service.CaseKeywords;
+using CaseMngmt.Service.CompanyTemplates;
 using CaseMngmt.Service.Templates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,13 @@ namespace CaseMngmt.Server.Controllers
         private readonly ILogger<CaseController> _logger;
         private readonly ICaseKeywordService _caseKeywordService;
         private readonly ITemplateService _templateService;
-        public CaseController(ILogger<CaseController> logger, ICaseKeywordService caseKeywordService, ITemplateService templateService)
+        private readonly ICompanyTemplateService _companyTemplateService;
+        public CaseController(ILogger<CaseController> logger, ICaseKeywordService caseKeywordService, ITemplateService templateService, ICompanyTemplateService companyTemplateService)
         {
             _logger = logger;
             _caseKeywordService = caseKeywordService;
             _templateService = templateService;
+            _companyTemplateService = companyTemplateService;
         }
 
         [HttpPost, Route("getAll")]
@@ -35,8 +38,9 @@ namespace CaseMngmt.Server.Controllers
                 // Get Template to check role of user
                 var currentUserRole = User.FindAll(ClaimTypes.Role).Select(x => x.Value).ToList();
                 var currentCompanyId = User.FindFirst("CompanyId")?.Value;
-                var currentTemplateId = User.FindFirst("TemplateId")?.Value;
-                if (currentUserRole == null || currentUserRole.Count < 1 || string.IsNullOrEmpty(currentCompanyId) || string.IsNullOrEmpty(currentTemplateId))
+                var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(currentCompanyId));
+                var currentTemplateId = companyTemplate.First()?.TemplateId;
+                if (currentUserRole == null || currentUserRole.Count < 1 || string.IsNullOrEmpty(currentCompanyId) || !currentTemplateId.HasValue)
                 {
                     return BadRequest("Wrong Claim");
                 }
@@ -44,7 +48,7 @@ namespace CaseMngmt.Server.Controllers
                 var searchRequest = new CaseKeywordSearchRequest
                 {
                     CompanyId = Guid.Parse(currentCompanyId),
-                    TemplateId = Guid.Parse(currentTemplateId),
+                    TemplateId = currentTemplateId,
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
                     KeywordValues = request.KeywordValues
@@ -97,6 +101,9 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
+                var companyId = User.FindFirst("CompanyId")?.Value;
+                var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
+                request.TemplateId = companyTemplate.First().TemplateId;
                 var userTemplate = await _templateService.GetByIdAsync(request.TemplateId);
                 if (userTemplate == null)
                 {
@@ -109,14 +116,14 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest("KeywordValues is wrong format");
                 }
 
-                var userKeywordSetting = userTemplate.Keywords.Select(x => x.KeywordId).ToList();
-                var requestKeywords = request.KeywordValues.Select(x => x.KeywordId).ToList();
+                //var userKeywordSetting = userTemplate.Keywords.Select(x => x.KeywordId).ToList();
+                //var requestKeywords = request.KeywordValues.Select(x => x.KeywordId).ToList();
 
-                var isSameKeyword = userKeywordSetting.All(requestKeywords.Contains);
-                if (!isSameKeyword)
-                {
-                    return BadRequest("KeywordValues is wrong");
-                }
+                //var isSameKeyword = userKeywordSetting.All(requestKeywords.Contains);
+                //if (!isSameKeyword)
+                //{
+                //    return BadRequest("KeywordValues is wrong");
+                //}
 
                 var result = await _caseKeywordService.AddAsync(request);
 

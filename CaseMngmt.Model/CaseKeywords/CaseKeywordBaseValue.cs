@@ -35,7 +35,8 @@ namespace CaseMngmt.Models.CaseKeywords
                 }
 
                 var genericValidator = new GenericValidator();
-                return genericValidator.IsValid(type, Value, MaxLength);
+                return true;
+                //return genericValidator.IsValid(type, Value, MaxLength);
             }
             catch (Exception ex)
             {

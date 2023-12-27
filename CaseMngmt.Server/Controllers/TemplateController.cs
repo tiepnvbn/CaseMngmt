@@ -71,11 +71,11 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                var template = await _templateService.GetByIdAsync(templateId.Value);
-                if (template == null)
-                {
-                    return BadRequest();
-                }
+                //var template = await _templateService.GetByIdAsync(templateId.Value);
+                //if (template == null)
+                //{
+                //    return BadRequest();
+                //}
                 TemplateViewModel? result = await _templateService.GetByIdAsync(templateId.Value);
 
                 if (result == null)

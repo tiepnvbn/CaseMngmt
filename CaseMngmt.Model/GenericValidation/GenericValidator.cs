@@ -6,7 +6,12 @@
         {
             try
             {
-                object result = Activator.CreateInstance(type);
+                object result = null;
+                if (type.IsValueType)
+                {
+                    result = Activator.CreateInstance(type);
+                }
+                
 
                 // Get a reference to the TryParse method for this type
                 var tryParseMethod = type.GetMethod("TryParse", new[] { typeof(string), type.MakeByRefType() });
@@ -22,7 +27,7 @@
                 }
                 return false;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }
