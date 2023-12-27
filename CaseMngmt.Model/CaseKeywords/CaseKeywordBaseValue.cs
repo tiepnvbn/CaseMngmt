@@ -49,5 +49,6 @@ namespace CaseMngmt.Models.CaseKeywords
     {
         [Required]
         public Guid CaseId { get; set; }
+        public string CaseName { get; set; }
     }
 }
