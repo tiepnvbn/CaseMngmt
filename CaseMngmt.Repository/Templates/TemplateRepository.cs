@@ -71,9 +71,9 @@ namespace CaseMngmt.Repository.Templates
                                                   Order = x.Order,
                                                   Searchable = x.Searchable,
                                                   TemplateId = templateId,
-                                                  TypeId = type.Id,
-                                                  TypeName = type.Name,
-                                                  TypeValue = type.Value,
+                                                  TypeId = x.Type.Id,
+                                                  TypeName = x.Type.Name,
+                                                  TypeValue = x.Type.Value,
                                                   Metadata = !string.IsNullOrEmpty(x.Metadata)
                                                     ? x.Metadata.Split(',', StringSplitOptions.None).ToList()
                                                     : new List<string>()
