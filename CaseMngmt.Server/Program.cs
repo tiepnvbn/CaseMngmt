@@ -29,6 +29,7 @@ using CaseMngmt.Server;
 using CaseMngmt.Repository.CaseKeywords;
 using CaseMngmt.Repository.CompanyTemplates;
 using CaseMngmt.Service.CompanyTemplates;
+using CaseMngmt.Service.FileUploads;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,7 +78,7 @@ builder.Services.AddTransient<ITypeService, TypeService>();
 builder.Services.AddTransient<ITypeRepository, TypeRepository>();
 builder.Services.AddTransient<ICompanyTemplateService, CompanyTemplateService>();
 builder.Services.AddTransient<ICompanyTemplateRepository, CompanyTemplateRepository>();
-
+builder.Services.AddTransient<IFileUploadService, FileUploadService>();
 #endregion
 
 

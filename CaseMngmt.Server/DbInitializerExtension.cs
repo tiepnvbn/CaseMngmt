@@ -347,17 +347,6 @@ namespace CaseMngmt.Server
                         Source = string.Empty
                     }
                 };
-                keywordManager.AddAsync(new Keyword
-                {
-                    Name = "Customer Name",
-                    TypeId = defaultAlphanumericTypeGuid,
-                    TemplateId = defaultTemplateId,
-                    MaxLength = 20,
-                    IsRequired = true,
-                    Searchable = true,
-                    Order = 1,
-                    Source = string.Empty
-                });
                 keywordManager.AddMultiAsync(listKeywordDefault).ConfigureAwait(false);
 
                 #endregion

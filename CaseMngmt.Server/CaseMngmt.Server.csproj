@@ -38,4 +38,8 @@
     <ProjectReference Include="..\CaseMngmt.Service\CaseMngmt.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UploadedFiles\" />
+  </ItemGroup>
+
 </Project>
