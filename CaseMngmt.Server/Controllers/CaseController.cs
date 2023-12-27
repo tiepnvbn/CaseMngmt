@@ -110,11 +110,11 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                var isInValidModel = request.KeywordValues.Any(x => !x.Validate());
-                if (isInValidModel)
-                {
-                    return BadRequest("KeywordValues is wrong format");
-                }
+                //var isInValidModel = request.KeywordValues.Any(x => !x.Validate());
+                //if (isInValidModel)
+                //{
+                //    return BadRequest("KeywordValues is wrong format");
+                //}
 
                 //var userKeywordSetting = userTemplate.Keywords.Select(x => x.KeywordId).ToList();
                 //var requestKeywords = request.KeywordValues.Select(x => x.KeywordId).ToList();

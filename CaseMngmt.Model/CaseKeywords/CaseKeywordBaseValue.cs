@@ -29,10 +29,10 @@ namespace CaseMngmt.Models.CaseKeywords
                     return false;
                 }
                 Type type;
-                if (!DataTypeDictionary.DataTypeAlias.TryGetValue(TypeValue, out type))
-                {
-                    return false;
-                }
+                //if (!DataTypeDictionary.DataTypeAlias.TryGetValue(TypeValue, out type))
+                //{
+                //    return false;
+                //}
 
                 var genericValidator = new GenericValidator();
                 return true;
