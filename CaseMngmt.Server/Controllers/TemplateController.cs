@@ -12,7 +12,6 @@ namespace CaseMngmt.Server.Controllers
     [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     [Route("api/[controller]")]
-    [ClaimRequirement(ClaimTypes.Role, "Admin")]
     public class TemplateController : ControllerBase
     {
         private readonly ILogger<TemplateController> _logger;
@@ -30,6 +29,7 @@ namespace CaseMngmt.Server.Controllers
             _companyTemplateService = companyTemplateService;
         }
 
+        [ClaimRequirement(ClaimTypes.Role, "SuperAdmin")]
         [HttpGet, Route("getAll")]
         public async Task<IActionResult> GetAll(int? pageSize = 25, int? pageNumber = 1)
         {
@@ -71,11 +71,6 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                var template = await _templateService.GetByIdAsync(templateId.Value);
-                if (template == null)
-                {
-                    return BadRequest();
-                }
                 TemplateViewModel? result = await _templateService.GetByIdAsync(templateId.Value);
 
                 if (result == null)
@@ -119,6 +114,7 @@ namespace CaseMngmt.Server.Controllers
         }
 
         // TODO : integrate with image/file
+        [ClaimRequirement(ClaimTypes.Role, "SuperAdmin")]
         [HttpPost]
         public async Task<IActionResult> Create(TemplateRequest request)
         {
@@ -154,6 +150,7 @@ namespace CaseMngmt.Server.Controllers
         }
         
         // TODO : integrate with image/file
+        [ClaimRequirement(ClaimTypes.Role, "SuperAdmin")]
         [HttpPut, Route("{Id}")]
         public async Task<IActionResult> Update(TemplateViewRequest request)
         {
@@ -187,6 +184,7 @@ namespace CaseMngmt.Server.Controllers
             }
         }
 
+        [ClaimRequirement(ClaimTypes.Role, "SuperAdmin")]
         [HttpDelete, Route("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

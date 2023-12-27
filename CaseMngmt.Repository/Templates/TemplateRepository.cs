@@ -77,7 +77,7 @@ namespace CaseMngmt.Repository.Templates
                                                   Metadata = !string.IsNullOrEmpty(x.Metadata)
                                                     ? x.Metadata.Split(',', StringSplitOptions.None).ToList()
                                                     : new List<string>()
-                                              }).ToList()
+                                              }).OrderBy(x => x.Order).ToList()
                                           });
 
                 var result = await IQueryableTemplate.FirstOrDefaultAsync();

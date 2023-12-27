@@ -44,8 +44,6 @@ namespace CaseMngmt.Models.Database
                 .WithMany(e => e.KeywordRole)
                 .HasForeignKey(e => new { e.RoleId });
             base.OnModelCreating(modelBuilder);
-
-            //new DbInitializer(modelBuilder).Seed();
         }
 
         public DbSet<Company> Company { get; set; }
