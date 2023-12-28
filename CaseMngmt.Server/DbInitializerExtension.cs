@@ -104,13 +104,13 @@ namespace CaseMngmt.Server
                     {
                         Id=defaultDateTypeGuid,
                         Name = "Date",
-                        Value = "DateTime"
+                        Value = "datetime"
                     },
                     new Models.Types.Type
                     {
                         Id= defaultDatetimeTypeGuid,
                         Name = "Datetime",
-                        Value = "DateTime"
+                        Value = "datetime"
                     },
                     new Models.Types.Type
                     {
@@ -128,7 +128,7 @@ namespace CaseMngmt.Server
                     {
                         Id = defaultListTypeGuid,
                         Name = "List (Alphanumeric)",
-                        Value = "string"
+                        Value = "list"
                     }
                 };
                 typeManager.AddMultiAsync(listType).ConfigureAwait(false);
@@ -347,17 +347,6 @@ namespace CaseMngmt.Server
                         Source = string.Empty
                     }
                 };
-                keywordManager.AddAsync(new Keyword
-                {
-                    Name = "Customer Name",
-                    TypeId = defaultAlphanumericTypeGuid,
-                    TemplateId = defaultTemplateId,
-                    MaxLength = 20,
-                    IsRequired = true,
-                    Searchable = true,
-                    Order = 1,
-                    Source = string.Empty
-                });
                 keywordManager.AddMultiAsync(listKeywordDefault).ConfigureAwait(false);
 
                 #endregion

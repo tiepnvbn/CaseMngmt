@@ -1,8 +1,6 @@
 ﻿using CaseMngmt.Models.Database;
 using Microsoft.EntityFrameworkCore;
 using CaseMngmt.Models.Keywords;
-using CaseMngmt.Models.Templates;
-using CaseMngmt.Models.CaseKeywords;
 
 namespace CaseMngmt.Repository.Keywords
 {
@@ -78,15 +76,15 @@ namespace CaseMngmt.Repository.Keywords
                                              MaxLength = tempKeyword.MaxLength,
                                              Order = tempKeyword.Order,
                                              Searchable = tempKeyword.Searchable,
-                                             TypeId = tempType.Id,
-                                             TypeName = tempType.Name,
-                                             TypeValue = tempType.Value,
+                                             TypeId = tempKeyword.Type.Id,
+                                             TypeName = tempKeyword.Type.Name,
+                                             TypeValue = tempKeyword.Type.Value,
                                              Metadata = !string.IsNullOrEmpty(tempKeyword.Metadata)
                                                 ? tempKeyword.Metadata.Split(',', StringSplitOptions.None).ToList()
                                                 : new List<string>()
                                          });
                 IQueryableKeyword = IQueryableKeyword.OrderBy(m => m.KeywordName);
-                var result = await IQueryableKeyword.Skip(pageNumber - 1).Take(pageSize).ToListAsync();
+                var result = await IQueryableKeyword.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
                 return result;
             }

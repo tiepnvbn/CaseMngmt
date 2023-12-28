@@ -35,14 +35,17 @@ namespace CaseMngmt.Server.Controllers
         {
             try
             {
-                // Get Template to check role of user
-                var currentTemplateId = User.FindFirst("TemplateId")?.Value;
-                if (string.IsNullOrEmpty(currentTemplateId))
+                var companyId = User.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(companyId))
                 {
-                    return BadRequest("Wrong Claim");
+                    return BadRequest();
                 }
-
-                var templateId = Guid.Parse(currentTemplateId);
+                var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
+                var templateId = companyTemplate.FirstOrDefault()?.TemplateId;
+                if (templateId == null || templateId == Guid.Empty)
+                {
+                    return BadRequest();
+                }
 
                 var result = await _templateService.GetAllAsync(templateId, pageSize.Value, pageNumber.Value);
                 return result != null ? Ok(result) : BadRequest();

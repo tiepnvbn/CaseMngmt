@@ -65,26 +65,33 @@ namespace CaseMngmt.Repository.Customers
 
         public async Task<IEnumerable<Customer>> GetAllAsync(string customerName, string phoneNumber, string companyId, int pageSize, int pageNumber)
         {
-            var IQueryableCustomer = (from tempCustomer in _context.Customer select tempCustomer).Where(x => !x.Deleted);
-            
-            if (!string.IsNullOrEmpty(companyId))
+            try
             {
-                IQueryableCustomer = IQueryableCustomer.Where(m => m.CompanyId == Guid.Parse(companyId));
-            }
+                var IQueryableCustomer = (from tempCustomer in _context.Customer select tempCustomer).Where(x => !x.Deleted);
 
-            if (!string.IsNullOrEmpty(customerName))
-            {
-                IQueryableCustomer = IQueryableCustomer.Where(m => m.Name.Contains(customerName.Trim()));
-            }
-            if (!string.IsNullOrEmpty(phoneNumber))
-            {
-                IQueryableCustomer = IQueryableCustomer.Where(m => m.PhoneNumber.Contains(phoneNumber.Trim()));
-            }
-            
-            IQueryableCustomer = IQueryableCustomer.OrderBy(m => m.Name);
-            var result = await IQueryableCustomer.Skip(pageNumber - 1).Take(pageSize).ToListAsync();
+                if (!string.IsNullOrEmpty(companyId))
+                {
+                    IQueryableCustomer = IQueryableCustomer.Where(m => m.CompanyId == Guid.Parse(companyId));
+                }
 
-            return result;
+                if (!string.IsNullOrEmpty(customerName))
+                {
+                    IQueryableCustomer = IQueryableCustomer.Where(m => m.Name.Contains(customerName.Trim()));
+                }
+                if (!string.IsNullOrEmpty(phoneNumber))
+                {
+                    IQueryableCustomer = IQueryableCustomer.Where(m => m.PhoneNumber.Contains(phoneNumber.Trim()));
+                }
+
+                IQueryableCustomer = IQueryableCustomer.OrderBy(m => m.Name);
+                var result = await IQueryableCustomer.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<Customer?> GetByIdAsync(Guid id)

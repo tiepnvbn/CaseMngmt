@@ -27,12 +27,12 @@ namespace CaseMngmt.Models.Database
         public virtual DbSet<ApplicationRole> ApplicationRole { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Case>()
+              modelBuilder.Entity<Case>()
                 .HasMany(e => e.Keywords)
                 .WithMany(e => e.Cases)
                 .UsingEntity<CaseKeyword>(
-                    l => l.HasOne<Keyword>().WithMany().HasForeignKey(e => e.KeywordId),
-                    r => r.HasOne<Case>().WithMany().HasForeignKey(e => e.CaseId))
+                    l => l.HasOne<Keyword>(e => e.Keyword).WithMany(e => e.CaseKeywords).HasForeignKey(e => e.KeywordId), //MapLeftKey
+                    r => r.HasOne<Case>(e => e.Case).WithMany(e => e.CaseKeywords).HasForeignKey(e => e.CaseId)) //MapRightKey
                 .HasKey(e => e.Id);
 
             modelBuilder.Entity<CompanyTemplate>()

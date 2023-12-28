@@ -1,4 +1,6 @@
-﻿namespace CaseMngmt.Models.GenericValidation
+﻿using System.ComponentModel;
+
+namespace CaseMngmt.Models.GenericValidation
 {
     public class GenericValidator
     {
@@ -6,28 +8,20 @@
         {
             try
             {
-                object result = null;
-                if (type.IsValueType)
-                {
-                    result = Activator.CreateInstance(type);
-                }
-                
-
-                // Get a reference to the TryParse method for this type
-                var tryParseMethod = type.GetMethod("TryParse", new[] { typeof(string), type.MakeByRefType() });
-                // Call TryParse
-                var success = tryParseMethod.Invoke(null, new[] { value, result }) is bool;
-                if (success)
+                object valuse = TypeDescriptor.GetConverter(type).ConvertFromInvariantString(value);
+                if (valuse != null)
                 {
                     if (maxlength != null)
                     {
                         return value.Length <= maxlength;
                     }
+
                     return true;
                 }
+
                 return false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

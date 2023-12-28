@@ -41,8 +41,15 @@ namespace CaseMngmt.Service.Keywords
 
         public async Task<IEnumerable<KeywordViewModel>> GetAllAsync(int pageSize, int pageNumber)
         {
-            var result = await _repository.GetAllAsync(pageSize, pageNumber);
-            return result;
+            try
+            {
+                var result = await _repository.GetAllAsync(pageSize, pageNumber);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<KeywordViewModel?> GetByIdAsync(Guid id)

@@ -29,12 +29,18 @@ using CaseMngmt.Server;
 using CaseMngmt.Repository.CaseKeywords;
 using CaseMngmt.Repository.CompanyTemplates;
 using CaseMngmt.Service.CompanyTemplates;
+using CaseMngmt.Service.FileUploads;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString,
+                options => options.EnableRetryOnFailure(
+                    maxRetryCount: 5,
+                    maxRetryDelay: System.TimeSpan.FromSeconds(30),
+                    errorNumbersToAdd: null)
+                ));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services
@@ -77,7 +83,7 @@ builder.Services.AddTransient<ITypeService, TypeService>();
 builder.Services.AddTransient<ITypeRepository, TypeRepository>();
 builder.Services.AddTransient<ICompanyTemplateService, CompanyTemplateService>();
 builder.Services.AddTransient<ICompanyTemplateRepository, CompanyTemplateRepository>();
-
+builder.Services.AddTransient<IFileUploadService, FileUploadService>();
 #endregion
 
 
@@ -162,7 +168,7 @@ var app = builder.Build();
 //Configure the HTTP-request pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.UseItToSeedSqlServer();    //custom extension method to seed the DB
+    //app.UseItToSeedSqlServer();
     //configure other services
 }
 

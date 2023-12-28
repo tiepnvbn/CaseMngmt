@@ -132,7 +132,7 @@ namespace CaseMngmt.Repository.Templates
                 //}
 
                 IQueryableTemplate = IQueryableTemplate.OrderBy(m => m.Name);
-                var result = await IQueryableTemplate.Skip(pageNumber - 1).Take(pageSize).ToListAsync();
+                var result = await IQueryableTemplate.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
                 return result;
             }

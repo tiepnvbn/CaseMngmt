@@ -17,7 +17,8 @@ namespace CaseMngmt.Server.Controllers
         private readonly ICaseKeywordService _caseKeywordService;
         private readonly ITemplateService _templateService;
         private readonly ICompanyTemplateService _companyTemplateService;
-        public CaseController(ILogger<CaseController> logger, ICaseKeywordService caseKeywordService, ITemplateService templateService, ICompanyTemplateService companyTemplateService)
+        public CaseController(ILogger<CaseController> logger, ICaseKeywordService caseKeywordService, 
+            ITemplateService templateService, ICompanyTemplateService companyTemplateService)
         {
             _logger = logger;
             _caseKeywordService = caseKeywordService;
@@ -28,7 +29,7 @@ namespace CaseMngmt.Server.Controllers
         [HttpPost, Route("getAll")]
         public async Task<IActionResult> GetAll(CaseKeywordSearch request)
         {
-            if (!ModelState.IsValid || request == null || !request.KeywordValues.Any())
+            if (!ModelState.IsValid || request == null)
             {
                 return BadRequest(ModelState);
             }
@@ -38,24 +39,34 @@ namespace CaseMngmt.Server.Controllers
                 // Get Template to check role of user
                 var currentUserRole = User.FindAll(ClaimTypes.Role).Select(x => x.Value).ToList();
                 var currentCompanyId = User.FindFirst("CompanyId")?.Value;
-                var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(currentCompanyId));
-                var currentTemplateId = companyTemplate.First()?.TemplateId;
-                if (currentUserRole == null || currentUserRole.Count < 1 || string.IsNullOrEmpty(currentCompanyId) || !currentTemplateId.HasValue)
+                if (currentUserRole == null || currentUserRole.Count < 1 || string.IsNullOrEmpty(currentCompanyId))
                 {
                     return BadRequest("Wrong Claim");
+                }
+
+                var companyId = User.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(companyId))
+                {
+                    return BadRequest();
+                }
+                var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
+                var templateId = companyTemplate.FirstOrDefault()?.TemplateId;
+                if (templateId == null || templateId == Guid.Empty)
+                {
+                    return BadRequest();
                 }
 
                 var searchRequest = new CaseKeywordSearchRequest
                 {
                     CompanyId = Guid.Parse(currentCompanyId),
-                    TemplateId = currentTemplateId,
+                    TemplateId = templateId,
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
                     KeywordValues = request.KeywordValues
                 };
 
                 var result = await _caseKeywordService.GetAllAsync(searchRequest);
-                return Ok(result);
+                return result != null && result.Any() ? Ok(result) : NotFound();
             }
             catch (Exception e)
             {
