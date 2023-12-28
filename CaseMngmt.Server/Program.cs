@@ -168,7 +168,7 @@ var app = builder.Build();
 //Configure the HTTP-request pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.UseItToSeedSqlServer();    //custom extension method to seed the DB
+    //app.UseItToSeedSqlServer();
     //configure other services
 }
 
