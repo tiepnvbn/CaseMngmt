@@ -27,21 +27,13 @@ namespace CaseMngmt.Service.Customers
         {
             try
             {
-                var caseKeywordValues = await _caseKeywordRepository.GetAllAsync(searchRequest);
-                if (caseKeywordValues == null)
+                var result = await _caseKeywordRepository.GetAllAsync(searchRequest);
+                if (result == null)
                 {
                     return null;
                 }
 
-                //var result = caseKeywordValues.Select(x => 
-                //    new CaseKeywordViewModel
-                //    {
-                //        //CaseId = caseId,
-                //        CaseKeywordValues = x.ToList()
-                //    }
-                //);
-
-                return null;
+                return result;
             }
             catch (Exception)
             {

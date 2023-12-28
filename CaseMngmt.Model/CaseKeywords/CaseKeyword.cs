@@ -19,7 +19,7 @@ namespace CaseMngmt.Models.CaseKeywords
         public string Value { get; set; }
         public bool Deleted { get; set; }
 
-        public Case Case { get; set; }
-        public Keyword Keyword { get; set; }
+        public Case Case { get; set; } = null!;
+        public Keyword Keyword { get; set; } = null!;
     }
 }

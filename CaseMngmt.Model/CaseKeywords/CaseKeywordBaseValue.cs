@@ -5,21 +5,20 @@ namespace CaseMngmt.Models.CaseKeywords
 {
     public class CaseKeywordBaseValue
     {
-        //[Required]
+        [Required]
         public Guid KeywordId { get; set; }
         [MaxLength(256)]
         public string KeywordName { get; set; }
-        //[Required]
+        [Required]
         public string Value { get; set; }
         public Guid TypeId { get; set; }
         public string? TypeName { get; set; }
-        public string? TypeValue { get; set; }
+        public string TypeValue { get; set; }
         public bool IsRequired { get; set; }
         public int? MaxLength { get; set; }
-
         public bool Searchable { get; set; }
         public int Order { get; set; }
-        public List<string> Metadata { get; set; }
+        public IEnumerable<string> Metadata { get; set; }
         public bool Validate()
         {
             try
@@ -29,14 +28,13 @@ namespace CaseMngmt.Models.CaseKeywords
                     return false;
                 }
                 Type type;
-                //if (!DataTypeDictionary.DataTypeAlias.TryGetValue(TypeValue, out type))
-                //{
-                //    return false;
-                //}
+                if (!DataTypeDictionary.DataTypeAlias.TryGetValue(TypeValue.ToLower(), out type))
+                {
+                    return false;
+                }
 
-                //var genericValidator = new GenericValidator();
-                //return genericValidator.IsValid(type, Value, MaxLength);
-                return true;
+                var genericValidator = new GenericValidator();
+                return genericValidator.IsValid(type, Value, MaxLength);
             }
             catch (Exception ex)
             {

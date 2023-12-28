@@ -3,6 +3,6 @@
     public class CaseKeywordViewModel
     {
         public Guid CaseId { get; set; }
-        public List<CaseKeywordBaseValue> CaseKeywordValues { get; set; }
+        public IEnumerable<CaseKeywordBaseValue> CaseKeywordValues { get; set; }
     }
 }

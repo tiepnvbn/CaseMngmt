@@ -29,7 +29,7 @@ namespace CaseMngmt.Server.Controllers
         [HttpPost, Route("getAll")]
         public async Task<IActionResult> GetAll(CaseKeywordSearch request)
         {
-            if (!ModelState.IsValid || request == null || !request.KeywordValues.Any())
+            if (!ModelState.IsValid || request == null)
             {
                 return BadRequest(ModelState);
             }
@@ -66,7 +66,7 @@ namespace CaseMngmt.Server.Controllers
                 };
 
                 var result = await _caseKeywordService.GetAllAsync(searchRequest);
-                return Ok(result);
+                return result != null && result.Any() ? Ok(result) : NotFound();
             }
             catch (Exception e)
             {

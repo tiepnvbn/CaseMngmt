@@ -1,7 +1,6 @@
 ﻿using CaseMngmt.Models.Database;
 using Microsoft.EntityFrameworkCore;
 using CaseMngmt.Models.CaseKeywords;
-using CaseMngmt.Models.Templates;
 
 namespace CaseMngmt.Repository.CaseKeywords
 {
@@ -77,52 +76,53 @@ namespace CaseMngmt.Repository.CaseKeywords
             }
         }
 
-        public async Task<IEnumerable<CaseKeywordViewModel>> GetAllAsync(CaseKeywordSearchRequest searchRequest)
+        public async Task<List<CaseKeywordViewModel>> GetAllAsync(CaseKeywordSearchRequest searchRequest)
         {
             try
             {
-                //var groupingQuery = 
-                //        from responses in _context.CaseKeyword
-                //        group responses by new { responses.CaseId, responses.Value } into responseGroup
-                //        select new 
-                //        {
-                //            CaseId = responseGroup.Key,
-                //            KeywordValue = responseGroup.
-                //        };
-                var IQueryableCase = (from tempCase in _context.Case
-                                      join caseKeyword in _context.CaseKeyword on tempCase.Id equals caseKeyword.CaseId
-                                      join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
-                                      join template in _context.Template on keyword.TemplateId equals template.Id
-                                      join companyTemplate in _context.CompanyTemplate on template.Id equals companyTemplate.TemplateId
-                                      join type in _context.Type on keyword.TypeId equals type.Id
-                                      where !caseKeyword.Deleted
-                                        && keyword.TemplateId == searchRequest.TemplateId
-                                        && companyTemplate.CompanyId == searchRequest.CompanyId
-                                        //&& searchRequest.KeywordValues.All(x => x.KeywordId == keyword.Id && caseKeyword.Value.Contains(x.Value))
-                                      //group new { tempCase, caseKeyword } by new { tempCase.Id } into pg
-                                      //let firstCase = pg.FirstOrDefault()
-                                      select new CaseKeywordViewModel
-                                      {
-                                          CaseId = tempCase.Id,
-                                          CaseKeywordValues = tempCase.Keywords.Select(x => new CaseKeywordBaseValue
-                                          {
-                                              KeywordId = x.Id,
-                                              KeywordName = x.Name,
-                                              Value = caseKeyword.Value,
-                                              IsRequired = x.IsRequired,
-                                              MaxLength = x.MaxLength,
-                                              Searchable = x.Searchable,
-                                              Order = x.Order,
-                                              TypeId = x.Type.Id,
-                                              TypeName = x.Type.Name,
-                                              TypeValue = x.Type.Value,
-                                              Metadata = !string.IsNullOrEmpty(x.Metadata)
-                                                ? x.Metadata.Split(',', StringSplitOptions.None).ToList()
-                                                : new List<string>()
-                                          }).ToList()
-                                      }
-                                      );
-                var result = await IQueryableCase.Skip((searchRequest.PageNumber - 1) * searchRequest.PageSize).Take(searchRequest.PageSize).ToListAsync();
+                var query = (from caseKeyword in _context.CaseKeyword.Include(x => x.Keyword).Include(x => x.Keyword.Type)
+                             join tempCase in _context.Case on caseKeyword.CaseId equals tempCase.Id
+                             join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
+                             join template in _context.Template on keyword.TemplateId equals template.Id
+                             join companyTemplate in _context.CompanyTemplate on template.Id equals companyTemplate.TemplateId
+                             join type in _context.Type on keyword.TypeId equals type.Id
+                             where !caseKeyword.Deleted
+                                && !tempCase.Deleted
+                                && !keyword.Deleted
+                                && keyword.TemplateId == searchRequest.TemplateId
+                                && companyTemplate.CompanyId == searchRequest.CompanyId
+                             select new { tempCase.Id, caseKeyword })
+                            .AsEnumerable()
+                            .GroupBy(x => x.Id);
+
+                if (searchRequest.KeywordValues != null && searchRequest.KeywordValues.Any())
+                {
+                    query = query.Where(z => searchRequest.KeywordValues.All(x => z.Any(c => c.caseKeyword.KeywordId.Equals(x.KeywordId) && c.caseKeyword.Value.Contains(x.Value))));
+                }
+
+                var result = query
+                        .Select(z => new CaseKeywordViewModel
+                        {
+                            CaseId = z.Key,
+                            CaseKeywordValues = z.Select(x => new CaseKeywordBaseValue
+                            {
+                                KeywordId = x.caseKeyword.Keyword.Id,
+                                KeywordName = x.caseKeyword.Keyword.Name,
+                                Value = x.caseKeyword.Value,
+                                IsRequired = x.caseKeyword.Keyword.IsRequired,
+                                MaxLength = x.caseKeyword.Keyword.MaxLength,
+                                Searchable = x.caseKeyword.Keyword.Searchable,
+                                Order = x.caseKeyword.Keyword.Order,
+                                TypeId = x.caseKeyword.Keyword.Type.Id,
+                                TypeName = x.caseKeyword.Keyword.Type.Name,
+                                TypeValue = x.caseKeyword.Keyword.Type.Value,
+                                Metadata = !string.IsNullOrEmpty(x.caseKeyword.Keyword.Metadata)
+                                  ? x.caseKeyword.Keyword.Metadata.Split(',', StringSplitOptions.None).ToList()
+                                  : new List<string>()
+                            }).OrderBy(x => x.Order).ToList()
+                        })
+                        .Skip((searchRequest.PageNumber - 1) * searchRequest.PageSize)
+                        .Take(searchRequest.PageSize).ToList();
 
                 return result;
             }

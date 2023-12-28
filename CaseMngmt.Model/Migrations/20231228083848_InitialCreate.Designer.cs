@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CaseMngmt.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231225114556_InitialCreate")]
+    [Migration("20231228083848_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -606,17 +606,21 @@ namespace CaseMngmt.Models.Migrations
 
             modelBuilder.Entity("CaseMngmt.Models.CaseKeywords.CaseKeyword", b =>
                 {
-                    b.HasOne("CaseMngmt.Models.Cases.Case", null)
-                        .WithMany()
+                    b.HasOne("CaseMngmt.Models.Cases.Case", "Case")
+                        .WithMany("CaseKeywords")
                         .HasForeignKey("CaseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CaseMngmt.Models.Keywords.Keyword", null)
-                        .WithMany()
+                    b.HasOne("CaseMngmt.Models.Keywords.Keyword", "Keyword")
+                        .WithMany("CaseKeywords")
                         .HasForeignKey("KeywordId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Case");
+
+                    b.Navigation("Keyword");
                 });
 
             modelBuilder.Entity("CaseMngmt.Models.CompanyTemplates.CompanyTemplate", b =>
@@ -733,6 +737,11 @@ namespace CaseMngmt.Models.Migrations
                     b.Navigation("KeywordRole");
                 });
 
+            modelBuilder.Entity("CaseMngmt.Models.Cases.Case", b =>
+                {
+                    b.Navigation("CaseKeywords");
+                });
+
             modelBuilder.Entity("CaseMngmt.Models.Companies.Company", b =>
                 {
                     b.Navigation("CompanyTemplate");
@@ -744,6 +753,8 @@ namespace CaseMngmt.Models.Migrations
 
             modelBuilder.Entity("CaseMngmt.Models.Keywords.Keyword", b =>
                 {
+                    b.Navigation("CaseKeywords");
+
                     b.Navigation("KeywordRole");
                 });
 
