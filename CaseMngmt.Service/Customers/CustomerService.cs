@@ -21,7 +21,7 @@ namespace CaseMngmt.Service.Customers
                 var entity = _mapper.Map<Customer>(customer);
                 entity.CompanyId = customer.CompanyId;
                 entity.CreatedBy = Guid.Parse(customer.CreatedBy);
-                entity.UpdatedBy = Guid.Parse(customer.UpdatedBy);
+                entity.UpdatedBy = Guid.Parse(customer.CreatedBy);
                 return await _repository.AddAsync(entity);
             }
             catch (Exception ex)
