@@ -8,7 +8,7 @@ namespace CaseMngmt.Models.Templates
         [Required]
         public Guid CompanyId { get; set; }
         [Required]
-        public List<KeywordAddRequest> KeywordRequests { get; set; }
+        public List<KeywordRequest> KeywordRequests { get; set; }
     }
 
     public class TemplateViewRequest
@@ -18,6 +18,6 @@ namespace CaseMngmt.Models.Templates
         [Required]
         public Guid CompanyId { get; set; }
         [Required]
-        public List<KeywordEditRequest> KeywordRequests { get; set; }
+        public List<KeywordRequest> KeywordRequests { get; set; }
     }
 }

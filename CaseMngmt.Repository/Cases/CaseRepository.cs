@@ -41,7 +41,7 @@ namespace CaseMngmt.Repository.Cases
             }
         }
 
-        public async Task<IEnumerable<Case>> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<IEnumerable<Case>?> GetAllAsync(int pageSize, int pageNumber)
         {
             try
             {

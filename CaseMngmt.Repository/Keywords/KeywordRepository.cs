@@ -41,7 +41,7 @@ namespace CaseMngmt.Repository.Keywords
             }
         }
 
-        public async Task<List<Keyword>> GetByTemplateIdAsync(Guid templateId)
+        public async Task<List<Keyword>?> GetByTemplateIdAsync(Guid templateId)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace CaseMngmt.Repository.Keywords
             }
         }
 
-        public async Task<List<KeywordViewModel>> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<List<KeywordViewModel>?> GetAllAsync(int pageSize, int pageNumber)
         {
             try
             {
@@ -76,11 +76,12 @@ namespace CaseMngmt.Repository.Keywords
                                              MaxLength = tempKeyword.MaxLength,
                                              Order = tempKeyword.Order,
                                              Searchable = tempKeyword.Searchable,
+                                             DocumentSearchable = tempKeyword.DocumentSearchable,
                                              TypeId = tempKeyword.Type.Id,
                                              TypeName = tempKeyword.Type.Name,
                                              TypeValue = tempKeyword.Type.Value,
-                                             Metadata = !string.IsNullOrEmpty(tempKeyword.Metadata)
-                                                ? tempKeyword.Metadata.Split(',', StringSplitOptions.None).ToList()
+                                             Metadata = !string.IsNullOrEmpty(tempKeyword.Type.Metadata)
+                                                ? tempKeyword.Type.Metadata.Split(',', StringSplitOptions.None).ToList()
                                                 : new List<string>()
                                          });
                 IQueryableKeyword = IQueryableKeyword.OrderBy(m => m.KeywordName);

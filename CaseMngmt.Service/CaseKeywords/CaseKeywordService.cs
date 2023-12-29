@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using CaseMngmt.Models.CaseKeywords;
-using CaseMngmt.Models.Cases;
 using CaseMngmt.Repository.CaseKeywords;
 using CaseMngmt.Repository.Cases;
-using CaseMngmt.Repository.Keywords;
 using CaseMngmt.Service.CaseKeywords;
 
 namespace CaseMngmt.Service.Customers
@@ -12,14 +10,12 @@ namespace CaseMngmt.Service.Customers
     {
         private ICaseRepository _caseRepository;
         private ICaseKeywordRepository _caseKeywordRepository;
-        private IKeywordRepository _keywordRepository;
 
         private readonly IMapper _mapper;
-        public CaseKeywordService(ICaseRepository caseRepository, ICaseKeywordRepository caseKeywordRepository, IKeywordRepository keywordRepository, IMapper mapper)
+        public CaseKeywordService(ICaseRepository caseRepository, ICaseKeywordRepository caseKeywordRepository, IMapper mapper)
         {
             _caseRepository = caseRepository;
             _caseKeywordRepository = caseKeywordRepository;
-            _keywordRepository = keywordRepository;
             _mapper = mapper;
         }
 
@@ -59,6 +55,7 @@ namespace CaseMngmt.Service.Customers
                 var result = new CaseKeywordViewModel
                 {
                     CaseId = caseId,
+                    CaseName = caseEntity.Name,
                     CaseKeywordValues = caseKeywordValues.ToList()
                 };
                 return result;

@@ -37,14 +37,14 @@ namespace CaseMngmt.Server.Controllers
             try
             {
                 // Get Template to check role of user
-                var currentUserRole = User.FindAll(ClaimTypes.Role).Select(x => x.Value).ToList();
-                var currentCompanyId = User.FindFirst("CompanyId")?.Value;
+                var currentUserRole = User?.FindAll(ClaimTypes.Role)?.Select(x => x.Value)?.ToList();
+                var currentCompanyId = User?.FindFirst("CompanyId")?.Value;
                 if (currentUserRole == null || currentUserRole.Count < 1 || string.IsNullOrEmpty(currentCompanyId))
                 {
                     return BadRequest("Wrong Claim");
                 }
 
-                var companyId = User.FindFirst("CompanyId")?.Value;
+                var companyId = User?.FindFirst("CompanyId")?.Value;
                 if (string.IsNullOrEmpty(companyId))
                 {
                     return BadRequest();
@@ -70,7 +70,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CaseController), true, e);
                 return BadRequest();
             }
         }
@@ -96,7 +96,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CaseController), true, e);
                 return BadRequest();
             }
         }
@@ -139,7 +139,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CaseController), true, e);
                 return BadRequest();
             }
         }
@@ -160,7 +160,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CaseController), true, e);
                 return BadRequest();
             }
         }
@@ -180,7 +180,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CaseController), true, e);
                 return BadRequest();
             }
         }

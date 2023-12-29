@@ -7,7 +7,7 @@ namespace CaseMngmt.Models.Customers
         [MaxLength(12)]
         [RegularExpression(@"^(\d{12})$", ErrorMessage = "Wrong PhoneNumber")]
         [Required]
-        public string? PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
 
         [MaxLength(50)]
         [Required]

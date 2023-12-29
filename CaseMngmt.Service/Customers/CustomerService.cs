@@ -20,19 +20,14 @@ namespace CaseMngmt.Service.Customers
             {
                 var entity = _mapper.Map<Customer>(customer);
                 entity.CompanyId = customer.CompanyId;
-                entity.CreatedBy = Guid.Parse(customer.CreatedBy);
-                entity.UpdatedBy = Guid.Parse(customer.UpdatedBy);
+                entity.CreatedBy = customer.CreatedBy.Value;
+                entity.UpdatedBy =customer.UpdatedBy.Value;
                 return await _repository.AddAsync(entity);
             }
             catch (Exception ex)
             {
                 return 0;
             }
-        }
-
-        public async Task<bool> CheckCustomerExistsAsync(string customerName)
-        {
-            return await _repository.CheckCustomerExistsAsync(customerName);
         }
 
         public async Task<int> DeleteAsync(Guid id)
@@ -47,14 +42,20 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<IEnumerable<CustomerViewModel>> GetAllCustomersAsync(string customerName, string phoneNumber, string companyId, int pageSize, int pageNumber)
+        public async Task<IEnumerable<CustomerViewModel>?> GetAllCustomersAsync(string? customerName, string? phoneNumber, string companyId, int pageSize, int pageNumber)
         {
+            try
+            {
+                var customersFromRepository = await _repository.GetAllAsync(customerName, phoneNumber, companyId, pageSize, pageNumber);
 
-            var customersFromRepository = await _repository.GetAllAsync(customerName, phoneNumber, companyId, pageSize, pageNumber);
+                var result = _mapper.Map<List<CustomerViewModel>>(customersFromRepository);
 
-            var result = _mapper.Map<List<CustomerViewModel>>(customersFromRepository);
-
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<CustomerViewModel?> GetByIdAsync(Guid id)
@@ -92,7 +93,7 @@ namespace CaseMngmt.Service.Customers
                 entity.PostCode2 = customer.PostCode2;
                 entity.StateProvince = customer.StateProvince;
                 entity.CompanyId = customer.CompanyId;
-                entity.UpdatedBy = Guid.Parse(customer.UpdatedBy);
+                entity.UpdatedBy = customer.UpdatedBy.Value;
                 entity.UpdatedDate = DateTime.UtcNow;
                 await _repository.UpdateAsync(entity);
                 return 1;

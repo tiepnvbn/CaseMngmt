@@ -1,4 +1,5 @@
 ﻿using CaseMngmt.Models.ApplicationRoles;
+using CaseMngmt.Models.Keywords;
 using System.ComponentModel.DataAnnotations;
 
 namespace CaseMngmt.Models.KeywordRoles
@@ -12,5 +13,6 @@ namespace CaseMngmt.Models.KeywordRoles
         public Guid RoleId { get; set; }
 
         public ApplicationRole ApplicationRole { get; set; } = null!;
+        public Keyword Keyword { get; set; } = null!;
     }
 }

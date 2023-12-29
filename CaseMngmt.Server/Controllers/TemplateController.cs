@@ -35,7 +35,7 @@ namespace CaseMngmt.Server.Controllers
         {
             try
             {
-                var companyId = User.FindFirst("CompanyId")?.Value;
+                var companyId = User?.FindFirst("CompanyId")?.Value;
                 if (string.IsNullOrEmpty(companyId))
                 {
                     return BadRequest();
@@ -47,12 +47,12 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                var result = await _templateService.GetAllAsync(templateId, pageSize.Value, pageNumber.Value);
-                return result != null ? Ok(result) : BadRequest();
+                var result = await _templateService.GetAllAsync(templateId, pageSize ?? 25, pageNumber ?? 1);
+                return result != null && result.Any() ? Ok(result) : NotFound();
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(TemplateController), true, e);
                 return BadRequest();
             }
         }
@@ -62,7 +62,7 @@ namespace CaseMngmt.Server.Controllers
         {
             try
             {
-                var companyId = User.FindFirst("CompanyId")?.Value;
+                var companyId = User?.FindFirst("CompanyId")?.Value;
                 if (string.IsNullOrEmpty(companyId))
                 {
                     return BadRequest();
@@ -85,7 +85,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(TemplateController), true, e);
                 return BadRequest();
             }
         }
@@ -111,7 +111,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(TemplateController), true, e);
                 return BadRequest();
             }
         }
@@ -133,7 +133,7 @@ namespace CaseMngmt.Server.Controllers
             try
             {
                 // TODO : add user infomation
-                var loggedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var loggedUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 var company = await _companyService.GetByIdAsync(request.CompanyId);
                 if (company == null)
@@ -147,7 +147,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(TemplateController), true, e);
                 return BadRequest();
             }
         }
@@ -169,7 +169,7 @@ namespace CaseMngmt.Server.Controllers
             try
             {
                 // TODO : add user infomation
-                var loggedUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var loggedUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 var company = await _companyService.GetByIdAsync(request.CompanyId);
                 if (company == null)
@@ -182,7 +182,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(TemplateController), true, e);
                 return BadRequest();
             }
         }
@@ -203,7 +203,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(TemplateController), true, e);
                 return BadRequest();
             }
         }

@@ -28,22 +28,6 @@ namespace CaseMngmt.Repository.Customers
             }
         }
 
-        public async Task<bool> CheckCustomerExistsAsync(string customerName)
-        {
-            var customerCount = await (from customer in _context.Customer
-                                       where !customer.Deleted && customer.Name == customerName
-                                       select customer).CountAsync();
-
-            if (customerCount > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         public async Task<int> DeleteAsync(Guid id)
         {
             try
@@ -63,7 +47,7 @@ namespace CaseMngmt.Repository.Customers
             }
         }
 
-        public async Task<IEnumerable<Customer>> GetAllAsync(string customerName, string phoneNumber, string companyId, int pageSize, int pageNumber)
+        public async Task<IEnumerable<Customer>?> GetAllAsync(string? customerName, string? phoneNumber, string companyId, int pageSize, int pageNumber)
         {
             try
             {

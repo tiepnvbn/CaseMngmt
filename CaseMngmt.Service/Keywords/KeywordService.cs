@@ -39,7 +39,7 @@ namespace CaseMngmt.Service.Keywords
             }
         }
 
-        public async Task<IEnumerable<KeywordViewModel>> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<IEnumerable<KeywordViewModel>?> GetAllAsync(int pageSize, int pageNumber)
         {
             try
             {
@@ -81,6 +81,7 @@ namespace CaseMngmt.Service.Keywords
                 entity.IsRequired = request.IsRequired;
                 entity.Order = request.Order;
                 entity.Searchable = request.Searchable;
+                entity.DocumentSearchable = request.DocumentSearchable;
                 entity.UpdatedDate = DateTime.UtcNow;
                 await _repository.UpdateAsync(entity);
                 return 1;

@@ -14,11 +14,11 @@ namespace CaseMngmt.Service.Companies
             _mapper = mapper;
         }
 
-        public async Task<int> AddAsync(CompanyRequest Company)
+        public async Task<int> AddAsync(CompanyRequest company)
         {
             try
             {
-                var entity = _mapper.Map<Company>(Company);
+                var entity = _mapper.Map<Company>(company);
                 return await _repository.AddAsync(entity);
             }
             catch (Exception ex)
@@ -39,17 +39,23 @@ namespace CaseMngmt.Service.Companies
             }
         }
 
-        public async Task<IEnumerable<CompanyViewModel>> GetAllAsync(string CompanyName, string phoneNumber, int pageSize, int pageNumber)
+        public async Task<IEnumerable<CompanyViewModel>?> GetAllAsync(string companyName, string phoneNumber, int pageSize, int pageNumber)
         {
+            try
+            {
+                var companysFromRepository = await _repository.GetAllAsync(companyName, phoneNumber, pageSize, pageNumber);
 
-            var CompanysFromRepository = await _repository.GetAllAsync(CompanyName, phoneNumber, pageSize, pageNumber);
+                var result = _mapper.Map<List<CompanyViewModel>>(companysFromRepository);
 
-            var result = _mapper.Map<List<CompanyViewModel>>(CompanysFromRepository);
-
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
-        public async Task<CompanyViewModel> GetByIdAsync(Guid id)
+        public async Task<CompanyViewModel?> GetByIdAsync(Guid id)
         {
             try
             {
@@ -63,26 +69,26 @@ namespace CaseMngmt.Service.Companies
             }
         }
 
-        public async Task<int> UpdateAsync(Guid Id, CompanyRequest Company)
+        public async Task<int> UpdateAsync(Guid id, CompanyRequest company)
         {
             try
             {
-                var entity = await _repository.GetByIdAsync(Id);
+                var entity = await _repository.GetByIdAsync(id);
                 if (entity == null)
                 {
                     return 0;
                 }
 
-                entity.Name = Company.Name;
-                entity.RoomNumber = Company.RoomNumber;
-                entity.City = Company.City;
-                entity.PhoneNumber = Company.PhoneNumber;
-                entity.BuildingName = Company.BuildingName;
-                entity.City = Company.City;
-                entity.Note = Company.Note;
-                entity.PostCode1 = Company.PostCode1;
-                entity.PostCode2 = Company.PostCode2;
-                entity.StateProvince = Company.StateProvince;
+                entity.Name = company.Name;
+                entity.RoomNumber = company.RoomNumber;
+                entity.City = company.City;
+                entity.PhoneNumber = company.PhoneNumber;
+                entity.BuildingName = company.BuildingName;
+                entity.City = company.City;
+                entity.Note = company.Note;
+                entity.PostCode1 = company.PostCode1;
+                entity.PostCode2 = company.PostCode2;
+                entity.StateProvince = company.StateProvince;
                 entity.UpdatedDate = DateTime.UtcNow;
                 await _repository.UpdateAsync(entity);
                 return 1;

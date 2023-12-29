@@ -5,8 +5,10 @@ using CaseMngmt.Models.Cases;
 using CaseMngmt.Models.Companies;
 using CaseMngmt.Models.CompanyTemplates;
 using CaseMngmt.Models.Customers;
+using CaseMngmt.Models.FileTypes;
 using CaseMngmt.Models.KeywordRoles;
 using CaseMngmt.Models.Keywords;
+using CaseMngmt.Models.RoleFileTypes;
 using CaseMngmt.Models.Templates;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -27,22 +29,33 @@ namespace CaseMngmt.Models.Database
         public virtual DbSet<ApplicationRole> ApplicationRole { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-              modelBuilder.Entity<Case>()
+            modelBuilder.Entity<Case>()
+              .HasMany(e => e.Keywords)
+              .WithMany(e => e.Cases)
+              .UsingEntity<CaseKeyword>(
+                  l => l.HasOne(e => e.Keyword).WithMany(e => e.CaseKeywords).HasForeignKey(e => e.KeywordId), //MapLeftKey
+                  r => r.HasOne(e => e.Case).WithMany(e => e.CaseKeywords).HasForeignKey(e => e.CaseId)) //MapRightKey
+              .HasKey(e => e.Id);
+
+            modelBuilder.Entity<FileType>()
+                .HasMany(e => e.Roles)
+                .WithMany(e => e.FileTypes)
+                .UsingEntity<RoleFileType>(
+                    l => l.HasOne(e => e.ApplicationRole).WithMany(e => e.RoleFileTypes).HasForeignKey(e => e.RoleId), //MapLeftKey
+                    r => r.HasOne(e => e.FileType).WithMany(e => e.RoleFileTypes).HasForeignKey(e => e.FileTypeId)) //MapRightKey
+              .HasKey(e => new { e.RoleId, e.FileTypeId });
+
+            modelBuilder.Entity<ApplicationRole>()
                 .HasMany(e => e.Keywords)
-                .WithMany(e => e.Cases)
-                .UsingEntity<CaseKeyword>(
-                    l => l.HasOne<Keyword>(e => e.Keyword).WithMany(e => e.CaseKeywords).HasForeignKey(e => e.KeywordId), //MapLeftKey
-                    r => r.HasOne<Case>(e => e.Case).WithMany(e => e.CaseKeywords).HasForeignKey(e => e.CaseId)) //MapRightKey
-                .HasKey(e => e.Id);
+                .WithMany(e => e.Roles)
+                .UsingEntity<KeywordRole>(
+                    l => l.HasOne(e => e.Keyword).WithMany(e => e.KeywordRoles).HasForeignKey(e => e.KeywordId), //MapLeftKey
+                    r => r.HasOne(e => e.ApplicationRole).WithMany(e => e.KeywordRoles).HasForeignKey(e => e.RoleId)) //MapRightKey
+              .HasKey(e => new { e.RoleId, e.KeywordId });
 
             modelBuilder.Entity<CompanyTemplate>()
                 .HasKey(e => new { e.CompanyId, e.TemplateId });
-            modelBuilder.Entity<KeywordRole>()
-                .HasKey(e => new { e.KeywordId, e.RoleId });
-            modelBuilder.Entity<KeywordRole>()
-                .HasOne(e => e.ApplicationRole)
-                .WithMany(e => e.KeywordRole)
-                .HasForeignKey(e => new { e.RoleId });
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -55,5 +68,7 @@ namespace CaseMngmt.Models.Database
         public DbSet<KeywordRole> KeywordRole { get; set; }
         public DbSet<CaseKeyword> CaseKeyword { get; set; }
         public DbSet<CompanyTemplate> CompanyTemplate { get; set; }
+        public DbSet<FileType> FileType { get; set; }
+        public DbSet<RoleFileType> RoleFileType { get; set; }
     }
 }

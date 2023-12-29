@@ -6,9 +6,9 @@ namespace CaseMngmt.Repository.Keywords
     {
         Task<int> AddAsync(Keyword keyword);
         Task<int> AddMultiAsync(List<Keyword> keywords);
-        Task<List<KeywordViewModel>> GetAllAsync(int pageSize, int pageNumber);
+        Task<List<KeywordViewModel>?> GetAllAsync(int pageSize, int pageNumber);
         Task<Keyword?> GetByIdAsync(Guid id);
-        Task<List<Keyword>> GetByTemplateIdAsync(Guid templateId);
+        Task<List<Keyword>?> GetByTemplateIdAsync(Guid templateId);
         Task<int> DeleteAsync(Guid id);
         Task<int> DeleteMultiByTemplateIdAsync(Guid templateId);
         Task<int> UpdateAsync(Keyword keyword);

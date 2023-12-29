@@ -1,6 +1,5 @@
 ﻿using CaseMngmt.Models.Database;
 using Microsoft.EntityFrameworkCore;
-using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.CompanyTemplates;
 
 namespace CaseMngmt.Repository.CompanyTemplates
@@ -54,7 +53,6 @@ namespace CaseMngmt.Repository.CompanyTemplates
             catch (Exception)
             {
                 return new List<CompanyTemplate>();
-                throw;
             }
         }
     }

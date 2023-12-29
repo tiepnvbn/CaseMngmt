@@ -1,6 +1,7 @@
 ﻿using CaseMngmt.Models.Database;
 using Microsoft.EntityFrameworkCore;
 using CaseMngmt.Models.CaseKeywords;
+using CaseMngmt.Models.Templates;
 
 namespace CaseMngmt.Repository.CaseKeywords
 {
@@ -43,7 +44,7 @@ namespace CaseMngmt.Repository.CaseKeywords
             }
         }
 
-        public async Task<IEnumerable<CaseKeywordBaseValue>> GetByIdAsync(Guid caseId)
+        public async Task<IEnumerable<CaseKeywordBaseValue>?> GetByIdAsync(Guid caseId)
         {
             try
             {
@@ -59,15 +60,16 @@ namespace CaseMngmt.Repository.CaseKeywords
                                       IsRequired = caseKeyword.Keyword.IsRequired,
                                       MaxLength = caseKeyword.Keyword.MaxLength,
                                       Searchable = caseKeyword.Keyword.Searchable,
+                                      DocumentSearchable = caseKeyword.Keyword.DocumentSearchable,
                                       Order = keyword.Order,
                                       TypeId = caseKeyword.Keyword.Type.Id,
                                       TypeName = caseKeyword.Keyword.Type.Name,
                                       TypeValue = caseKeyword.Keyword.Type.Value,
-                                      Metadata = !string.IsNullOrEmpty(caseKeyword.Keyword.Metadata)
-                                                ? caseKeyword.Keyword.Metadata.Split(',', StringSplitOptions.None).ToList()
+                                      Metadata = !string.IsNullOrEmpty(caseKeyword.Keyword.Type.Metadata)
+                                                ? caseKeyword.Keyword.Type.Metadata.Split(',', StringSplitOptions.None).ToList()
                                                 : new List<string>()
                                   });
-                var result = await IQueryable.ToListAsync();
+                var result = await IQueryable.OrderBy(x => x.Order).ToListAsync();
                 return result;
             }
             catch (Exception ex)
@@ -76,7 +78,7 @@ namespace CaseMngmt.Repository.CaseKeywords
             }
         }
 
-        public async Task<List<CaseKeywordViewModel>> GetAllAsync(CaseKeywordSearchRequest searchRequest)
+        public async Task<List<CaseKeywordViewModel>?> GetAllAsync(CaseKeywordSearchRequest searchRequest)
         {
             try
             {
@@ -91,9 +93,9 @@ namespace CaseMngmt.Repository.CaseKeywords
                                 && !keyword.Deleted
                                 && keyword.TemplateId == searchRequest.TemplateId
                                 && companyTemplate.CompanyId == searchRequest.CompanyId
-                             select new { tempCase.Id, caseKeyword })
+                             select new { tempCase, caseKeyword })
                             .AsEnumerable()
-                            .GroupBy(x => x.Id);
+                            .GroupBy(x => new { x.tempCase.Id, x.tempCase.Name });
 
                 if (searchRequest.KeywordValues != null && searchRequest.KeywordValues.Any())
                 {
@@ -103,7 +105,8 @@ namespace CaseMngmt.Repository.CaseKeywords
                 var result = query
                         .Select(z => new CaseKeywordViewModel
                         {
-                            CaseId = z.Key,
+                            CaseId = z.Key.Id,
+                            CaseName = z.Key.Name,
                             CaseKeywordValues = z.Select(x => new CaseKeywordBaseValue
                             {
                                 KeywordId = x.caseKeyword.Keyword.Id,
@@ -112,19 +115,20 @@ namespace CaseMngmt.Repository.CaseKeywords
                                 IsRequired = x.caseKeyword.Keyword.IsRequired,
                                 MaxLength = x.caseKeyword.Keyword.MaxLength,
                                 Searchable = x.caseKeyword.Keyword.Searchable,
+                                DocumentSearchable = x.caseKeyword.Keyword.DocumentSearchable,
                                 Order = x.caseKeyword.Keyword.Order,
                                 TypeId = x.caseKeyword.Keyword.Type.Id,
                                 TypeName = x.caseKeyword.Keyword.Type.Name,
                                 TypeValue = x.caseKeyword.Keyword.Type.Value,
-                                Metadata = !string.IsNullOrEmpty(x.caseKeyword.Keyword.Metadata)
-                                  ? x.caseKeyword.Keyword.Metadata.Split(',', StringSplitOptions.None).ToList()
+                                Metadata = !string.IsNullOrEmpty(x.caseKeyword.Keyword.Type.Metadata)
+                                  ? x.caseKeyword.Keyword.Type.Metadata.Split(',', StringSplitOptions.None).ToList()
                                   : new List<string>()
                             }).OrderBy(x => x.Order).ToList()
                         })
                         .Skip((searchRequest.PageNumber - 1) * searchRequest.PageSize)
                         .Take(searchRequest.PageSize).ToList();
 
-                return result;
+                return await Task.FromResult(result);
             }
             catch (Exception ex)
             {

@@ -24,8 +24,8 @@ namespace CaseMngmt.Server.Controllers
         {
             try
             {
-                var result = await _service.GetAllAsync(name, phoneNumber, pageSize.Value, pageNumber.Value);
-                return Ok(result);
+                var result = await _service.GetAllAsync(name, phoneNumber, pageSize ?? 25, pageNumber ?? 1);
+                return result != null && result.Any() ? Ok(result) : NotFound();
             }
             catch (Exception e)
             {
@@ -44,7 +44,7 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                CompanyViewModel result = await _service.GetByIdAsync(id);
+                CompanyViewModel? result = await _service.GetByIdAsync(id);
 
                 if (result == null)
                 {
@@ -69,7 +69,7 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                Company.CreatedBy = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                Company.CreatedBy = Guid.Parse(User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000");
                 var result = await _service.AddAsync(Company);
 
                 return result > 0 ? Ok(result) : BadRequest();
@@ -91,7 +91,7 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                model.UpdatedBy = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                model.UpdatedBy = Guid.Parse(User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000");
                 var result = await _service.UpdateAsync(Id, model);
                 return result > 0 ? Ok(result) : BadRequest();
             }

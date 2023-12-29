@@ -1,25 +1,24 @@
 ﻿using AutoMapper;
-using CaseMngmt.Models.Types;
-using CaseMngmt.Repository.Types;
-using Type = CaseMngmt.Models.Types.Type;
+using CaseMngmt.Models.FileTypes;
+using CaseMngmt.Repository.FileTypes;
 
-namespace CaseMngmt.Service.Types
+namespace CaseMngmt.Service.FileTypes
 {
-    public class TypeService : ITypeService
+    public class FileTypeService : IFileTypeService
     {
-        private ITypeRepository _repository;
+        private IFileTypeRepository _repository;
         private readonly IMapper _mapper;
-        public TypeService(ITypeRepository repository, IMapper mapper)
+        public FileTypeService(IFileTypeRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
-        public async Task<int> AddAsync(TypeRequest request)
+        public async Task<int> AddAsync(FileTypeRequest request)
         {
             try
             {
-                var entity = _mapper.Map<Type>(request);
+                var entity = _mapper.Map<FileType>(request);
                 return await _repository.AddAsync(entity);
             }
             catch (Exception ex)
@@ -40,13 +39,13 @@ namespace CaseMngmt.Service.Types
             }
         }
 
-        public async Task<IEnumerable<TypeViewModel>?> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<IEnumerable<FileTypeViewModel>?> GetAllAsync(int pageSize, int pageNumber)
         {
             try
             {
                 var typesFromRepository = await _repository.GetAllAsync(pageSize, pageNumber);
 
-                var result = _mapper.Map<List<TypeViewModel>>(typesFromRepository);
+                var result = _mapper.Map<List<FileTypeViewModel>>(typesFromRepository);
 
                 return result;
             }
@@ -56,12 +55,12 @@ namespace CaseMngmt.Service.Types
             }
         }
 
-        public async Task<TypeViewModel?> GetByIdAsync(Guid id)
+        public async Task<FileTypeViewModel?> GetByIdAsync(Guid id)
         {
             try
             {
                 var entity = await _repository.GetByIdAsync(id);
-                var result = _mapper.Map<TypeViewModel>(entity);
+                var result = _mapper.Map<FileTypeViewModel>(entity);
                 return result;
             }
             catch (Exception ex)
@@ -70,7 +69,7 @@ namespace CaseMngmt.Service.Types
             }
         }
 
-        public async Task<int> UpdateAsync(Guid Id, TypeRequest request)
+        public async Task<int> UpdateAsync(Guid Id, FileTypeRequest request)
         {
             try
             {

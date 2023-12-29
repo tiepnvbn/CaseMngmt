@@ -24,9 +24,14 @@ namespace CaseMngmt.Server.Controllers
         {
             try
             {
-                var currentCompanyId = User.FindFirst("CompanyId").Value;
-                var result = await _service.GetAllCustomersAsync(customerName, phoneNumber, currentCompanyId, pageSize.Value, pageNumber.Value);
-                return Ok(result);
+                var currentCompanyId = User?.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(currentCompanyId))
+                {
+                    return BadRequest();
+                }
+
+                var result = await _service.GetAllCustomersAsync(customerName, phoneNumber, currentCompanyId, pageSize ?? 25, pageNumber ?? 1);
+                return result != null && result.Any() ? Ok(result) : NotFound();
             }
             catch (Exception e)
             {
@@ -45,12 +50,13 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                CustomerViewModel result = await _service.GetByIdAsync(id);
+                CustomerViewModel? result = await _service.GetByIdAsync(id);
 
                 if (result == null)
                 {
                     return NotFound();
                 }
+
                 return Ok(result);
             }
             catch (Exception e)
@@ -70,10 +76,23 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                customer.CreatedBy = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                customer.CompanyId = Guid.Parse(User.FindFirst("CompanyId").Value);
-                var result = await _service.AddCustomerAsync(customer);
+                var currentCompanyId = User?.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(currentCompanyId))
+                {
+                    return BadRequest();
+                }
 
+                var currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId))
+                {
+                    return BadRequest();
+                }
+                
+                customer.CreatedBy = Guid.Parse(currentUserId);
+                customer.UpdatedBy = Guid.Parse(currentUserId);
+                customer.CompanyId = Guid.Parse(currentCompanyId);
+
+                var result = await _service.AddCustomerAsync(customer);
                 return result > 0 ? Ok(result) : BadRequest();
             }
             catch (Exception e)
@@ -93,8 +112,20 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                model.CompanyId = Guid.Parse(User.FindFirst("CompanyId").Value);
-                model.UpdatedBy = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var currentCompanyId = User?.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(currentCompanyId))
+                {
+                    return BadRequest();
+                }
+                var currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId))
+                {
+                    return BadRequest();
+                }
+
+                model.CompanyId = Guid.Parse(currentCompanyId);
+                model.UpdatedBy = Guid.Parse(currentUserId);
+
                 var result = await _service.UpdateCustomerAsync(id, model);
                 return result > 0 ? Ok(result) : BadRequest();
             }

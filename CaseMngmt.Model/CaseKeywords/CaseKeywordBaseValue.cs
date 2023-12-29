@@ -9,7 +9,6 @@ namespace CaseMngmt.Models.CaseKeywords
         public Guid KeywordId { get; set; }
         [MaxLength(256)]
         public string KeywordName { get; set; }
-        [Required]
         public string Value { get; set; }
         public Guid TypeId { get; set; }
         public string? TypeName { get; set; }
@@ -17,8 +16,9 @@ namespace CaseMngmt.Models.CaseKeywords
         public bool IsRequired { get; set; }
         public int? MaxLength { get; set; }
         public bool Searchable { get; set; }
+        public bool DocumentSearchable { get; set; }
         public int Order { get; set; }
-        public IEnumerable<string> Metadata { get; set; }
+        public IEnumerable<string>? Metadata { get; set; }
         public bool Validate()
         {
             try
@@ -28,13 +28,13 @@ namespace CaseMngmt.Models.CaseKeywords
                     return false;
                 }
                 Type type;
-                if (!DataTypeDictionary.DataTypeAlias.TryGetValue(TypeValue.ToLower(), out type))
+                if (DataTypeDictionary.DataTypeAlias.TryGetValue(TypeValue.ToLower(), value: out type))
                 {
-                    return false;
+                    var genericValidator = new GenericValidator();
+                    return genericValidator.IsValid(type, Value, MaxLength);
                 }
 
-                var genericValidator = new GenericValidator();
-                return genericValidator.IsValid(type, Value, MaxLength);
+                return false;
             }
             catch (Exception ex)
             {
@@ -42,10 +42,4 @@ namespace CaseMngmt.Models.CaseKeywords
             }
         }
     }
-    //public class CaseKeywordValue : CaseKeywordBaseValue
-    //{
-    //    [Required]
-    //    public Guid CaseId { get; set; }
-    //    public string CaseName { get; set; }
-    //}
 }
