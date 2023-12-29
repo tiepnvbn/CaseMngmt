@@ -28,7 +28,7 @@ namespace CaseMngmt.Service.Customers
                 {
                     return null;
                 }
-
+                
                 return result;
             }
             catch (Exception)
@@ -72,7 +72,7 @@ namespace CaseMngmt.Service.Customers
             {
                 var caseModel = new Models.Cases.Case
                 {
-                    Name = $"Case - {DateTime.UtcNow}"
+                    Name = $"Case - {DateTime.Now}"
                 };
                 var caseResult = await _caseRepository.AddAsync(caseModel);
 

@@ -1,7 +1,6 @@
 ﻿using CaseMngmt.Models.Database;
 using Microsoft.EntityFrameworkCore;
 using CaseMngmt.Models.CaseKeywords;
-using CaseMngmt.Models.Templates;
 
 namespace CaseMngmt.Repository.CaseKeywords
 {

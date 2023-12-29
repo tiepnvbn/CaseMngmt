@@ -19,6 +19,16 @@ namespace CaseMngmt.Models.CaseKeywords
         public bool DocumentSearchable { get; set; }
         public int Order { get; set; }
         public IEnumerable<string>? Metadata { get; set; }
+    }
+
+    public class CaseKeywordValue
+    {
+        [Required]
+        public Guid KeywordId { get; set; }
+        public string Value { get; set; }
+        public string TypeValue { get; set; }
+        public bool IsRequired { get; set; }
+        public int? MaxLength { get; set; }
         public bool Validate()
         {
             try

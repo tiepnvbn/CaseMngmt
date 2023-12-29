@@ -182,7 +182,7 @@ var app = builder.Build();
 //Configure the HTTP-request pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.UseItToSeedSqlServer();
+    //app.UseItToSeedSqlServer();
     //configure other services
 }
 

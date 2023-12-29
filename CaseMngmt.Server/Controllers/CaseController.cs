@@ -17,7 +17,7 @@ namespace CaseMngmt.Server.Controllers
         private readonly ICaseKeywordService _caseKeywordService;
         private readonly ITemplateService _templateService;
         private readonly ICompanyTemplateService _companyTemplateService;
-        public CaseController(ILogger<CaseController> logger, ICaseKeywordService caseKeywordService, 
+        public CaseController(ILogger<CaseController> logger, ICaseKeywordService caseKeywordService,
             ITemplateService templateService, ICompanyTemplateService companyTemplateService)
         {
             _logger = logger;
@@ -112,7 +112,19 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                var userTemplate = await _templateService.GetByIdAsync(request.TemplateId);
+                var companyId = User?.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(companyId))
+                {
+                    return BadRequest();
+                }
+                var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
+                var templateId = companyTemplate.FirstOrDefault()?.TemplateId;
+                if (templateId == null || templateId == Guid.Empty)
+                {
+                    return BadRequest();
+                }
+
+                var userTemplate = await _templateService.GetByIdAsync(templateId.Value);
                 if (userTemplate == null)
                 {
                     return BadRequest();
@@ -127,8 +139,8 @@ namespace CaseMngmt.Server.Controllers
                 var userKeywordSetting = userTemplate.Keywords.Select(x => x.KeywordId).ToList();
                 var requestKeywords = request.KeywordValues.Select(x => x.KeywordId).ToList();
 
-                var isSameKeyword = userKeywordSetting.All(requestKeywords.Contains);
-                if (!isSameKeyword)
+                var allOfUserKeywordsIsInRequest = userKeywordSetting.Intersect(requestKeywords).Count() == userKeywordSetting.Count();
+                if (!allOfUserKeywordsIsInRequest)
                 {
                     return BadRequest("KeywordValues is wrong");
                 }
@@ -155,6 +167,39 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
+                var companyId = User?.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(companyId))
+                {
+                    return BadRequest();
+                }
+                var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
+                var templateId = companyTemplate.FirstOrDefault()?.TemplateId;
+                if (templateId == null || templateId == Guid.Empty)
+                {
+                    return BadRequest();
+                }
+
+                var userTemplate = await _templateService.GetByIdAsync(templateId.Value);
+                if (userTemplate == null)
+                {
+                    return BadRequest();
+                }
+
+                var isInValidModel = request.KeywordValues.Any(x => !x.Validate());
+                if (isInValidModel)
+                {
+                    return BadRequest("KeywordValues is wrong format");
+                }
+
+                var userKeywordSetting = userTemplate.Keywords.Select(x => x.KeywordId).ToList();
+                var requestKeywords = request.KeywordValues.Select(x => x.KeywordId).ToList();
+
+                var allOfUserKeywordsIsInRequest = userKeywordSetting.Intersect(requestKeywords).Count() == userKeywordSetting.Count();
+                if (!allOfUserKeywordsIsInRequest)
+                {
+                    return BadRequest("KeywordValues is wrong");
+                }
+
                 var result = await _caseKeywordService.UpdateAsync(request);
                 return result > 0 ? Ok(result) : BadRequest();
             }
