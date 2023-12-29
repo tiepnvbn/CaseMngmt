@@ -6,11 +6,11 @@ namespace CaseMngmt.Models.Companies
     {
         [MaxLength(256)]
         [Required]
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         [MaxLength(12)]
         [Required]
-        public string? PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
 
         [MaxLength(50)]
         [Required]

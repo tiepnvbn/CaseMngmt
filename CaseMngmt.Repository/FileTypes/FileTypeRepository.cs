@@ -1,23 +1,23 @@
 ﻿using CaseMngmt.Models.Database;
+using CaseMngmt.Models.FileTypes;
 using Microsoft.EntityFrameworkCore;
-using Type = CaseMngmt.Models.Types.Type;
 
-namespace CaseMngmt.Repository.Types
+namespace CaseMngmt.Repository.FileTypes
 {
-    public class TypeRepository : ITypeRepository
+    public class FileTypeRepository : IFileTypeRepository
     {
         private ApplicationDbContext _context;
 
-        public TypeRepository(ApplicationDbContext context)
+        public FileTypeRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<int> AddAsync(Type model)
+        public async Task<int> AddAsync(FileType model)
         {
             try
             {
-                await _context.Type.AddAsync(model);
+                await _context.FileType.AddAsync(model);
                 var result = _context.SaveChanges();
 
                 return result;
@@ -28,11 +28,11 @@ namespace CaseMngmt.Repository.Types
             }
         }
 
-        public async Task<Type?> GetByIdAsync(Guid id)
+        public async Task<FileType?> GetByIdAsync(Guid id)
         {
             try
             {
-                var result = await _context.Type.FindAsync(id);
+                var result = await _context.FileType.FindAsync(id);
                 return result;
             }
             catch (Exception ex)
@@ -41,12 +41,12 @@ namespace CaseMngmt.Repository.Types
             }
         }
 
-        public async Task<IEnumerable<Type>?> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<IEnumerable<FileType>?> GetAllAsync(int pageSize, int pageNumber)
         {
             try
             {
-                var IQueryableType = (from tempType in _context.Type select tempType);
-                IQueryableType = IQueryableType.Where(x => !x.Deleted && x.IsDefaultType).OrderBy(m => m.Name);
+                var IQueryableType = (from tempType in _context.FileType select tempType);
+                IQueryableType = IQueryableType.Where(x => !x.Deleted).OrderBy(m => m.Name);
                 var result = await IQueryableType.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
                 return result;
@@ -57,13 +57,13 @@ namespace CaseMngmt.Repository.Types
             }
         }
 
-        public async Task<int> UpdateAsync(Type typeModel)
+        public async Task<int> UpdateAsync(FileType model)
         {
             try
             {
-                if (typeModel != null)
+                if (model != null)
                 {
-                    _context.Type.Update(typeModel);
+                    _context.FileType.Update(model);
                     await _context.SaveChangesAsync();
                     return 1;
                 }
@@ -80,7 +80,7 @@ namespace CaseMngmt.Repository.Types
         {
             try
             {
-                Type? typeModel = await _context.Type.FindAsync(id);
+                FileType? typeModel = await _context.FileType.FindAsync(id);
                 if (typeModel != null)
                 {
                     typeModel.Deleted = true;
@@ -96,11 +96,11 @@ namespace CaseMngmt.Repository.Types
             }
         }
 
-        public async Task<int> AddMultiAsync(List<Type> types)
+        public async Task<int> AddMultiAsync(List<FileType> fileTypes)
         {
             try
             {
-                await _context.Type.AddRangeAsync(types);
+                await _context.FileType.AddRangeAsync(fileTypes);
                 var result = _context.SaveChanges();
 
                 return result;
@@ -111,15 +111,15 @@ namespace CaseMngmt.Repository.Types
             }
         }
 
-        public async Task<int> DeleteByIdsAsync(List<Guid> typeIds)
+        public async Task<int> DeleteByIdsAsync(List<Guid> fileIds)
         {
             try
             {
-                var data = _context.Type.Where(a => !a.Deleted && typeIds.Contains(a.Id)).ToList();
+                var data = _context.FileType.Where(a => !a.Deleted && fileIds.Contains(a.Id)).ToList();
                 foreach (var item in data)
                 {
                     item.Deleted = true;
-                    _context.Type.Update(item);
+                    _context.FileType.Update(item);
                 }
                 await _context.SaveChangesAsync();
 

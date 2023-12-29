@@ -14,6 +14,7 @@ namespace CaseMngmt.Models.Keywords
         public int? MaxLength { get; set; }
         public bool IsRequired { get; set; }
         public bool Searchable { get; set; }
+        public bool DocumentSearchable { get; set; }
         public int Order { get; set; }
         public List<string> Metadata { get; set; }
         public Guid CreatedBy { get; set; }

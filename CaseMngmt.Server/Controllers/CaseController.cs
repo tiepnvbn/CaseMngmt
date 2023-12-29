@@ -17,7 +17,7 @@ namespace CaseMngmt.Server.Controllers
         private readonly ICaseKeywordService _caseKeywordService;
         private readonly ITemplateService _templateService;
         private readonly ICompanyTemplateService _companyTemplateService;
-        public CaseController(ILogger<CaseController> logger, ICaseKeywordService caseKeywordService, 
+        public CaseController(ILogger<CaseController> logger, ICaseKeywordService caseKeywordService,
             ITemplateService templateService, ICompanyTemplateService companyTemplateService)
         {
             _logger = logger;
@@ -37,14 +37,14 @@ namespace CaseMngmt.Server.Controllers
             try
             {
                 // Get Template to check role of user
-                var currentUserRole = User.FindAll(ClaimTypes.Role).Select(x => x.Value).ToList();
-                var currentCompanyId = User.FindFirst("CompanyId")?.Value;
+                var currentUserRole = User?.FindAll(ClaimTypes.Role)?.Select(x => x.Value)?.ToList();
+                var currentCompanyId = User?.FindFirst("CompanyId")?.Value;
                 if (currentUserRole == null || currentUserRole.Count < 1 || string.IsNullOrEmpty(currentCompanyId))
                 {
                     return BadRequest("Wrong Claim");
                 }
 
-                var companyId = User.FindFirst("CompanyId")?.Value;
+                var companyId = User?.FindFirst("CompanyId")?.Value;
                 if (string.IsNullOrEmpty(companyId))
                 {
                     return BadRequest();
@@ -70,7 +70,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CaseController), true, e);
                 return BadRequest();
             }
         }
@@ -96,7 +96,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CaseController), true, e);
                 return BadRequest();
             }
         }
@@ -112,10 +112,19 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                var companyId = User.FindFirst("CompanyId")?.Value;
+                var companyId = User?.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(companyId))
+                {
+                    return BadRequest();
+                }
                 var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
-                request.TemplateId = companyTemplate.First().TemplateId;
-                var userTemplate = await _templateService.GetByIdAsync(request.TemplateId);
+                var templateId = companyTemplate.FirstOrDefault()?.TemplateId;
+                if (templateId == null || templateId == Guid.Empty)
+                {
+                    return BadRequest();
+                }
+
+                var userTemplate = await _templateService.GetByIdAsync(templateId.Value);
                 if (userTemplate == null)
                 {
                     return BadRequest();
@@ -130,11 +139,11 @@ namespace CaseMngmt.Server.Controllers
                 //var userKeywordSetting = userTemplate.Keywords.Select(x => x.KeywordId).ToList();
                 //var requestKeywords = request.KeywordValues.Select(x => x.KeywordId).ToList();
 
-                //var isSameKeyword = userKeywordSetting.All(requestKeywords.Contains);
-                //if (!isSameKeyword)
-                //{
-                //    return BadRequest("KeywordValues is wrong");
-                //}
+                var allOfUserKeywordsIsInRequest = userKeywordSetting.Intersect(requestKeywords).Count() == userKeywordSetting.Count();
+                if (!allOfUserKeywordsIsInRequest)
+                {
+                    return BadRequest("KeywordValues is wrong");
+                }
 
                 var result = await _caseKeywordService.AddAsync(request);
 
@@ -142,7 +151,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CaseController), true, e);
                 return BadRequest();
             }
         }
@@ -158,12 +167,45 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
+                var companyId = User?.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(companyId))
+                {
+                    return BadRequest();
+                }
+                var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
+                var templateId = companyTemplate.FirstOrDefault()?.TemplateId;
+                if (templateId == null || templateId == Guid.Empty)
+                {
+                    return BadRequest();
+                }
+
+                var userTemplate = await _templateService.GetByIdAsync(templateId.Value);
+                if (userTemplate == null)
+                {
+                    return BadRequest();
+                }
+
+                var isInValidModel = request.KeywordValues.Any(x => !x.Validate());
+                if (isInValidModel)
+                {
+                    return BadRequest("KeywordValues is wrong format");
+                }
+
+                var userKeywordSetting = userTemplate.Keywords.Select(x => x.KeywordId).ToList();
+                var requestKeywords = request.KeywordValues.Select(x => x.KeywordId).ToList();
+
+                var allOfUserKeywordsIsInRequest = userKeywordSetting.Intersect(requestKeywords).Count() == userKeywordSetting.Count();
+                if (!allOfUserKeywordsIsInRequest)
+                {
+                    return BadRequest("KeywordValues is wrong");
+                }
+
                 var result = await _caseKeywordService.UpdateAsync(request);
                 return result > 0 ? Ok(result) : BadRequest();
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CaseController), true, e);
                 return BadRequest();
             }
         }
@@ -183,7 +225,7 @@ namespace CaseMngmt.Server.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, nameof(CustomerController), true, e);
+                _logger.LogError(e.Message, nameof(CaseController), true, e);
                 return BadRequest();
             }
         }

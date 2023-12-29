@@ -1,9 +1,7 @@
-﻿using CaseMngmt.Models;
-using CaseMngmt.Models.Account;
+﻿using CaseMngmt.Models.Account;
 using CaseMngmt.Models.ApplicationRoles;
 using CaseMngmt.Models.ApplicationUsers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;

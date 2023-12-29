@@ -47,7 +47,7 @@ namespace CaseMngmt.Repository.Companies
             }
         }
 
-        public async Task<IEnumerable<Company>> GetAllAsync(string companyName, string phoneNumber, int pageSize, int pageNumber)
+        public async Task<IEnumerable<Company>?> GetAllAsync(string companyName, string phoneNumber, int pageSize, int pageNumber)
         {
             try
             {

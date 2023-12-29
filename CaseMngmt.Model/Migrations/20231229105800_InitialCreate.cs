@@ -67,6 +67,23 @@ namespace CaseMngmt.Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FileType",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FileType", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Template",
                 columns: table => new
                 {
@@ -88,7 +105,10 @@ namespace CaseMngmt.Models.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsDefaultType = table.Column<bool>(type: "bit", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Source = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Metadata = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -188,6 +208,30 @@ namespace CaseMngmt.Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RoleFileType",
+                columns: table => new
+                {
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FileTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoleFileType", x => new { x.RoleId, x.FileTypeId });
+                    table.ForeignKey(
+                        name: "FK_RoleFileType_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RoleFileType_FileType_FileTypeId",
+                        column: x => x.FileTypeId,
+                        principalTable: "FileType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CompanyTemplate",
                 columns: table => new
                 {
@@ -221,9 +265,8 @@ namespace CaseMngmt.Models.Migrations
                     MaxLength = table.Column<int>(type: "int", nullable: true),
                     IsRequired = table.Column<bool>(type: "bit", nullable: false),
                     Searchable = table.Column<bool>(type: "bit", nullable: false),
+                    DocumentSearchable = table.Column<bool>(type: "bit", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
-                    Source = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Metadata = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -369,7 +412,7 @@ namespace CaseMngmt.Models.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_KeywordRole", x => new { x.KeywordId, x.RoleId });
+                    table.PrimaryKey("PK_KeywordRole", x => new { x.RoleId, x.KeywordId });
                     table.ForeignKey(
                         name: "FK_KeywordRole_AspNetRoles_RoleId",
                         column: x => x.RoleId,
@@ -459,9 +502,14 @@ namespace CaseMngmt.Models.Migrations
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_KeywordRole_RoleId",
+                name: "IX_KeywordRole_KeywordId",
                 table: "KeywordRole",
-                column: "RoleId");
+                column: "KeywordId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RoleFileType_FileTypeId",
+                table: "RoleFileType",
+                column: "FileTypeId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -494,16 +542,22 @@ namespace CaseMngmt.Models.Migrations
                 name: "KeywordRole");
 
             migrationBuilder.DropTable(
+                name: "RoleFileType");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Case");
 
             migrationBuilder.DropTable(
+                name: "Keyword");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Keyword");
+                name: "FileType");
 
             migrationBuilder.DropTable(
                 name: "Company");

@@ -9,7 +9,7 @@ namespace CaseMngmt.Models.Companies
     {
         [MaxLength(12)]
         [Required]
-        public string? PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
 
         [MaxLength(50)]
         [Required]
@@ -43,7 +43,7 @@ namespace CaseMngmt.Models.Companies
         public string? Note { get; set; }
 
         public ICollection<ApplicationUser> Users { get; set; }
-        public ICollection<Customer> Customer { get; set; }
-        public ICollection<CompanyTemplate> CompanyTemplate { get; set; }
+        public ICollection<Customer> Customers { get; set; }
+        public ICollection<CompanyTemplate> CompanyTemplates { get; set; }
     }
 }

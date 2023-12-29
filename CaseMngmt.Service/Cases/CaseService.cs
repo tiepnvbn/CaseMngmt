@@ -18,7 +18,8 @@ namespace CaseMngmt.Service.Cases
         {
             try
             {
-                Case entity = new Case() { 
+                Case entity = new Case()
+                {
                     Name = caseName
                 };
                 return await _repository.AddAsync(entity);
@@ -41,10 +42,17 @@ namespace CaseMngmt.Service.Cases
             }
         }
 
-        public async Task<IEnumerable<Case>> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<IEnumerable<Case>?> GetAllAsync(int pageSize, int pageNumber)
         {
-            var result = await _repository.GetAllAsync(pageSize, pageNumber);
-            return result;
+            try
+            {
+                var result = await _repository.GetAllAsync(pageSize, pageNumber);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<Case?> GetByIdAsync(Guid id)

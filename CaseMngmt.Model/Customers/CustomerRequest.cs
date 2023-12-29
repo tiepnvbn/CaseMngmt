@@ -6,11 +6,11 @@ namespace CaseMngmt.Models.Customers
     {
         [MaxLength(256)]
         [Required]
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         [MaxLength(12)]
         [Required]
-        public string? PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
 
         [MaxLength(50)]
         [Required]
@@ -45,7 +45,7 @@ namespace CaseMngmt.Models.Customers
         [Required]
         public Guid CompanyId { get; set; }
 
-        public string? CreatedBy { get; set; }
-        public string? UpdatedBy { get; set; }
+        public Guid? CreatedBy { get; set; }
+        public Guid? UpdatedBy { get; set; }
     }
 }

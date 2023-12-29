@@ -70,12 +70,13 @@ namespace CaseMngmt.Repository.Templates
                                                   MaxLength = x.MaxLength,
                                                   Order = x.Order,
                                                   Searchable = x.Searchable,
+                                                  DocumentSearchable = x.DocumentSearchable,
                                                   TemplateId = templateId,
                                                   TypeId = x.Type.Id,
                                                   TypeName = x.Type.Name,
                                                   TypeValue = x.Type.Value,
-                                                  Metadata = !string.IsNullOrEmpty(x.Metadata)
-                                                    ? x.Metadata.Split(',', StringSplitOptions.None).ToList()
+                                                  Metadata = !string.IsNullOrEmpty(x.Type.Metadata)
+                                                    ? x.Type.Metadata.Split(',', StringSplitOptions.None).ToList()
                                                     : new List<string>()
                                               }).OrderBy(x => x.Order).ToList()
                                           });
@@ -89,7 +90,7 @@ namespace CaseMngmt.Repository.Templates
             }
         }
 
-        public async Task<IEnumerable<TemplateViewModel>> GetAllAsync(Guid? companyId, int pageSize, int pageNumber)
+        public async Task<IEnumerable<TemplateViewModel>?> GetAllAsync(Guid? companyId, int pageSize, int pageNumber)
         {
             try
             {
@@ -118,6 +119,7 @@ namespace CaseMngmt.Repository.Templates
                                                   MaxLength = x.MaxLength,
                                                   Order = x.Order,
                                                   Searchable = x.Searchable,
+                                                  DocumentSearchable = x.DocumentSearchable,
                                                   TemplateId = tempTemplate.Id,
                                                   TypeId = x.Type.Id,
                                                   TypeName = x.Type.Name,

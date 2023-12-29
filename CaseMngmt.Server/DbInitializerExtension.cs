@@ -2,10 +2,12 @@
 using CaseMngmt.Models.ApplicationRoles;
 using CaseMngmt.Models.ApplicationUsers;
 using CaseMngmt.Models.Database;
+using CaseMngmt.Models.FileTypes;
 using CaseMngmt.Models.Keywords;
 using CaseMngmt.Models.Templates;
 using CaseMngmt.Repository.Companies;
 using CaseMngmt.Repository.CompanyTemplates;
+using CaseMngmt.Repository.FileTypes;
 using CaseMngmt.Repository.Keywords;
 using CaseMngmt.Repository.Templates;
 using CaseMngmt.Repository.Types;
@@ -24,15 +26,16 @@ namespace CaseMngmt.Server
             try
             {
                 var context = services.GetRequiredService<ApplicationDbContext>();
-
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
                 var companyManager = scope.ServiceProvider.GetRequiredService<ICompanyRepository>();
                 var typeManager = scope.ServiceProvider.GetRequiredService<ITypeRepository>();
                 var templateManager = scope.ServiceProvider.GetRequiredService<ITemplateRepository>();
                 var keywordManager = scope.ServiceProvider.GetRequiredService<IKeywordRepository>();
-
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
                 var companyTemplateManager = scope.ServiceProvider.GetRequiredService<ICompanyTemplateRepository>();
+                var fileTypeManager = scope.ServiceProvider.GetRequiredService<IFileTypeRepository>();
+
+                #region Company
 
                 var defaultCompanyGuid = Guid.Parse("A4B11694-A5C9-48D7-BF6D-F12C019482DE");
                 var defaultCompany2Guid = Guid.Parse("A4B11694-A5C9-48D7-BF6D-F12C019482DD");
@@ -78,6 +81,8 @@ namespace CaseMngmt.Server
                     Deleted = false,
                 });
 
+                #endregion
+
                 #region Type
 
                 var defaultNumbericTypeGuid = Guid.NewGuid();
@@ -86,53 +91,141 @@ namespace CaseMngmt.Server
                 var defaultDatetimeTypeGuid = Guid.NewGuid();
                 var defaultCurrencyTypeGuid = Guid.NewGuid();
                 var defaultAlphanumericTypeGuid = Guid.NewGuid();
-                var defaultListTypeGuid = Guid.NewGuid();
+                var listDefaultGuid = Guid.NewGuid();
+                var listRequestTypeGuid = Guid.NewGuid();
+                var listPaymentStatusGuid = Guid.NewGuid();
+                var listSubmissionStatusGuid = Guid.NewGuid();
+
                 var listType = new List<Models.Types.Type>() {
                     new Models.Types.Type
                     {
                         Id = defaultNumbericTypeGuid,
                         Name = "Numberic (Up to 6 digits)",
-                        Value = "float"
+                        Value = "float",
+                        IsDefaultType = true
                     },
                     new Models.Types.Type
                     {
                         Id = defaultNumbericType2Guid,
                         Name = "Numberic (Up to 15 digits)",
-                        Value = "double"
+                        Value = "double",
+                        IsDefaultType = true
                     },
                     new Models.Types.Type
                     {
                         Id=defaultDateTypeGuid,
                         Name = "Date",
-                        Value = "datetime"
+                        Value = "datetime",
+                        IsDefaultType = true
                     },
                     new Models.Types.Type
                     {
                         Id= defaultDatetimeTypeGuid,
                         Name = "Datetime",
-                        Value = "datetime"
+                        Value = "datetime",
+                        IsDefaultType = true
                     },
                     new Models.Types.Type
                     {
                         Id= defaultCurrencyTypeGuid,
                         Name = "Currency",
-                        Value = "decimal"
+                        Value = "decimal",
+                        IsDefaultType = true
                     },
                     new Models.Types.Type
                     {
                         Id = defaultAlphanumericTypeGuid,
                         Name = "Alphanumeric",
-                        Value = "string"
+                        Value = "string",
+                        IsDefaultType = true
                     },
                     new Models.Types.Type
                     {
-                        Id = defaultListTypeGuid,
+                        Id = listDefaultGuid,
                         Name = "List (Alphanumeric)",
-                        Value = "list"
+                        Value = "list",
+                        IsDefaultType = true
+                    },
+                    new Models.Types.Type
+                    {
+                        Id = listRequestTypeGuid,
+                        Name = "List (Alphanumeric)",
+                        Value = "list",
+                        Metadata = "Land Parcel Survey,Topographic Survey,Geological Survey,Seismic Survey,Groundwater Survey,Architectural Design,New Construction,Remodeling/Renovation Construction,Demolition Construction",
+                    },
+                    new Models.Types.Type
+                    {
+                        Id = listSubmissionStatusGuid,
+                        Name = "List (Alphanumeric)",
+                        Value = "list",
+                        Metadata = "Not yet,Done",
+                    },
+                    new Models.Types.Type
+                    {
+                        Id = listPaymentStatusGuid,
+                        Name = "List (Alphanumeric)",
+                        Value = "list",
+                        Metadata = "Billed,Check Payment,Complete",
                     }
                 };
                 typeManager.AddMultiAsync(listType).ConfigureAwait(false);
+                Thread.Sleep(2000);
+                #endregion
 
+                #region FileType
+
+                var listFileType = new List<FileType>() {
+                    new FileType
+                    {
+                        Name = "Delivery Receipt",
+                    },
+                    new FileType
+                    {
+                        Name = "Invoice",
+                    },
+                    new FileType
+                    {
+                        Name = "Purchase Order",
+                    },
+                    new FileType
+                    {
+                        Name = "Other",
+                    },
+                    new FileType
+                    {
+                        Name = "Shipment Schedule",
+                    },
+                    new FileType
+                    {
+                        Name = "Request Form",
+                    },
+                    new FileType
+                    {
+                        Name = "Guide Map",
+                    },
+                    new FileType
+                    {
+                        Name = "Photos",
+                    },
+                    new FileType
+                    {
+                        Name = "Measurement File",
+                    },
+                    new FileType
+                    {
+                        Name = "Design File",
+                    },
+                    new FileType
+                    {
+                        Name = "Site Map",
+                    },
+                    new FileType
+                    {
+                        Name = "Report Email",
+                    }
+                };
+                fileTypeManager.AddMultiAsync(listFileType).ConfigureAwait(false);
+                Thread.Sleep(2000);
                 #endregion
 
                 #region Template
@@ -163,8 +256,8 @@ namespace CaseMngmt.Server
                         MaxLength = 20,
                         IsRequired =true,
                         Searchable =true,
+                        DocumentSearchable = true,
                         Order = 1,
-                        Source = string.Empty
                     },
                     new Keyword
                     {
@@ -175,7 +268,6 @@ namespace CaseMngmt.Server
                         IsRequired =true,
                         Searchable =true,
                         Order = 2,
-                        Source = string.Empty
                     },
                     new Keyword
                     {
@@ -186,7 +278,6 @@ namespace CaseMngmt.Server
                         IsRequired =true,
                         Searchable =true,
                         Order = 3,
-                        Source = string.Empty
                     },
                     new Keyword
                     {
@@ -197,7 +288,6 @@ namespace CaseMngmt.Server
                         IsRequired =true,
                         Searchable =true,
                         Order = 4,
-                        Source = string.Empty
                     },
                     new Keyword
                     {
@@ -207,21 +297,18 @@ namespace CaseMngmt.Server
                         MaxLength = 100,
                         IsRequired =true,
                         Searchable =true,
+                        DocumentSearchable = true,
                         Order = 5,
-                        Source = string.Empty
                     },
                     new Keyword
                     {
                         Name = "Request Type",
-                        TypeId = defaultListTypeGuid,
+                        TypeId = listRequestTypeGuid,
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
                         Searchable =true,
                         Order = 6,
-                        //Metadata = "Jet,Bass Boat,Marine Boat,OEM,Other",
-                        Metadata = "Land Parcel Survey,Topographic Survey,Geological Survey,Seismic Survey,Groundwater Survey,Architectural Design,New Construction,Remodeling/Renovation Construction,Demolition Construction",
-                        Source = string.Empty
                     },
                     new Keyword
                     {
@@ -232,7 +319,6 @@ namespace CaseMngmt.Server
                         IsRequired =true,
                         Searchable =true,
                         Order = 7,
-                        Source = string.Empty
                     },
                     new Keyword
                     {
@@ -243,7 +329,6 @@ namespace CaseMngmt.Server
                         IsRequired =true,
                         Searchable =true,
                         Order = 8,
-                        Source = string.Empty
                     },
                     new Keyword
                     {
@@ -254,19 +339,16 @@ namespace CaseMngmt.Server
                         IsRequired =true,
                         Searchable =true,
                         Order = 9,
-                        Source = string.Empty
                     },
                     new Keyword
                     {
                         Name = "Submission Status",
-                        TypeId = defaultListTypeGuid,
+                        TypeId = listSubmissionStatusGuid,
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
                         Searchable =true,
                         Order = 10,
-                        Metadata = "Not yet,Done",
-                        Source = string.Empty
                     },
                     new Keyword
                     {
@@ -277,19 +359,16 @@ namespace CaseMngmt.Server
                         IsRequired =true,
                         Searchable =true,
                         Order = 11,
-                        Source = string.Empty
                     },
                     new Keyword
                     {
                         Name = "Payment Status",
-                        TypeId = defaultListTypeGuid,
+                        TypeId = listPaymentStatusGuid,
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
                         Searchable =true,
                         Order = 12,
-                        Metadata = "Billed,Check Payment,Complete",
-                        Source = string.Empty
                     },
                     new Keyword
                     {
@@ -300,7 +379,6 @@ namespace CaseMngmt.Server
                         IsRequired =true,
                         Searchable =true,
                         Order = 13,
-                        Source = string.Empty
                     },
                     new Keyword
                     {
@@ -311,7 +389,6 @@ namespace CaseMngmt.Server
                         IsRequired =true,
                         Searchable =true,
                         Order = 14,
-                        Source = string.Empty
                     },
                     new Keyword
                     {
@@ -322,7 +399,17 @@ namespace CaseMngmt.Server
                         IsRequired =true,
                         Searchable =true,
                         Order = 15,
-                        Source = string.Empty
+                    },
+                    new Keyword
+                    {
+                        Name = "Payment Amount",
+                        TypeId = defaultCurrencyTypeGuid,
+                        TemplateId = defaultTemplateId,
+                        MaxLength = 100,
+                        IsRequired = true,
+                        Searchable = true,
+                        DocumentSearchable = true,
+                        Order = 16,
                     },
                     new Keyword
                     {
@@ -332,8 +419,7 @@ namespace CaseMngmt.Server
                         MaxLength = 100,
                         IsRequired = true,
                         Searchable = true,
-                        Order = 16,
-                        Source = string.Empty
+                        Order = 17,
                     },
                     new Keyword
                     {
@@ -343,13 +429,15 @@ namespace CaseMngmt.Server
                         MaxLength = 1000,
                         IsRequired =true,
                         Searchable =true,
-                        Order = 17,
-                        Source = string.Empty
+                        Order = 18,
                     }
                 };
                 keywordManager.AddMultiAsync(listKeywordDefault).ConfigureAwait(false);
-
+                Thread.Sleep(2000);
                 #endregion
+
+                #region Users & Roles
+
                 var userExists = userManager.FindByNameAsync("SuperAdmin");
                 if (userExists.Result == null)
                 {
@@ -373,7 +461,7 @@ namespace CaseMngmt.Server
 
                     userManager.CreateAsync(user2, "Admin@123");
 
-                    System.Threading.Thread.Sleep(2000);
+                    Thread.Sleep(2000);
 
                     var roleSuperAdminCheck = roleManager.RoleExistsAsync("SuperAdmin");
                     if (!roleSuperAdminCheck.Result)
@@ -386,12 +474,15 @@ namespace CaseMngmt.Server
                         roleManager.CreateAsync(new ApplicationRole(UserRoles.Admin));
                     }
 
-                    System.Threading.Thread.Sleep(2000);
+                    Thread.Sleep(2000);
                     userManager.AddToRoleAsync(user, "SuperAdmin");
-                    
-                    System.Threading.Thread.Sleep(2000);
+
+                    Thread.Sleep(2000);
                     userManager.AddToRoleAsync(user2, "Admin");
-                     System.Threading.Thread.Sleep(2000);
+                    Thread.Sleep(2000);
+
+                    #endregion
+
                 }
             }
             catch (Exception ex)

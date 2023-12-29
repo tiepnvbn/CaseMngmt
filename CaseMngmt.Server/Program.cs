@@ -1,35 +1,37 @@
-using CaseMngmt.Models.Database;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using CaseMngmt.Repository.Customers;
-using CaseMngmt.Service.Customers;
-using AutoMapper;
-using CaseMngmt.Models.AutoMapper;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
-using CaseMngmt.Service.Companies;
-using CaseMngmt.Repository.Companies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using AutoMapper;
+using CaseMngmt.Server;
+using CaseMngmt.Models.Database;
+using CaseMngmt.Models.AutoMapper;
 using CaseMngmt.Models.ApplicationUsers;
 using CaseMngmt.Models.ApplicationRoles;
+using CaseMngmt.Service.Customers;
+using CaseMngmt.Service.Companies;
 using CaseMngmt.Service.Types;
-using CaseMngmt.Repository.Types;
 using CaseMngmt.Service.Keywords;
-using CaseMngmt.Repository.Keywords;
-using CaseMngmt.Repository.Templates;
 using CaseMngmt.Service.Templates;
 using CaseMngmt.Service.Cases;
-using CaseMngmt.Repository.Cases;
 using CaseMngmt.Service.CaseKeywords;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using CaseMngmt.Server;
-using CaseMngmt.Repository.CaseKeywords;
-using CaseMngmt.Repository.CompanyTemplates;
 using CaseMngmt.Service.CompanyTemplates;
 using CaseMngmt.Service.FileUploads;
+using CaseMngmt.Service.FileTypes;
+using CaseMngmt.Repository.Companies;
+using CaseMngmt.Repository.Customers;
+using CaseMngmt.Repository.Types;
+using CaseMngmt.Repository.Keywords;
+using CaseMngmt.Repository.Templates;
+using CaseMngmt.Repository.Cases;
+using CaseMngmt.Repository.CaseKeywords;
+using CaseMngmt.Repository.CompanyTemplates;
+using CaseMngmt.Repository.FileTypes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,23 +69,36 @@ if (builder.Environment.IsDevelopment())
 
 builder.Services.AddTransient<ICustomerService, CustomerService>();
 builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
+
 builder.Services.AddTransient<ICompanyService, CompanyService>();
 builder.Services.AddTransient<ICompanyRepository, CompanyRepository>();
+
 builder.Services.AddTransient<ITypeService, TypeService>();
 builder.Services.AddTransient<ITypeRepository, TypeRepository>();
+
 builder.Services.AddTransient<IKeywordService, KeywordService>();
 builder.Services.AddTransient<IKeywordRepository, KeywordRepository>();
+
 builder.Services.AddTransient<ITemplateService, TemplateService>();
 builder.Services.AddTransient<ITemplateRepository, TemplateRepository>();
+
 builder.Services.AddTransient<ICaseService, CaseService>();
 builder.Services.AddTransient<ICaseRepository, CaseRepository>();
+
 builder.Services.AddTransient<ICaseKeywordService, CaseKeywordService>();
 builder.Services.AddTransient<ICaseKeywordRepository, CaseKeywordRepository>();
+
 builder.Services.AddTransient<ITypeService, TypeService>();
 builder.Services.AddTransient<ITypeRepository, TypeRepository>();
+
 builder.Services.AddTransient<ICompanyTemplateService, CompanyTemplateService>();
 builder.Services.AddTransient<ICompanyTemplateRepository, CompanyTemplateRepository>();
+
+builder.Services.AddTransient<IFileTypeRepository, FileTypeRepository>();
+builder.Services.AddTransient<IFileTypeService, FileTypeService>();
+
 builder.Services.AddTransient<IFileUploadService, FileUploadService>();
+
 #endregion
 
 
@@ -115,7 +130,6 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        options.JsonSerializerOptions.IgnoreNullValues = true;
     });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

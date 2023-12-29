@@ -350,17 +350,48 @@ namespace CaseMngmt.Models.Migrations
                     b.ToTable("Customer");
                 });
 
-            modelBuilder.Entity("CaseMngmt.Models.KeywordRoles.KeywordRole", b =>
+            modelBuilder.Entity("CaseMngmt.Models.FileTypes.FileType", b =>
                 {
-                    b.Property<Guid>("KeywordId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<Guid>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FileType");
+                });
+
+            modelBuilder.Entity("CaseMngmt.Models.KeywordRoles.KeywordRole", b =>
+                {
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("KeywordId", "RoleId");
+                    b.Property<Guid>("KeywordId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasIndex("RoleId");
+                    b.HasKey("RoleId", "KeywordId");
+
+                    b.HasIndex("KeywordId");
 
                     b.ToTable("KeywordRole");
                 });
@@ -380,14 +411,14 @@ namespace CaseMngmt.Models.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("DocumentSearchable")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsRequired")
                         .HasColumnType("bit");
 
                     b.Property<int?>("MaxLength")
                         .HasColumnType("int");
-
-                    b.Property<string>("Metadata")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -399,9 +430,6 @@ namespace CaseMngmt.Models.Migrations
 
                     b.Property<bool>("Searchable")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Source")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("TemplateId")
                         .HasColumnType("uniqueidentifier");
@@ -422,6 +450,21 @@ namespace CaseMngmt.Models.Migrations
                     b.HasIndex("TypeId");
 
                     b.ToTable("Keyword");
+                });
+
+            modelBuilder.Entity("CaseMngmt.Models.RoleFileTypes.RoleFileType", b =>
+                {
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FileTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("RoleId", "FileTypeId");
+
+                    b.HasIndex("FileTypeId");
+
+                    b.ToTable("RoleFileType");
                 });
 
             modelBuilder.Entity("CaseMngmt.Models.Templates.Template", b =>
@@ -470,10 +513,19 @@ namespace CaseMngmt.Models.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDefaultType")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Metadata")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Source")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UpdatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -624,7 +676,7 @@ namespace CaseMngmt.Models.Migrations
             modelBuilder.Entity("CaseMngmt.Models.CompanyTemplates.CompanyTemplate", b =>
                 {
                     b.HasOne("CaseMngmt.Models.Companies.Company", null)
-                        .WithMany("CompanyTemplate")
+                        .WithMany("CompanyTemplates")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -639,7 +691,7 @@ namespace CaseMngmt.Models.Migrations
             modelBuilder.Entity("CaseMngmt.Models.Customers.Customer", b =>
                 {
                     b.HasOne("CaseMngmt.Models.Companies.Company", null)
-                        .WithMany("Customer")
+                        .WithMany("Customers")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -647,19 +699,21 @@ namespace CaseMngmt.Models.Migrations
 
             modelBuilder.Entity("CaseMngmt.Models.KeywordRoles.KeywordRole", b =>
                 {
-                    b.HasOne("CaseMngmt.Models.Keywords.Keyword", null)
-                        .WithMany("KeywordRole")
+                    b.HasOne("CaseMngmt.Models.Keywords.Keyword", "Keyword")
+                        .WithMany("KeywordRoles")
                         .HasForeignKey("KeywordId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CaseMngmt.Models.ApplicationRoles.ApplicationRole", "ApplicationRole")
-                        .WithMany("KeywordRole")
+                        .WithMany("KeywordRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ApplicationRole");
+
+                    b.Navigation("Keyword");
                 });
 
             modelBuilder.Entity("CaseMngmt.Models.Keywords.Keyword", b =>
@@ -677,6 +731,25 @@ namespace CaseMngmt.Models.Migrations
                         .IsRequired();
 
                     b.Navigation("Type");
+                });
+
+            modelBuilder.Entity("CaseMngmt.Models.RoleFileTypes.RoleFileType", b =>
+                {
+                    b.HasOne("CaseMngmt.Models.FileTypes.FileType", "FileType")
+                        .WithMany("RoleFileTypes")
+                        .HasForeignKey("FileTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CaseMngmt.Models.ApplicationRoles.ApplicationRole", "ApplicationRole")
+                        .WithMany("RoleFileTypes")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationRole");
+
+                    b.Navigation("FileType");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -732,7 +805,9 @@ namespace CaseMngmt.Models.Migrations
 
             modelBuilder.Entity("CaseMngmt.Models.ApplicationRoles.ApplicationRole", b =>
                 {
-                    b.Navigation("KeywordRole");
+                    b.Navigation("KeywordRoles");
+
+                    b.Navigation("RoleFileTypes");
                 });
 
             modelBuilder.Entity("CaseMngmt.Models.Cases.Case", b =>
@@ -742,18 +817,23 @@ namespace CaseMngmt.Models.Migrations
 
             modelBuilder.Entity("CaseMngmt.Models.Companies.Company", b =>
                 {
-                    b.Navigation("CompanyTemplate");
+                    b.Navigation("CompanyTemplates");
 
-                    b.Navigation("Customer");
+                    b.Navigation("Customers");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("CaseMngmt.Models.FileTypes.FileType", b =>
+                {
+                    b.Navigation("RoleFileTypes");
                 });
 
             modelBuilder.Entity("CaseMngmt.Models.Keywords.Keyword", b =>
                 {
                     b.Navigation("CaseKeywords");
 
-                    b.Navigation("KeywordRole");
+                    b.Navigation("KeywordRoles");
                 });
 
             modelBuilder.Entity("CaseMngmt.Models.Templates.Template", b =>

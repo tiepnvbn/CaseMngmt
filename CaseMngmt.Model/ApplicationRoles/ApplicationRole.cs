@@ -1,5 +1,7 @@
-﻿using CaseMngmt.Models.KeywordRoles;
+﻿using CaseMngmt.Models.FileTypes;
+using CaseMngmt.Models.KeywordRoles;
 using CaseMngmt.Models.Keywords;
+using CaseMngmt.Models.RoleFileTypes;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,7 +12,11 @@ namespace CaseMngmt.Models.ApplicationRoles
     {
         public ApplicationRole() : base() { }
         public ApplicationRole(string name) : base(name) { }
-        //public virtual ICollection<Keyword> Keywords { get; set; }
-         public virtual ICollection<KeywordRole> KeywordRole { get;  }
+
+        public List<Keyword> Keywords { get; set; } = new();
+        public List<KeywordRole> KeywordRoles { get; }
+
+        public List<FileType> FileTypes { get; set; } = new();
+        public List<RoleFileType> RoleFileTypes { get; set; }
     }
 }

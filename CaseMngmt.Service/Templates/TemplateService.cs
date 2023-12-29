@@ -3,6 +3,7 @@ using CaseMngmt.Models.Templates;
 using CaseMngmt.Repository.Keywords;
 using CaseMngmt.Repository.Templates;
 using CaseMngmt.Models.Keywords;
+using CaseMngmt.Repository.Types;
 
 namespace CaseMngmt.Service.Templates
 {
@@ -10,11 +11,13 @@ namespace CaseMngmt.Service.Templates
     {
         private ITemplateRepository _repository;
         private IKeywordRepository _keywordRepository;
+        private ITypeRepository _typeRepository;
         private readonly IMapper _mapper;
-        public TemplateService(ITemplateRepository repository, IKeywordRepository keywordRepository, IMapper mapper)
+        public TemplateService(ITemplateRepository repository, IKeywordRepository keywordRepository, ITypeRepository typeRepository, IMapper mapper)
         {
             _repository = repository;
             _keywordRepository = keywordRepository;
+            _typeRepository = typeRepository;
             _mapper = mapper;
         }
 
@@ -33,18 +36,46 @@ namespace CaseMngmt.Service.Templates
                     return 0;
                 }
 
-                var keywordEntities = request.KeywordRequests.Select(x => new Keyword()
+                var typeList = (await _typeRepository.GetAllAsync(25, 1))?.FirstOrDefault(x => x.IsDefaultType && x.Value == "list");
+                if (typeList == null)
                 {
-                    Name = x.Name,
-                    TypeId = x.TypeId,
-                    TemplateId = template.Id,
-                    IsRequired = x.IsRequired,
-                    MaxLength = x.MaxLength,
-                    Order = x.Order,
-                    Searchable = x.Searchable,
-                    Metadata = x.Metadata,
-                    Source = x.Source,
-                }).ToList();
+                    return 0;
+                }
+
+                var typeListEntities = new List<Models.Types.Type>();
+                var keywordEntities = new List<Keyword>();
+
+                var typeListRequest = request.KeywordRequests.Where(x => x.TypeId == typeList.Id);
+                if (typeListRequest != null && typeListRequest.Any())
+                {
+                    typeListEntities = typeListRequest.Select(x => new Models.Types.Type()
+                    {
+                        Name = $"{x.Name} - List Metadata",
+                        Source = x.Source,
+                        Metadata = x.Metadata,
+                        Value = "list",
+                        IsDefaultType = false
+                    }).ToList();
+                    await _typeRepository.AddMultiAsync(typeListEntities);
+                }
+
+                for (var i = 0; i < request.KeywordRequests.Count; i++)
+                {
+                    var item = request.KeywordRequests[i];
+                    var newListId = typeListEntities.FirstOrDefault(z => z.Name == $"{item.Name} - List Metadata")?.Id ?? Guid.Empty;
+                    keywordEntities.Add(new Keyword()
+                    {
+                        Name = item.Name,
+                        TypeId = item.TypeId == typeList.Id ? newListId : item.TypeId,
+                        TemplateId = template.Id,
+                        IsRequired = item.IsRequired,
+                        MaxLength = item.MaxLength,
+                        Order = item.Order,
+                        Searchable = item.Searchable,
+                        DocumentSearchable = item.DocumentSearchable
+                    });
+                }
+
                 response = await _keywordRepository.AddMultiAsync(keywordEntities);
                 return response;
             }
@@ -70,18 +101,47 @@ namespace CaseMngmt.Service.Templates
                     await _keywordRepository.DeleteMultiByTemplateIdAsync(request.TemplateId);
                 }
 
-                var keywordEntities = request.KeywordRequests.Select(x => new Keyword()
+                // Check new Type LIST
+                var typeList = (await _typeRepository.GetAllAsync(25, 1))?.FirstOrDefault(x => x.IsDefaultType && x.Value == "list");
+                if (typeList == null)
                 {
-                    Name = x.Name,
-                    TypeId = x.TypeId,
-                    TemplateId = request.TemplateId,
-                    IsRequired = x.IsRequired,
-                    MaxLength = x.MaxLength,
-                    Order = x.Order,
-                    Searchable = x.Searchable,
-                    Metadata = x.Metadata,
-                    Source = x.Source,
-                }).ToList();
+                    return 0;
+                }
+
+                var typeListEntities = new List<Models.Types.Type>();
+                var keywordEntities = new List<Keyword>();
+
+                var typeListRequest = request.KeywordRequests.Where(x => x.TypeId == typeList.Id);
+                if (typeListRequest != null && typeListRequest.Any())
+                {
+                    typeListEntities = typeListRequest.Select(x => new Models.Types.Type()
+                    {
+                        Name = $"{x.Name} - List Metadata",
+                        Source = x.Source,
+                        Metadata = x.Metadata,
+                        Value = "list",
+                        IsDefaultType = false
+                    }).ToList();
+                    await _typeRepository.AddMultiAsync(typeListEntities);
+                }
+
+                for (var i = 0; i < request.KeywordRequests.Count; i++)
+                {
+                    var item = request.KeywordRequests[i];
+                    var newListId = typeListEntities.FirstOrDefault(z => z.Name == $"{item.Name} - List Metadata")?.Id ?? Guid.Empty;
+                    keywordEntities.Add(new Keyword()
+                    {
+                        Name = item.Name,
+                        TypeId = item.TypeId == typeList.Id ? newListId : item.TypeId,
+                        TemplateId = request.TemplateId,
+                        IsRequired = item.IsRequired,
+                        MaxLength = item.MaxLength,
+                        Order = item.Order,
+                        Searchable = item.Searchable,
+                        DocumentSearchable = item.DocumentSearchable
+                    });
+                }
+
                 await _keywordRepository.AddMultiAsync(keywordEntities);
 
                 return 1;
@@ -105,7 +165,7 @@ namespace CaseMngmt.Service.Templates
                 var currentKeywords = await _keywordRepository.GetByTemplateIdAsync(templateId);
                 if (currentKeywords != null && currentKeywords.Any())
                 {
-                      await _keywordRepository.DeleteMultiByTemplateIdAsync(templateId);
+                    await _keywordRepository.DeleteMultiByTemplateIdAsync(templateId);
                 }
 
                 await _repository.DeleteAsync(templateId);
