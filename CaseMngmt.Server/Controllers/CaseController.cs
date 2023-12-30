@@ -66,7 +66,7 @@ namespace CaseMngmt.Server.Controllers
                 };
 
                 var result = await _caseKeywordService.GetAllAsync(searchRequest);
-                return result != null && result.Any() ? Ok(result) : NotFound();
+                return Ok(result);
             }
             catch (Exception e)
             {
@@ -130,14 +130,14 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                //var isInValidModel = request.KeywordValues.Any(x => !x.Validate());
-                //if (isInValidModel)
-                //{
-                //    return BadRequest("KeywordValues is wrong format");
-                //}
+                var isInValidModel = request.KeywordValues.Any(x => !x.Validate());
+                if (isInValidModel)
+                {
+                    return BadRequest("KeywordValues is wrong format");
+                }
 
-                //var userKeywordSetting = userTemplate.Keywords.Select(x => x.KeywordId).ToList();
-                //var requestKeywords = request.KeywordValues.Select(x => x.KeywordId).ToList();
+                var userKeywordSetting = userTemplate.Keywords.Select(x => x.KeywordId).ToList();
+                var requestKeywords = request.KeywordValues.Select(x => x.KeywordId).ToList();
 
                 var allOfUserKeywordsIsInRequest = userKeywordSetting.Intersect(requestKeywords).Count() == userKeywordSetting.Count();
                 if (!allOfUserKeywordsIsInRequest)
