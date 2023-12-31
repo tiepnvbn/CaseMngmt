@@ -12,8 +12,10 @@ namespace CaseMngmt.Models.Keywords
         public Guid TemplateId { get; set; }
         public int? MaxLength { get; set; }
         public bool IsRequired { get; set; }
-        public bool Searchable { get; set; }
+        public bool CaseSearchable { get; set; }
         public bool DocumentSearchable { get; set; }
+        public bool IsShowOnTemplate { get; set; } = true;
+        public bool IsShowOnCaseList { get; set; }
         public int Order { get; set; }
         public Type Type { get; set; } = null!;
 

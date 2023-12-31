@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CaseMngmt.Models.FileUploads;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace CaseMngmt.Service.FileUploads
 {
@@ -12,19 +12,12 @@ namespace CaseMngmt.Service.FileUploads
             _mapper = mapper;
         }
 
-        public async Task<int> PostFileAsync(IFormFile fileToUpload, FileUploadModel fileDetail)
+        public async Task<int> UploadFileAsync(IFormFile fileToUpload, string filePath)
         {
             try
             {
-                var fileSetting = new FileUploadSettings();
-                var uploadFolder = fileSetting.UploadFolder + @"\";
-
-                string ext = Path.GetExtension(fileDetail.FileName).ToLower();
-                string fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
-                var fileNameOnServer = Path.Combine(uploadFolder, fileName + ext);
-
                 // Create a stream to write the file to
-                using var stream = File.Create(fileNameOnServer);
+                using var stream = File.Create(filePath);
 
                 // Upload file and copy to the stream
                 await fileToUpload.CopyToAsync(stream);
@@ -37,26 +30,22 @@ namespace CaseMngmt.Service.FileUploads
             }
         }
 
-        public async Task DownloadFileById(string fileName)
+        public async Task DownloadFileByFileName(string filePath)
         {
             try
             {
-                var content = new System.IO.MemoryStream();
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "UploadedFiles", fileName);
+                var provider = new FileExtensionContentTypeProvider();
+                if (!provider.TryGetContentType(filePath, out var contentType))
+                {
+                    contentType = "application/octet-stream";
+                }
 
-                await CopyStream(content, path);
+                var bytes = await File.ReadAllBytesAsync(filePath);
+                //var result = new File(bytes, contentType, Path.GetFileName(path));
             }
             catch (Exception)
             {
                 throw;
-            }
-        }
-
-        public async Task CopyStream(Stream stream, string downloadPath)
-        {
-            using (var fileStream = new FileStream(downloadPath, FileMode.Create, FileAccess.Write))
-            {
-                await stream.CopyToAsync(fileStream);
             }
         }
     }

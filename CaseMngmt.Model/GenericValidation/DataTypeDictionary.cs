@@ -19,6 +19,7 @@
             { "currency" , typeof(float) },
             { "string" , typeof(string) },
             { "list" , typeof(string) },
+            { "textarea" , typeof(string) }
         };
     }
 }

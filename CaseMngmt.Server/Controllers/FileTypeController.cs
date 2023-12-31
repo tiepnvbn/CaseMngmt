@@ -9,10 +9,10 @@ namespace CaseMngmt.Server.Controllers
     [Route("api/[controller]")]
     public class FileTypeController : ControllerBase
     {
-        private readonly ILogger<TemplateController> _logger;
+        private readonly ILogger<FileTypeController> _logger;
         private readonly IFileTypeService _fileTypeService;
 
-        public FileTypeController(ILogger<TemplateController> logger, IFileTypeService fileTypeService)
+        public FileTypeController(ILogger<FileTypeController> logger, IFileTypeService fileTypeService)
         {
             _logger = logger;
             _fileTypeService = fileTypeService;

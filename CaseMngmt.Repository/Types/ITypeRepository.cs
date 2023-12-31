@@ -8,6 +8,7 @@ namespace CaseMngmt.Repository.Types
         Task<int> AddMultiAsync(List<Type> Types);
         Task<IEnumerable<Type>?> GetAllAsync(int pageSize, int pageNumber);
         Task<Type?> GetByIdAsync(Guid id);
+        Task<Type?> GetByTypeNameAsync(string name);
         Task<int> DeleteAsync(Guid id);
         Task<int> UpdateAsync(Type Type);
         Task<int> DeleteByIdsAsync(List<Guid> typeIds);

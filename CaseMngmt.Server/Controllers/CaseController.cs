@@ -101,7 +101,28 @@ namespace CaseMngmt.Server.Controllers
             }
         }
 
-        // TODO : integrate with image/file
+        [HttpPost]
+        [Route("Close")]
+        public async Task<IActionResult> CloseCase(Guid caseId)
+        {
+            if (caseId == Guid.Empty)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = await _caseKeywordService.CloseCaseByAsync(caseId);
+                
+                return result > 0 ? Ok(result) : BadRequest();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, nameof(CaseController), true, e);
+                return BadRequest();
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(CaseKeywordAddRequest request)
         {
@@ -147,7 +168,7 @@ namespace CaseMngmt.Server.Controllers
 
                 var result = await _caseKeywordService.AddAsync(request);
 
-                return result > 0 ? Ok(result) : BadRequest();
+                return result != null ? Ok(result) : BadRequest();
             }
             catch (Exception e)
             {
@@ -156,7 +177,6 @@ namespace CaseMngmt.Server.Controllers
             }
         }
 
-        // TODO : integrate with image/file
         [HttpPut, Route("{Id}")]
         public async Task<IActionResult> Update(CaseKeywordRequest request)
         {

@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using CaseMngmt.Models.CaseKeywords;
+using CaseMngmt.Models.Keywords;
 using CaseMngmt.Repository.CaseKeywords;
 using CaseMngmt.Repository.Cases;
+using CaseMngmt.Repository.Keywords;
+using CaseMngmt.Repository.Types;
 using CaseMngmt.Service.CaseKeywords;
 
 namespace CaseMngmt.Service.Customers
@@ -10,12 +13,16 @@ namespace CaseMngmt.Service.Customers
     {
         private ICaseRepository _caseRepository;
         private ICaseKeywordRepository _caseKeywordRepository;
+        private ITypeRepository _typeRepository;
+        private IKeywordRepository _keywordRepository;
 
         private readonly IMapper _mapper;
-        public CaseKeywordService(ICaseRepository caseRepository, ICaseKeywordRepository caseKeywordRepository, IMapper mapper)
+        public CaseKeywordService(ICaseRepository caseRepository, ICaseKeywordRepository caseKeywordRepository, ITypeRepository typeRepository, IKeywordRepository keywordRepository, IMapper mapper)
         {
             _caseRepository = caseRepository;
             _caseKeywordRepository = caseKeywordRepository;
+            _typeRepository = typeRepository;
+            _keywordRepository = keywordRepository;
             _mapper = mapper;
         }
 
@@ -28,7 +35,7 @@ namespace CaseMngmt.Service.Customers
                 {
                     return null;
                 }
-                
+
                 return result;
             }
             catch (Exception)
@@ -56,6 +63,7 @@ namespace CaseMngmt.Service.Customers
                 {
                     CaseId = caseId,
                     CaseName = caseEntity.Name,
+                    Status = caseEntity.Status,
                     CaseKeywordValues = caseKeywordValues.ToList()
                 };
                 return result;
@@ -66,19 +74,20 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<int> AddAsync(CaseKeywordAddRequest request)
+        public async Task<Guid?> AddAsync(CaseKeywordAddRequest request)
         {
             try
             {
                 var caseModel = new Models.Cases.Case
                 {
-                    Name = $"Case - {DateTime.Now}"
+                    Name = $"Case - {DateTime.Now}",
+                    Status = "Open"
                 };
                 var caseResult = await _caseRepository.AddAsync(caseModel);
 
                 if (caseResult <= 0)
                 {
-                    return 0;
+                    return null;
                 }
 
                 var caseKeywords = request.KeywordValues.Select(x => new CaseKeyword
@@ -89,12 +98,15 @@ namespace CaseMngmt.Service.Customers
                 }).ToList();
 
                 var caseKeywordResult = await _caseKeywordRepository.AddMultiAsync(caseKeywords);
-
-                return caseKeywordResult;
+                if (caseKeywordResult > 0)
+                {
+                    return caseModel.Id;
+                }
+                return null;
             }
             catch (Exception ex)
             {
-                return 0;
+                return null;
             }
         }
 
@@ -133,6 +145,74 @@ namespace CaseMngmt.Service.Customers
                 await _caseRepository.DeleteAsync(caseId);
 
                 return 1;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
+        public async Task<int> AddFileToKeywordAsync(CaseKeywordFileUpload fileUploadRequest, Guid templateId)
+        {
+            try
+            {
+                var fileType = await _typeRepository.GetByTypeNameAsync("file");
+                if (fileType == null)
+                {
+                    fileType = new Models.Types.Type()
+                    {
+                        Name = $"File",
+                        Value = "file",
+                        IsDefaultType = false,
+                        CreatedDate = DateTime.Now,
+                        UpdatedDate = DateTime.Now
+                    };
+                    await _typeRepository.AddAsync(fileType);
+                }
+
+                var keyword = new Keyword()
+                {
+                    Name = "File",
+                    TypeId = fileType.Id,
+                    TemplateId = templateId,
+                    IsRequired = false,
+                    Order = 0,
+                    CaseSearchable = false,
+                    DocumentSearchable = true,
+                    IsShowOnCaseList = false,
+                    IsShowOnTemplate = false
+                };
+                await _keywordRepository.AddAsync(keyword);
+
+                var caseKeyword = new CaseKeyword
+                {
+                    CaseId = fileUploadRequest.CaseId,
+                    KeywordId = keyword.Id,
+                    Value = fileUploadRequest.FileName
+                };
+                return await _caseKeywordRepository.AddAsync(caseKeyword);
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
+        public async Task<int> CloseCaseByAsync(Guid caseId)
+        {
+            try
+            {
+                var caseEntity = await _caseRepository.GetByIdAsync(caseId);
+                if (caseEntity == null)
+                {
+                    return 0;
+                }
+
+                caseEntity.Status = "Closed";
+                caseEntity.UpdatedDate = DateTime.Now;
+                // TODO
+                caseEntity.UpdatedBy = Guid.Empty;
+                return await _caseRepository.UpdateAsync(caseEntity);
             }
             catch (Exception ex)
             {

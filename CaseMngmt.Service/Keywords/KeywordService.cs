@@ -80,7 +80,7 @@ namespace CaseMngmt.Service.Keywords
                 entity.MaxLength = request.MaxLength;
                 entity.IsRequired = request.IsRequired;
                 entity.Order = request.Order;
-                entity.Searchable = request.Searchable;
+                entity.CaseSearchable = request.CaseSearchable;
                 entity.DocumentSearchable = request.DocumentSearchable;
                 entity.UpdatedDate = DateTime.UtcNow;
                 await _repository.UpdateAsync(entity);

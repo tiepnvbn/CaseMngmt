@@ -71,8 +71,10 @@ namespace CaseMngmt.Service.Templates
                         IsRequired = item.IsRequired,
                         MaxLength = item.MaxLength,
                         Order = item.Order,
-                        Searchable = item.Searchable,
-                        DocumentSearchable = item.DocumentSearchable
+                        CaseSearchable = item.CaseSearchable,
+                        DocumentSearchable = item.DocumentSearchable,
+                        IsShowOnCaseList = item.IsShowOnCaseList,
+                        IsShowOnTemplate = true
                     });
                 }
 
@@ -137,8 +139,10 @@ namespace CaseMngmt.Service.Templates
                         IsRequired = item.IsRequired,
                         MaxLength = item.MaxLength,
                         Order = item.Order,
-                        Searchable = item.Searchable,
-                        DocumentSearchable = item.DocumentSearchable
+                        CaseSearchable = item.CaseSearchable,
+                        DocumentSearchable = item.DocumentSearchable,
+                        IsShowOnCaseList = item.IsShowOnCaseList,
+                        IsShowOnTemplate = true
                     });
                 }
 
