@@ -1,4 +1,6 @@
-﻿using CaseMngmt.Models.GenericValidation;
+﻿using CaseMngmt.Models.FileUploads;
+using CaseMngmt.Models.GenericValidation;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace CaseMngmt.Models.CaseKeywords
@@ -17,6 +19,8 @@ namespace CaseMngmt.Models.CaseKeywords
         public int? MaxLength { get; set; }
         public bool Searchable { get; set; }
         public bool DocumentSearchable { get; set; }
+        public bool IsShowOnTemplate { get; set; }
+        public bool IsShowOnCaseList { get; set; }
         public int Order { get; set; }
         public IEnumerable<string>? Metadata { get; set; }
     }

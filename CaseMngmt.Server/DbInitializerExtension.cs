@@ -91,6 +91,7 @@ namespace CaseMngmt.Server
                 var defaultDatetimeTypeGuid = Guid.NewGuid();
                 var defaultCurrencyTypeGuid = Guid.NewGuid();
                 var defaultAlphanumericTypeGuid = Guid.NewGuid();
+                var listTextAreaGuid = Guid.NewGuid();
                 var listDefaultGuid = Guid.NewGuid();
                 var listRequestTypeGuid = Guid.NewGuid();
                 var listPaymentStatusGuid = Guid.NewGuid();
@@ -137,6 +138,13 @@ namespace CaseMngmt.Server
                         Id = defaultAlphanumericTypeGuid,
                         Name = "Alphanumeric",
                         Value = "string",
+                        IsDefaultType = true
+                    },
+                    new Models.Types.Type
+                    {
+                        Id = listTextAreaGuid,
+                        Name = "TextArea",
+                        Value = "textarea",
                         IsDefaultType = true
                     },
                     new Models.Types.Type
@@ -255,9 +263,10 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 20,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         DocumentSearchable = true,
                         Order = 1,
+                        IsShowOnCaseList = true
                     },
                     new Keyword
                     {
@@ -266,7 +275,7 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 50,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 2,
                     },
                     new Keyword
@@ -276,7 +285,7 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 12,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 3,
                     },
                     new Keyword
@@ -286,7 +295,7 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 4,
                     },
                     new Keyword
@@ -296,7 +305,7 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         DocumentSearchable = true,
                         Order = 5,
                     },
@@ -307,8 +316,9 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 6,
+                        IsShowOnCaseList = true
                     },
                     new Keyword
                     {
@@ -317,7 +327,7 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 7,
                     },
                     new Keyword
@@ -327,7 +337,7 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 8,
                     },
                     new Keyword
@@ -337,8 +347,9 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 9,
+                        IsShowOnCaseList = true
                     },
                     new Keyword
                     {
@@ -347,7 +358,7 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 10,
                     },
                     new Keyword
@@ -357,7 +368,7 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 11,
                     },
                     new Keyword
@@ -367,7 +378,7 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 12,
                     },
                     new Keyword
@@ -377,7 +388,7 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 13,
                     },
                     new Keyword
@@ -387,7 +398,7 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 14,
                     },
                     new Keyword
@@ -397,7 +408,7 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 15,
                     },
                     new Keyword
@@ -407,7 +418,7 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired = true,
-                        Searchable = true,
+                        CaseSearchable = true,
                         DocumentSearchable = true,
                         Order = 16,
                     },
@@ -418,17 +429,17 @@ namespace CaseMngmt.Server
                         TemplateId = defaultTemplateId,
                         MaxLength = 100,
                         IsRequired = true,
-                        Searchable = true,
+                        CaseSearchable = true,
                         Order = 17,
                     },
                     new Keyword
                     {
                         Name = "Note",
-                        TypeId = defaultAlphanumericTypeGuid,
+                        TypeId = listTextAreaGuid,
                         TemplateId = defaultTemplateId,
                         MaxLength = 1000,
                         IsRequired =true,
-                        Searchable =true,
+                        CaseSearchable =true,
                         Order = 18,
                     }
                 };

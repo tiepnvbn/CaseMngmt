@@ -1,21 +1,19 @@
 ﻿using CaseMngmt.Service.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace CaseMngmt.Server.Controllers
 {
     [Authorize(AuthenticationSchemes = "Bearer")]
-    [ClaimRequirement(ClaimTypes.Role, "SuperAdmin")]
     [ApiController]
     [Route("api/[controller]")]
     public class TypeController : ControllerBase
     {
-        private readonly ILogger<TemplateController> _logger;
+        private readonly ILogger<TypeController> _logger;
         private readonly ITypeService _typeService;
 
 
-        public TypeController(ILogger<TemplateController> logger, ITypeService typeService)
+        public TypeController(ILogger<TypeController> logger, ITypeService typeService)
         {
             _logger = logger;
             _typeService = typeService;

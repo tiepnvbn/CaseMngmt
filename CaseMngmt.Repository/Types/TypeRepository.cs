@@ -130,5 +130,18 @@ namespace CaseMngmt.Repository.Types
                 return 0;
             }
         }
+
+        public async Task<Type?> GetByTypeNameAsync(string name)
+        {
+             try
+            {
+                var result = await _context.Type.FirstOrDefaultAsync(x => x.Name == name);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

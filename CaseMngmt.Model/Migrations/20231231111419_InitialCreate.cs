@@ -28,6 +28,7 @@ namespace CaseMngmt.Models.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -264,8 +265,10 @@ namespace CaseMngmt.Models.Migrations
                     TemplateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MaxLength = table.Column<int>(type: "int", nullable: true),
                     IsRequired = table.Column<bool>(type: "bit", nullable: false),
-                    Searchable = table.Column<bool>(type: "bit", nullable: false),
+                    CaseSearchable = table.Column<bool>(type: "bit", nullable: false),
                     DocumentSearchable = table.Column<bool>(type: "bit", nullable: false),
+                    IsShowOnTemplate = table.Column<bool>(type: "bit", nullable: false),
+                    IsShowOnCaseList = table.Column<bool>(type: "bit", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),

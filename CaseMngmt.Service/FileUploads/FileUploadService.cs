@@ -12,52 +12,63 @@ namespace CaseMngmt.Service.FileUploads
             _mapper = mapper;
         }
 
-        public async Task<int> PostFileAsync(IFormFile fileToUpload, FileUploadModel fileDetail)
+        public async Task<string> UploadFileAsync(IFormFile fileToUpload, string filePath)
         {
             try
             {
-                var fileSetting = new FileUploadSettings();
-                var uploadFolder = fileSetting.UploadFolder + @"\";
-
-                string ext = Path.GetExtension(fileDetail.FileName).ToLower();
-                string fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
-                var fileNameOnServer = Path.Combine(uploadFolder, fileName + ext);
-
+                var currentFilePath = filePath;
+                var count = 0;
+                while (File.Exists(currentFilePath))
+                {
+                    count++;
+                    currentFilePath = Path.GetDirectoryName(filePath)
+                                     + Path.DirectorySeparatorChar
+                                     + Path.GetFileNameWithoutExtension(filePath)
+                                     + count.ToString()
+                                     + Path.GetExtension(filePath);
+                }
                 // Create a stream to write the file to
-                using var stream = File.Create(fileNameOnServer);
+                using var stream = File.Create(currentFilePath);
 
                 // Upload file and copy to the stream
                 await fileToUpload.CopyToAsync(stream);
 
-                return 1;
+                return Path.GetFileNameWithoutExtension(currentFilePath);
             }
             catch (Exception)
             {
-                return 0;
+                return null;
             }
         }
 
-        public async Task DownloadFileById(string fileName)
+        public List<string?> GetAllFileByCaseIdAsync(Guid caseId)
         {
             try
             {
-                var content = new System.IO.MemoryStream();
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "UploadedFiles", fileName);
-
-                await CopyStream(content, path);
+                var folderPath = GetUploadedFolderPath(caseId);
+                var result = Directory.GetFiles(folderPath, "*.*")
+                    .Select(Path.GetFileName)
+                    .ToList();
+                return result;
             }
             catch (Exception)
             {
-                throw;
+                return new List<string?>();
             }
         }
 
-        public async Task CopyStream(Stream stream, string downloadPath)
+        public string GetUploadedFolderPath(Guid caseId)
         {
-            using (var fileStream = new FileStream(downloadPath, FileMode.Create, FileAccess.Write))
+            var fileSetting = new FileUploadSettings();
+            var uploadFolder = fileSetting.UploadFolder;
+
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), $"{uploadFolder}\\{caseId}");
+            if (!Directory.Exists(folderPath))
             {
-                await stream.CopyToAsync(fileStream);
+                Directory.CreateDirectory(folderPath);
             }
+
+            return folderPath;
         }
     }
 }

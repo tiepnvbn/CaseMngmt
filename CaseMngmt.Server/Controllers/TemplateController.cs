@@ -116,7 +116,6 @@ namespace CaseMngmt.Server.Controllers
             }
         }
 
-        // TODO : integrate with image/file
         [ClaimRequirement(ClaimTypes.Role, "SuperAdmin")]
         [HttpPost]
         public async Task<IActionResult> Create(TemplateRequest request)
@@ -152,7 +151,6 @@ namespace CaseMngmt.Server.Controllers
             }
         }
         
-        // TODO : integrate with image/file
         [ClaimRequirement(ClaimTypes.Role, "SuperAdmin")]
         [HttpPut, Route("{Id}")]
         public async Task<IActionResult> Update(TemplateViewRequest request)

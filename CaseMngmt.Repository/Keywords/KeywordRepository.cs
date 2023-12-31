@@ -75,7 +75,7 @@ namespace CaseMngmt.Repository.Keywords
                                              IsRequired = tempKeyword.IsRequired,
                                              MaxLength = tempKeyword.MaxLength,
                                              Order = tempKeyword.Order,
-                                             Searchable = tempKeyword.Searchable,
+                                             Searchable = tempKeyword.CaseSearchable,
                                              DocumentSearchable = tempKeyword.DocumentSearchable,
                                              TypeId = tempKeyword.Type.Id,
                                              TypeName = tempKeyword.Type.Name,

@@ -50,7 +50,10 @@ namespace CaseMngmt.Repository.CaseKeywords
                 var IQueryable = (from caseKeyword in _context.CaseKeyword
                                   join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
                                   join type in _context.Type on keyword.TypeId equals type.Id
-                                  where !caseKeyword.Deleted && caseKeyword.CaseId == caseId
+                                  where !caseKeyword.Deleted 
+                                    && caseKeyword.CaseId == caseId
+                                    && caseKeyword.Keyword.IsShowOnTemplate
+                                    && caseKeyword.Case.Status == "Open"
                                   select new CaseKeywordBaseValue
                                   {
                                       KeywordId = caseKeyword.KeywordId,
@@ -58,8 +61,10 @@ namespace CaseMngmt.Repository.CaseKeywords
                                       Value = caseKeyword.Value,
                                       IsRequired = caseKeyword.Keyword.IsRequired,
                                       MaxLength = caseKeyword.Keyword.MaxLength,
-                                      Searchable = caseKeyword.Keyword.Searchable,
+                                      Searchable = caseKeyword.Keyword.CaseSearchable,
                                       DocumentSearchable = caseKeyword.Keyword.DocumentSearchable,
+                                      IsShowOnCaseList = caseKeyword.Keyword.IsShowOnCaseList,
+                                      IsShowOnTemplate = caseKeyword.Keyword.IsShowOnTemplate,
                                       Order = keyword.Order,
                                       TypeId = caseKeyword.Keyword.Type.Id,
                                       TypeName = caseKeyword.Keyword.Type.Name,
@@ -92,9 +97,11 @@ namespace CaseMngmt.Repository.CaseKeywords
                                 && !keyword.Deleted
                                 && keyword.TemplateId == searchRequest.TemplateId
                                 && companyTemplate.CompanyId == searchRequest.CompanyId
+                                && caseKeyword.Keyword.IsShowOnTemplate
+                                && caseKeyword.Case.Status == "Open"
                              select new { tempCase, caseKeyword })
                             .AsEnumerable()
-                            .GroupBy(x => new { x.tempCase.Id, x.tempCase.Name });
+                            .GroupBy(x => new { x.tempCase.Id, x.tempCase.Name, x.tempCase.Status });
 
                 if (searchRequest.KeywordValues != null && searchRequest.KeywordValues.Any())
                 {
@@ -106,6 +113,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                         {
                             CaseId = z.Key.Id,
                             CaseName = z.Key.Name,
+                            Status = z.Key.Status,
                             CaseKeywordValues = z.Select(x => new CaseKeywordBaseValue
                             {
                                 KeywordId = x.caseKeyword.Keyword.Id,
@@ -113,8 +121,10 @@ namespace CaseMngmt.Repository.CaseKeywords
                                 Value = x.caseKeyword.Value,
                                 IsRequired = x.caseKeyword.Keyword.IsRequired,
                                 MaxLength = x.caseKeyword.Keyword.MaxLength,
-                                Searchable = x.caseKeyword.Keyword.Searchable,
+                                Searchable = x.caseKeyword.Keyword.CaseSearchable,
                                 DocumentSearchable = x.caseKeyword.Keyword.DocumentSearchable,
+                                IsShowOnCaseList = x.caseKeyword.Keyword.IsShowOnCaseList,
+                                IsShowOnTemplate = x.caseKeyword.Keyword.IsShowOnTemplate,
                                 Order = x.caseKeyword.Keyword.Order,
                                 TypeId = x.caseKeyword.Keyword.Type.Id,
                                 TypeName = x.caseKeyword.Keyword.Type.Name,

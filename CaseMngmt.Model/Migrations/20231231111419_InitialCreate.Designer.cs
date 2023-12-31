@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CaseMngmt.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231229105800_InitialCreate")]
+    [Migration("20231231111419_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -170,6 +170,10 @@ namespace CaseMngmt.Models.Migrations
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UpdatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -404,6 +408,9 @@ namespace CaseMngmt.Models.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("CaseSearchable")
+                        .HasColumnType("bit");
+
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -419,6 +426,12 @@ namespace CaseMngmt.Models.Migrations
                     b.Property<bool>("IsRequired")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsShowOnCaseList")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsShowOnTemplate")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("MaxLength")
                         .HasColumnType("int");
 
@@ -429,9 +442,6 @@ namespace CaseMngmt.Models.Migrations
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Searchable")
-                        .HasColumnType("bit");
 
                     b.Property<Guid>("TemplateId")
                         .HasColumnType("uniqueidentifier");
