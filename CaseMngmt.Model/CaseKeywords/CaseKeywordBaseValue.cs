@@ -56,35 +56,4 @@ namespace CaseMngmt.Models.CaseKeywords
             }
         }
     }
-
-    public class CaseKeywordFileUpload
-    {
-        [Required]
-        public Guid CaseId { get; set; }
-        [Required]
-        public Guid FileTypeId { get; set; }
-        public string FileName { get; set; }
-        [Required]
-        public IFormFile FileToUpload { get; set; }
-
-        public bool Validate()
-        {
-            try
-            {
-                string fileExt = Path.GetExtension(FileName).ToLower();
-                var fileSetting = new FileUploadSettings();
-                var validFileTypes = fileSetting.AcceptTypes.Split(',').ToList();
-
-                if (validFileTypes.Contains(fileExt))
-                {
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-    }
 }

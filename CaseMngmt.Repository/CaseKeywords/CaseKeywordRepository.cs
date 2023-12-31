@@ -50,7 +50,10 @@ namespace CaseMngmt.Repository.CaseKeywords
                 var IQueryable = (from caseKeyword in _context.CaseKeyword
                                   join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
                                   join type in _context.Type on keyword.TypeId equals type.Id
-                                  where !caseKeyword.Deleted && caseKeyword.CaseId == caseId
+                                  where !caseKeyword.Deleted 
+                                    && caseKeyword.CaseId == caseId
+                                    && caseKeyword.Keyword.IsShowOnTemplate
+                                    && caseKeyword.Case.Status == "Open"
                                   select new CaseKeywordBaseValue
                                   {
                                       KeywordId = caseKeyword.KeywordId,

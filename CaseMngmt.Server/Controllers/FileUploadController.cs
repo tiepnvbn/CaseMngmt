@@ -59,19 +59,13 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                if (string.IsNullOrEmpty(fileUploadRequest.FileName))
-                {
-                    fileUploadRequest.FileName = fileUploadRequest.FileToUpload.FileName;
-                }
-                string ext = Path.GetExtension(fileUploadRequest.FileToUpload.FileName).ToLower();
-
-                var filePath = GetFilePath($"{fileUploadRequest.FileName}{ext}", fileUploadRequest.CaseId);
+                var filePath = GetFilePath(fileUploadRequest.FileName, fileUploadRequest.CaseId);
                 var uploadResult = await _fileUploadService.UploadFileAsync(fileUploadRequest.FileToUpload, filePath);
 
-                if (uploadResult > 0)
+                if (uploadResult != null)
                 {
                     var result = await _caseKeywordService.AddFileToKeywordAsync(fileUploadRequest, templateId.Value);
-                    return result > 0 ? Ok() : BadRequest();
+                    return result > 0 ? Ok(uploadResult) : BadRequest();
                 }
 
                 return BadRequest();
@@ -118,18 +112,11 @@ namespace CaseMngmt.Server.Controllers
 
         private string GetFilePath(string filename, Guid caseId)
         {
-            var fileSetting = new FileUploadSettings();
-            var uploadFolder = fileSetting.UploadFolder;
-
-            var filepath = Path.Combine(Directory.GetCurrentDirectory(), $"{uploadFolder}\\{caseId}");
-            if (!Directory.Exists(filepath))
-            {
-                Directory.CreateDirectory(filepath);
-            }
+            var folderPath = _fileUploadService.GetUploadedFolderPath(caseId);
 
             string ext = Path.GetExtension(filename).ToLower();
             string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filename);
-            var exactpath = Path.Combine(filepath, fileNameWithoutExt + ext);
+            var exactpath = Path.Combine(folderPath, fileNameWithoutExt + ext);
 
             return exactpath;
         }

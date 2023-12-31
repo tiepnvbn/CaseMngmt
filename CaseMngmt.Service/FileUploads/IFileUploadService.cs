@@ -4,7 +4,8 @@ namespace CaseMngmt.Service.FileUploads
 {
     public interface IFileUploadService
     {
-        Task<int> UploadFileAsync(IFormFile fileToUpload, string filePath);
-        Task DownloadFileByFileName(string filePath);
+        Task<string> UploadFileAsync(IFormFile fileToUpload, string filePath);
+        List<string?> GetAllFileByCaseIdAsync(Guid caseId);
+        string GetUploadedFolderPath(Guid caseId);
     }
 }

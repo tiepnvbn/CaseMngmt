@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using CaseMngmt.Models.FileUploads;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.StaticFiles;
 
 namespace CaseMngmt.Service.FileUploads
 {
@@ -12,41 +12,63 @@ namespace CaseMngmt.Service.FileUploads
             _mapper = mapper;
         }
 
-        public async Task<int> UploadFileAsync(IFormFile fileToUpload, string filePath)
+        public async Task<string> UploadFileAsync(IFormFile fileToUpload, string filePath)
         {
             try
             {
+                var currentFilePath = filePath;
+                var count = 0;
+                while (File.Exists(currentFilePath))
+                {
+                    count++;
+                    currentFilePath = Path.GetDirectoryName(filePath)
+                                     + Path.DirectorySeparatorChar
+                                     + Path.GetFileNameWithoutExtension(filePath)
+                                     + count.ToString()
+                                     + Path.GetExtension(filePath);
+                }
                 // Create a stream to write the file to
-                using var stream = File.Create(filePath);
+                using var stream = File.Create(currentFilePath);
 
                 // Upload file and copy to the stream
                 await fileToUpload.CopyToAsync(stream);
 
-                return 1;
+                return Path.GetFileNameWithoutExtension(currentFilePath);
             }
             catch (Exception)
             {
-                return 0;
+                return null;
             }
         }
 
-        public async Task DownloadFileByFileName(string filePath)
+        public List<string?> GetAllFileByCaseIdAsync(Guid caseId)
         {
             try
             {
-                var provider = new FileExtensionContentTypeProvider();
-                if (!provider.TryGetContentType(filePath, out var contentType))
-                {
-                    contentType = "application/octet-stream";
-                }
-
-                var bytes = await File.ReadAllBytesAsync(filePath);
-                //var result = new File(bytes, contentType, Path.GetFileName(path));
+                var folderPath = GetUploadedFolderPath(caseId);
+                var result = Directory.GetFiles(folderPath, "*.*")
+                    .Select(Path.GetFileName)
+                    .ToList();
+                return result;
             }
             catch (Exception)
             {
-                throw;
+                return new List<string?>();
             }
+        }
+
+        public string GetUploadedFolderPath(Guid caseId)
+        {
+            var fileSetting = new FileUploadSettings();
+            var uploadFolder = fileSetting.UploadFolder;
+
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), $"{uploadFolder}\\{caseId}");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            return folderPath;
         }
     }
 }

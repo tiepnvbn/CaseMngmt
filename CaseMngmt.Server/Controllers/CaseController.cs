@@ -1,6 +1,7 @@
 ﻿using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Service.CaseKeywords;
 using CaseMngmt.Service.CompanyTemplates;
+using CaseMngmt.Service.FileUploads;
 using CaseMngmt.Service.Templates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +17,15 @@ namespace CaseMngmt.Server.Controllers
         private readonly ILogger<CaseController> _logger;
         private readonly ICaseKeywordService _caseKeywordService;
         private readonly ITemplateService _templateService;
+        private readonly IFileUploadService _fileUploadService;
         private readonly ICompanyTemplateService _companyTemplateService;
         public CaseController(ILogger<CaseController> logger, ICaseKeywordService caseKeywordService,
-            ITemplateService templateService, ICompanyTemplateService companyTemplateService)
+            ITemplateService templateService, IFileUploadService fileUploadService, ICompanyTemplateService companyTemplateService)
         {
             _logger = logger;
             _caseKeywordService = caseKeywordService;
             _templateService = templateService;
+            _fileUploadService = fileUploadService;
             _companyTemplateService = companyTemplateService;
         }
 
@@ -113,8 +116,30 @@ namespace CaseMngmt.Server.Controllers
             try
             {
                 var result = await _caseKeywordService.CloseCaseByAsync(caseId);
-                
+
                 return result > 0 ? Ok(result) : BadRequest();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, nameof(CaseController), true, e);
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        [Route("file/getall")]
+        public IActionResult GetAllFileByCaseId(Guid caseId)
+        {
+            if (caseId == Guid.Empty)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _fileUploadService.GetAllFileByCaseIdAsync(caseId);
+
+                return result.Any() ? Ok(result) : NotFound();
             }
             catch (Exception e)
             {
