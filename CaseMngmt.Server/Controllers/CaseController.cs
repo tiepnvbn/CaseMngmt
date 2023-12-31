@@ -66,7 +66,7 @@ namespace CaseMngmt.Server.Controllers
                 };
 
                 var result = await _caseKeywordService.GetAllAsync(searchRequest);
-                return result != null && result.Any() ? Ok(result) : NotFound();
+                return Ok(result);
             }
             catch (Exception e)
             {
