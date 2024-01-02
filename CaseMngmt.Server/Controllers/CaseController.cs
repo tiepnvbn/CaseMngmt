@@ -202,7 +202,7 @@ namespace CaseMngmt.Server.Controllers
             }
         }
 
-        [HttpPut, Route("{Id}")]
+        [HttpPut]
         public async Task<IActionResult> Update(CaseKeywordRequest request)
         {
             if (!ModelState.IsValid || request == null || request.CaseId == Guid.Empty)

@@ -80,7 +80,7 @@ namespace CaseMngmt.Service.Customers
             {
                 var caseModel = new Models.Cases.Case
                 {
-                    Name = $"Case - {DateTime.Now}",
+                    Name = $"CASE{((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds()}",
                     Status = "Open"
                 };
                 var caseResult = await _caseRepository.AddAsync(caseModel);
