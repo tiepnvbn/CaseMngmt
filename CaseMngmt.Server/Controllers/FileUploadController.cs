@@ -64,8 +64,13 @@ namespace CaseMngmt.Server.Controllers
 
                 if (uploadResult != null)
                 {
-                    var result = await _caseKeywordService.AddFileToKeywordAsync(fileUploadRequest, templateId.Value);
-                    return result > 0 ? Ok(uploadResult) : BadRequest();
+                    var result = await _caseKeywordService.AddFileToKeywordAsync(fileUploadRequest, filePath, templateId.Value);
+                    return result != null ? Ok(new FileResponse
+                    {
+                        FileName = uploadResult,
+                        FilePath = filePath,
+                        KeywordId = result.Value
+                    }) : BadRequest();
                 }
 
                 return BadRequest();
@@ -102,6 +107,40 @@ namespace CaseMngmt.Server.Controllers
 
                 var bytes = await System.IO.File.ReadAllBytesAsync(filePath);
                 return File(bytes, contenttype, Path.GetFileName(filePath));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, nameof(FileUploadController), true, e);
+                return BadRequest();
+            }
+        }
+
+        [HttpDelete]
+        [Route("Delete")]
+        public async Task<IActionResult> DeleteFile(string filename, Guid keywordId, Guid caseId)
+        {
+            if (!ModelState.IsValid || string.IsNullOrEmpty(filename))
+            {
+                return BadRequest();
+            }
+            try
+            {
+                string ext = Path.GetExtension(filename).ToLower();
+                if (string.IsNullOrEmpty(ext))
+                {
+                    return BadRequest("The filename need file type");
+                }
+
+                var filePath = GetFilePath(filename, caseId);
+
+                var deleteResult = _fileUploadService.DeleteFileByFilePath(filePath);
+                if (deleteResult > 0)
+                {
+                    var result = await _caseKeywordService.DeleteFileKeywordAsync(caseId, keywordId);
+                    return result > 0 ? Ok(result) : BadRequest();
+                }
+
+                return BadRequest();
             }
             catch (Exception e)
             {

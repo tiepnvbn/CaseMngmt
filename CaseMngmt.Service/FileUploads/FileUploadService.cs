@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CaseMngmt.Models.FileUploads;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
 
 namespace CaseMngmt.Service.FileUploads
 {
@@ -69,6 +70,33 @@ namespace CaseMngmt.Service.FileUploads
             }
 
             return folderPath;
+        }
+
+        public int DeleteFileByFilePath(string filePath)
+        {
+            try
+            {
+                IFileProvider physicalFileProvider = new PhysicalFileProvider(filePath);
+
+                if (physicalFileProvider is PhysicalFileProvider)
+                {
+                    var directory = physicalFileProvider.GetDirectoryContents(string.Empty);
+                    foreach (var file in directory)
+                    {
+                        if (!file.IsDirectory)
+                        {
+                            var fileInfo = new FileInfo(file.PhysicalPath);
+                            fileInfo.Delete();
+                        }
+                    }
+                }
+
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
         }
     }
 }
