@@ -1,6 +1,8 @@
 ﻿using CaseMngmt.Models.Database;
 using Microsoft.EntityFrameworkCore;
 using CaseMngmt.Models.CaseKeywords;
+using CaseMngmt.Models.Keywords;
+using CaseMngmt.Models.FileUploads;
 
 namespace CaseMngmt.Repository.CaseKeywords
 {
@@ -50,7 +52,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                 var IQueryable = (from caseKeyword in _context.CaseKeyword
                                   join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
                                   join type in _context.Type on keyword.TypeId equals type.Id
-                                  where !caseKeyword.Deleted 
+                                  where !caseKeyword.Deleted
                                     && caseKeyword.CaseId == caseId
                                     && caseKeyword.Keyword.IsShowOnTemplate
                                     && caseKeyword.Case.Status == "Open"
@@ -91,7 +93,6 @@ namespace CaseMngmt.Repository.CaseKeywords
                              join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
                              join template in _context.Template on keyword.TemplateId equals template.Id
                              join companyTemplate in _context.CompanyTemplate on template.Id equals companyTemplate.TemplateId
-                             join type in _context.Type on keyword.TypeId equals type.Id
                              where !caseKeyword.Deleted
                                 && !tempCase.Deleted
                                 && !keyword.Deleted
@@ -164,16 +165,19 @@ namespace CaseMngmt.Repository.CaseKeywords
             }
         }
 
-        public async Task<int> DeleteAsync(Guid caseId)
+        public async Task<int> DeleteAsync(Guid id)
         {
             try
             {
-                CaseKeyword? model = await _context.CaseKeyword.FindAsync(caseId);
+                CaseKeyword? model = await _context.CaseKeyword.FindAsync(id);
                 if (model != null)
                 {
-                    _context.CaseKeyword.Remove(model);
+                    model.Deleted = true;
+                    await _context.SaveChangesAsync();
+                    return 1;
                 }
-                return _context.SaveChanges();
+
+                return 0;
             }
             catch (Exception ex)
             {
@@ -225,6 +229,47 @@ namespace CaseMngmt.Repository.CaseKeywords
             catch (Exception ex)
             {
                 return 0;
+            }
+        }
+
+        public async Task<CaseKeyword?> GetByCaseIdAndKeywordIdAsync(Guid caseId, Guid keywordId)
+        {
+            try
+            {
+                CaseKeyword? model = await _context.CaseKeyword.FirstOrDefaultAsync(x => x.CaseId == caseId && x.KeywordId == keywordId);
+                return model;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<FileResponse>> GetFileKeywordsByCaseIdAAsync(Guid caseId)
+        {
+            try
+            {
+                var IQueryable = (from caseKeyword in _context.CaseKeyword.Include(x => x.Keyword).Include(x => x.Keyword.Type)
+                                  join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
+                                  join type in _context.Type on keyword.TypeId equals type.Id
+                                  where !caseKeyword.Deleted
+                                    && !keyword.Deleted
+                                    && !type.Deleted
+                                    && caseKeyword.CaseId == caseId
+                                    && !caseKeyword.Keyword.IsShowOnTemplate
+                                    && caseKeyword.Case.Status == "Open"
+                                  select new FileResponse
+                                  {
+                                      KeywordId = caseKeyword.KeywordId,
+                                      FileName = caseKeyword.Keyword.Name,
+                                      FilePath = caseKeyword.Value
+                                  });
+                var result = await IQueryable.OrderBy(x => x.FileName).ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return new List<FileResponse>();
             }
         }
     }

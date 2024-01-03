@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CaseMngmt.Models.CaseKeywords;
+using CaseMngmt.Models.FileUploads;
 using CaseMngmt.Models.Keywords;
 using CaseMngmt.Repository.CaseKeywords;
 using CaseMngmt.Repository.Cases;
@@ -31,10 +32,6 @@ namespace CaseMngmt.Service.Customers
             try
             {
                 var result = await _caseKeywordRepository.GetAllAsync(searchRequest);
-                if (result == null)
-                {
-                    return null;
-                }
 
                 return result;
             }
@@ -152,7 +149,7 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<int> AddFileToKeywordAsync(CaseKeywordFileUpload fileUploadRequest, Guid templateId)
+        public async Task<Guid?> AddFileToKeywordAsync(CaseKeywordFileUpload fileUploadRequest, string filePath,  Guid templateId)
         {
             try
             {
@@ -172,7 +169,7 @@ namespace CaseMngmt.Service.Customers
 
                 var keyword = new Keyword()
                 {
-                    Name = "File",
+                    Name = fileUploadRequest.FileName,
                     TypeId = fileType.Id,
                     TemplateId = templateId,
                     IsRequired = false,
@@ -188,13 +185,15 @@ namespace CaseMngmt.Service.Customers
                 {
                     CaseId = fileUploadRequest.CaseId,
                     KeywordId = keyword.Id,
-                    Value = fileUploadRequest.FileName
+                    Value = filePath
                 };
-                return await _caseKeywordRepository.AddAsync(caseKeyword);
+
+                var caseKeyResult = await _caseKeywordRepository.AddAsync(caseKeyword);
+                return caseKeyResult > 0 ? keyword.Id : null;
             }
             catch (Exception ex)
             {
-                return 0;
+                return null;
             }
         }
 
@@ -217,6 +216,49 @@ namespace CaseMngmt.Service.Customers
             catch (Exception ex)
             {
                 return 0;
+            }
+        }
+
+        public async Task<int> DeleteFileKeywordAsync(Guid caseId, Guid keywordId)
+        {
+            try
+            {
+                var caseEntity = await _caseRepository.GetByIdAsync(caseId);
+                if (caseEntity == null)
+                {
+                    return 0;
+                }
+
+                var keywordEntity = await _keywordRepository.GetByIdAsync(keywordId);
+                if (keywordEntity == null)
+                {
+                    return 0;
+                }
+                var caseKeyword = await _caseKeywordRepository.GetByCaseIdAndKeywordIdAsync(caseId, keywordId);
+                if (caseKeyword != null)
+                {
+                    await _caseKeywordRepository.DeleteAsync(caseKeyword.Id);
+                    await _keywordRepository.DeleteAsync(keywordEntity.Id);
+                }
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
+        public async Task<IEnumerable<FileResponse>> GetFileKeywordsByCaseIdAAsync(Guid caseId)
+        {
+            try
+            {
+                var fileKeywordsResult = await _caseKeywordRepository.GetFileKeywordsByCaseIdAAsync(caseId);
+                return fileKeywordsResult;
+            }
+            catch (Exception ex)
+            {
+                return new List<FileResponse>();
             }
         }
     }

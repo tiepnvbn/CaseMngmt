@@ -1,4 +1,5 @@
 ﻿using CaseMngmt.Models.CaseKeywords;
+using CaseMngmt.Models.FileUploads;
 
 namespace CaseMngmt.Service.CaseKeywords
 {
@@ -10,6 +11,8 @@ namespace CaseMngmt.Service.CaseKeywords
         Task<int> CloseCaseByAsync(Guid caseId);
         Task<int> DeleteAsync(Guid caseId);
         Task<int> UpdateAsync(CaseKeywordRequest request);
-        Task<int> AddFileToKeywordAsync(CaseKeywordFileUpload fileUploadRequest, Guid templateId);
+        Task<Guid?> AddFileToKeywordAsync(CaseKeywordFileUpload fileUploadRequest, string filePath, Guid templateId);
+        Task<IEnumerable<FileResponse>> GetFileKeywordsByCaseIdAAsync(Guid caseId);
+        Task<int> DeleteFileKeywordAsync(Guid caseId, Guid keywordId);
     }
 }

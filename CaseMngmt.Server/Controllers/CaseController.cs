@@ -128,7 +128,7 @@ namespace CaseMngmt.Server.Controllers
 
         [HttpGet]
         [Route("file/getall")]
-        public IActionResult GetAllFileByCaseId(Guid caseId)
+        public async Task<IActionResult> GetAllFileByCaseId(Guid caseId)
         {
             if (caseId == Guid.Empty)
             {
@@ -137,9 +137,18 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                var result = _fileUploadService.GetAllFileByCaseIdAsync(caseId);
+                var fileKeywordsResult = await _caseKeywordService.GetFileKeywordsByCaseIdAAsync(caseId);
+                var availableFileResult = _fileUploadService.GetAllFileByCaseIdAsync(caseId);
 
-                return result.Any() ? Ok(result) : NotFound();
+                var result = fileKeywordsResult.ToList();
+                if (availableFileResult != null && fileKeywordsResult.Count() != availableFileResult.Count())
+                {
+                    result = fileKeywordsResult.Where(x => availableFileResult.Contains(x.FileName)).ToList();
+                }
+
+                return result.Any()
+                    ? Ok(result)
+                    : NotFound();
             }
             catch (Exception e)
             {
