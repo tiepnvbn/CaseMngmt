@@ -42,7 +42,7 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                if (fileUploadRequest.Validate())
+                if (!fileUploadRequest.Validate())
                 {
                     return BadRequest("Your file is not supported");
                 }

@@ -4,7 +4,7 @@
     {
         public FileUploadSettings()
         {
-            AcceptTypes = "image/*,.pdf,.txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.dwg,.dxf,.jww";
+            AcceptTypes = ".jpeg,.jpg,.png,.gif,.tiff,.psd,.pdf,.eps,.raw,.txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.dwg,.dxf,.jww";
             ValidFileTypes = "application/vnd.openxmlformats-officedocument,image/,application/pdf,text/plain";
             InvalidFileExtensions = ".cs,.js,.vb,.exe,.com,.bat";
             UploadFolder = "UploadedFiles";

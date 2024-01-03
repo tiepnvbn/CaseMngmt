@@ -25,7 +25,7 @@ namespace CaseMngmt.Server.Controllers
             try
             {
                 var result = await _service.GetAllAsync(name, phoneNumber, pageSize ?? 25, pageNumber ?? 1);
-                return result != null && result.Any() ? Ok(result) : NotFound();
+                return result != null && result.Items.Any() ? Ok(result) : NotFound();
             }
             catch (Exception e)
             {

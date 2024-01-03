@@ -47,8 +47,8 @@ namespace CaseMngmt.Repository.CompanyTemplates
         {
             try
             {
-                List<CompanyTemplate> companyTemplateawait = await _context.CompanyTemplate.Where(x => x.CompanyId.Equals(companyId)).ToListAsync();
-                return companyTemplateawait;
+                List<CompanyTemplate> companyTemplate = await _context.CompanyTemplate.Where(x => x.CompanyId.Equals(companyId)).ToListAsync();
+                return companyTemplate;
             }
             catch (Exception)
             {

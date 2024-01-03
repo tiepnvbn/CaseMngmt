@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CaseMngmt.Models.CompanyTemplates;
-using CaseMngmt.Repository.Companies;
 using CaseMngmt.Repository.CompanyTemplates;
 
 namespace CaseMngmt.Service.CompanyTemplates

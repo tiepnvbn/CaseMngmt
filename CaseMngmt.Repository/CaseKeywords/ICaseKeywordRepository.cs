@@ -1,4 +1,5 @@
-﻿using CaseMngmt.Models.CaseKeywords;
+﻿using CaseMngmt.Models;
+using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.FileUploads;
 
 namespace CaseMngmt.Repository.CaseKeywords
@@ -7,10 +8,10 @@ namespace CaseMngmt.Repository.CaseKeywords
     {
         Task<int> AddMultiAsync(List<CaseKeyword> caseKeys);
         Task<int> AddAsync(CaseKeyword caseKey);
-        Task<List<CaseKeywordViewModel>?> GetAllAsync(CaseKeywordSearchRequest searchRequest);
+        Task<PagedResult<CaseKeywordViewModel>?> GetAllAsync(CaseKeywordSearchRequest searchRequest);
         Task<IEnumerable<CaseKeywordBaseValue>?> GetByIdAsync(Guid caseId);
         Task<CaseKeyword?> GetByCaseIdAndKeywordIdAsync(Guid caseId, Guid keywordId);
-        Task<IEnumerable<FileResponse>> GetFileKeywordsByCaseIdAAsync(Guid caseId);
+        Task<IEnumerable<FileResponse>> GetFileKeywordsByCaseIdAsync(Guid caseId);
         Task<int> DeleteAsync(Guid id);
         Task<int> DeleteByCaseIdAsync(Guid caseId);
         Task<int> UpdateAsync(CaseKeyword caseKey);

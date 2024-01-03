@@ -182,7 +182,7 @@ namespace CaseMngmt.Service.Templates
             }
         }
 
-        public async Task<IEnumerable<TemplateViewModel>?> GetAllAsync(Guid? companyId, int pageSize, int pageNumber)
+        public async Task<Models.PagedResult<TemplateViewModel>?> GetAllAsync(Guid? companyId, int pageSize, int pageNumber)
         {
             try
             {

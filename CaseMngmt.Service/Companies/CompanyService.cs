@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using CaseMngmt.Models;
 using CaseMngmt.Models.Companies;
+using CaseMngmt.Models.Customers;
 using CaseMngmt.Repository.Companies;
 
 namespace CaseMngmt.Service.Companies
@@ -39,13 +41,13 @@ namespace CaseMngmt.Service.Companies
             }
         }
 
-        public async Task<IEnumerable<CompanyViewModel>?> GetAllAsync(string companyName, string phoneNumber, int pageSize, int pageNumber)
+        public async Task<PagedResult<CompanyViewModel>?> GetAllAsync(string companyName, string phoneNumber, int pageSize, int pageNumber)
         {
             try
             {
                 var companysFromRepository = await _repository.GetAllAsync(companyName, phoneNumber, pageSize, pageNumber);
 
-                var result = _mapper.Map<List<CompanyViewModel>>(companysFromRepository);
+                var result = _mapper.Map<PagedResult<CompanyViewModel>>(companysFromRepository);
 
                 return result;
             }

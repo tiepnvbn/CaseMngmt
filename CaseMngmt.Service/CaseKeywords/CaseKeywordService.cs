@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CaseMngmt.Models;
 using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.FileUploads;
 using CaseMngmt.Models.Keywords;
@@ -27,7 +28,7 @@ namespace CaseMngmt.Service.Customers
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<CaseKeywordViewModel>?> GetAllAsync(CaseKeywordSearchRequest searchRequest)
+        public async Task<PagedResult<CaseKeywordViewModel>?> GetAllAsync(CaseKeywordSearchRequest searchRequest)
         {
             try
             {
@@ -249,11 +250,11 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<IEnumerable<FileResponse>> GetFileKeywordsByCaseIdAAsync(Guid caseId)
+        public async Task<IEnumerable<FileResponse>> GetFileKeywordsByCaseIdAsync(Guid caseId)
         {
             try
             {
-                var fileKeywordsResult = await _caseKeywordRepository.GetFileKeywordsByCaseIdAAsync(caseId);
+                var fileKeywordsResult = await _caseKeywordRepository.GetFileKeywordsByCaseIdAsync(caseId);
                 return fileKeywordsResult;
             }
             catch (Exception ex)

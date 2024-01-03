@@ -1,6 +1,7 @@
 ﻿using CaseMngmt.Models.Database;
 using CaseMngmt.Models.Cases;
 using Microsoft.EntityFrameworkCore;
+using CaseMngmt.Models;
 
 namespace CaseMngmt.Repository.Cases
 {
@@ -41,13 +42,15 @@ namespace CaseMngmt.Repository.Cases
             }
         }
 
-        public async Task<IEnumerable<Case>?> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<PagedResult<Case>?> GetAllAsync(int pageSize, int pageNumber)
         {
             try
             {
-                var IQueryableCase = (from tempCase in _context.Case select tempCase);
-                IQueryableCase = IQueryableCase.Where(x => !x.Deleted).OrderBy(m => m.Name);
-                var result = await IQueryableCase.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+                var queryableCase = (from tempCase in _context.Case select tempCase);
+                queryableCase = queryableCase.Where(x => !x.Deleted).OrderBy(m => m.Name);
+
+                var query = queryableCase.AsQueryable();
+                var result = await PagedResult<Case>.CreateAsync(query.AsNoTracking(), pageNumber, pageSize);
 
                 return result;
             }

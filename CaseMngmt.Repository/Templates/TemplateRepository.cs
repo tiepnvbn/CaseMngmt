@@ -1,6 +1,7 @@
 ﻿using CaseMngmt.Models.Database;
 using Microsoft.EntityFrameworkCore;
 using CaseMngmt.Models.Templates;
+using CaseMngmt.Models;
 
 namespace CaseMngmt.Repository.Templates
 {
@@ -90,11 +91,11 @@ namespace CaseMngmt.Repository.Templates
             }
         }
 
-        public async Task<IEnumerable<TemplateViewModel>?> GetAllAsync(Guid? companyId, int pageSize, int pageNumber)
+        public async Task<PagedResult<TemplateViewModel>?> GetAllAsync(Guid? companyId, int pageSize, int pageNumber)
         {
             try
             {
-                var IQueryableTemplate = (from tempTemplate in _context.Template
+                var queryableTemplate = (from tempTemplate in _context.Template
                                           join companyTemplate in _context.CompanyTemplate on tempTemplate.Id equals companyTemplate.TemplateId
                                           join keyword in _context.Keyword on tempTemplate.Id equals keyword.TemplateId
                                           join type in _context.Type on keyword.TypeId equals type.Id
@@ -133,8 +134,9 @@ namespace CaseMngmt.Repository.Templates
                 //    IQueryableTemplate = IQueryableTemplate.Where(x => x).OrderBy(m => m.Name);
                 //}
 
-                IQueryableTemplate = IQueryableTemplate.OrderBy(m => m.Name);
-                var result = await IQueryableTemplate.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+                queryableTemplate = queryableTemplate.OrderBy(m => m.Name);
+                var query = queryableTemplate.AsQueryable();
+                var result = await PagedResult<TemplateViewModel>.CreateAsync(query.AsNoTracking(), pageNumber, pageSize);
 
                 return result;
             }

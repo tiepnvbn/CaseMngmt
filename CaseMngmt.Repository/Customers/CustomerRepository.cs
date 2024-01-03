@@ -1,6 +1,7 @@
 ﻿using CaseMngmt.Models.Database;
 using CaseMngmt.Models.Customers;
 using Microsoft.EntityFrameworkCore;
+using CaseMngmt.Models;
 
 namespace CaseMngmt.Repository.Customers
 {
@@ -47,28 +48,29 @@ namespace CaseMngmt.Repository.Customers
             }
         }
 
-        public async Task<IEnumerable<Customer>?> GetAllAsync(string? customerName, string? phoneNumber, string companyId, int pageSize, int pageNumber)
+        public async Task<PagedResult<Customer>?> GetAllAsync(string? customerName, string? phoneNumber, string companyId, int pageSize, int pageNumber)
         {
             try
             {
-                var IQueryableCustomer = (from tempCustomer in _context.Customer select tempCustomer).Where(x => !x.Deleted);
+                var queryableCustomer = (from tempCustomer in _context.Customer select tempCustomer).Where(x => !x.Deleted);
 
                 if (!string.IsNullOrEmpty(companyId))
                 {
-                    IQueryableCustomer = IQueryableCustomer.Where(m => m.CompanyId == Guid.Parse(companyId));
+                    queryableCustomer = queryableCustomer.Where(m => m.CompanyId == Guid.Parse(companyId));
                 }
 
                 if (!string.IsNullOrEmpty(customerName))
                 {
-                    IQueryableCustomer = IQueryableCustomer.Where(m => m.Name.Contains(customerName.Trim()));
+                    queryableCustomer = queryableCustomer.Where(m => m.Name.Contains(customerName.Trim()));
                 }
                 if (!string.IsNullOrEmpty(phoneNumber))
                 {
-                    IQueryableCustomer = IQueryableCustomer.Where(m => m.PhoneNumber.Contains(phoneNumber.Trim()));
+                    queryableCustomer = queryableCustomer.Where(m => m.PhoneNumber.Contains(phoneNumber.Trim()));
                 }
 
-                IQueryableCustomer = IQueryableCustomer.OrderBy(m => m.Name);
-                var result = await IQueryableCustomer.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+                queryableCustomer = queryableCustomer.OrderBy(m => m.Name);
+                var query = queryableCustomer.AsQueryable();
+                var result = await PagedResult<Customer>.CreateAsync(query.AsNoTracking(), pageNumber, pageSize);
 
                 return result;
             }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CaseMngmt.Models;
 using CaseMngmt.Models.Cases;
 using CaseMngmt.Repository.Cases;
 
@@ -42,7 +43,7 @@ namespace CaseMngmt.Service.Cases
             }
         }
 
-        public async Task<IEnumerable<Case>?> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<PagedResult<Case>?> GetAllAsync(int pageSize, int pageNumber)
         {
             try
             {
