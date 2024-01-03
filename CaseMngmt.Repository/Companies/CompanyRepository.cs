@@ -1,6 +1,7 @@
 ﻿using CaseMngmt.Models.Database;
 using CaseMngmt.Models.Companies;
 using Microsoft.EntityFrameworkCore;
+using CaseMngmt.Models;
 
 namespace CaseMngmt.Repository.Companies
 {
@@ -47,23 +48,24 @@ namespace CaseMngmt.Repository.Companies
             }
         }
 
-        public async Task<IEnumerable<Company>?> GetAllAsync(string companyName, string phoneNumber, int pageSize, int pageNumber)
+        public async Task<PagedResult<Company>?> GetAllAsync(string companyName, string phoneNumber, int pageSize, int pageNumber)
         {
             try
             {
-                var IQueryableCompany = (from tempCompany in _context.Company select tempCompany).Where(x => !x.Deleted);
+                var queryableCompany = (from tempCompany in _context.Company select tempCompany).Where(x => !x.Deleted);
 
                 if (!string.IsNullOrEmpty(companyName))
                 {
-                    IQueryableCompany = IQueryableCompany.Where(m => m.Name.Contains(companyName.Trim()));
+                    queryableCompany = queryableCompany.Where(m => m.Name.Contains(companyName.Trim()));
                 }
                 if (!string.IsNullOrEmpty(phoneNumber))
                 {
-                    IQueryableCompany = IQueryableCompany.Where(m => m.PhoneNumber.Contains(phoneNumber.Trim()));
+                    queryableCompany = queryableCompany.Where(m => m.PhoneNumber.Contains(phoneNumber.Trim()));
                 }
 
-                IQueryableCompany = IQueryableCompany.OrderBy(m => m.Name);
-                var result = await IQueryableCompany.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+                queryableCompany = queryableCompany.OrderBy(m => m.Name);
+                var query = queryableCompany.AsQueryable();
+                var result = await PagedResult<Company>.CreateAsync(query.AsNoTracking(), pageNumber, pageSize);
 
                 return result;
             }

@@ -1,4 +1,5 @@
-﻿using CaseMngmt.Models.CompanyTemplates;
+﻿using CaseMngmt.Models;
+using CaseMngmt.Models.CompanyTemplates;
 
 namespace CaseMngmt.Repository.CompanyTemplates
 {

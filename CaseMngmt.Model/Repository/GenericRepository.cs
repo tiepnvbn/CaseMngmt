@@ -1,6 +1,5 @@
 ﻿using CaseMngmt.Models.Database;
 using Microsoft.EntityFrameworkCore;
-using System.Data.Entity.Infrastructure;
 using System.Linq.Expressions;
 
 namespace CaseMngmt.Models.Repository

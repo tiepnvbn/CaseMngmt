@@ -31,7 +31,7 @@ namespace CaseMngmt.Server.Controllers
                 }
 
                 var result = await _service.GetAllCustomersAsync(customerName, phoneNumber, currentCompanyId, pageSize ?? 25, pageNumber ?? 1);
-                return result != null && result.Any() ? Ok(result) : NotFound();
+                return result != null && result.Items.Any() ? Ok(result) : NotFound();
             }
             catch (Exception e)
             {

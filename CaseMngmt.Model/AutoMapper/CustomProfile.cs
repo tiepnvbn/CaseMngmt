@@ -14,11 +14,15 @@ namespace CaseMngmt.Models.AutoMapper
         {
             CreateMap<CustomerViewModel, Customer>();
             CreateMap<Customer, CustomerViewModel>();
+            CreateMap<PagedResult<CustomerViewModel>, PagedResult<Customer>>();
+            CreateMap<PagedResult<Customer>, PagedResult<CustomerViewModel>>();
             CreateMap<Customer, CustomerRequest>();
             CreateMap<CustomerRequest, Customer>().ForMember(x => x.Id, opt => opt.Ignore());
 
             CreateMap<CompanyViewModel, Company>();
             CreateMap<Company, CompanyViewModel>();
+            CreateMap<PagedResult<CompanyViewModel>, PagedResult<Company>>();
+            CreateMap<PagedResult<Company>, PagedResult<CompanyViewModel>>();
             CreateMap<Company, CompanyRequest>();
             CreateMap<CompanyRequest, Company>().ForMember(x => x.Id, opt => opt.Ignore());
 

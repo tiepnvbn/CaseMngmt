@@ -42,13 +42,13 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<IEnumerable<CustomerViewModel>?> GetAllCustomersAsync(string? customerName, string? phoneNumber, string companyId, int pageSize, int pageNumber)
+        public async Task<Models.PagedResult<CustomerViewModel>?> GetAllCustomersAsync(string? customerName, string? phoneNumber, string companyId, int pageSize, int pageNumber)
         {
             try
             {
                 var customersFromRepository = await _repository.GetAllAsync(customerName, phoneNumber, companyId, pageSize, pageNumber);
 
-                var result = _mapper.Map<List<CustomerViewModel>>(customersFromRepository);
+                var result = _mapper.Map<Models.PagedResult<CustomerViewModel>>(customersFromRepository);
 
                 return result;
             }

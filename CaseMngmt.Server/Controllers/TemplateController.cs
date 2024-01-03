@@ -48,7 +48,7 @@ namespace CaseMngmt.Server.Controllers
                 }
 
                 var result = await _templateService.GetAllAsync(templateId, pageSize ?? 25, pageNumber ?? 1);
-                return result != null && result.Any() ? Ok(result) : NotFound();
+                return result != null && result.Items.Any() ? Ok(result) : NotFound();
             }
             catch (Exception e)
             {

@@ -1,8 +1,8 @@
 ﻿using CaseMngmt.Models.Database;
 using Microsoft.EntityFrameworkCore;
 using CaseMngmt.Models.CaseKeywords;
-using CaseMngmt.Models.Keywords;
 using CaseMngmt.Models.FileUploads;
+using CaseMngmt.Models;
 
 namespace CaseMngmt.Repository.CaseKeywords
 {
@@ -84,11 +84,11 @@ namespace CaseMngmt.Repository.CaseKeywords
             }
         }
 
-        public async Task<List<CaseKeywordViewModel>?> GetAllAsync(CaseKeywordSearchRequest searchRequest)
+        public async Task<PagedResult<CaseKeywordViewModel>?> GetAllAsync(CaseKeywordSearchRequest searchRequest)
         {
             try
             {
-                var query = (from caseKeyword in _context.CaseKeyword.Include(x => x.Keyword).Include(x => x.Keyword.Type)
+                var queryable = (from caseKeyword in _context.CaseKeyword.Include(x => x.Keyword).Include(x => x.Keyword.Type)
                              join tempCase in _context.Case on caseKeyword.CaseId equals tempCase.Id
                              join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
                              join template in _context.Template on keyword.TemplateId equals template.Id
@@ -106,10 +106,10 @@ namespace CaseMngmt.Repository.CaseKeywords
 
                 if (searchRequest.KeywordValues != null && searchRequest.KeywordValues.Any())
                 {
-                    query = query.Where(z => searchRequest.KeywordValues.All(x => z.Any(c => c.caseKeyword.KeywordId.Equals(x.KeywordId) && c.caseKeyword.Value.Contains(x.Value))));
+                    queryable = queryable.Where(z => searchRequest.KeywordValues.All(x => z.Any(c => c.caseKeyword.KeywordId.Equals(x.KeywordId) && c.caseKeyword.Value.Contains(x.Value))));
                 }
 
-                var result = query
+                var query = queryable
                         .Select(z => new CaseKeywordViewModel
                         {
                             CaseId = z.Key.Id,
@@ -133,10 +133,10 @@ namespace CaseMngmt.Repository.CaseKeywords
                                 Metadata = !string.IsNullOrEmpty(x.caseKeyword.Keyword.Type.Metadata)
                                   ? x.caseKeyword.Keyword.Type.Metadata.Split(',', StringSplitOptions.None).ToList()
                                   : new List<string>()
-                            }).OrderBy(x => x.Order).ToList()
-                        })
-                        .Skip((searchRequest.PageNumber - 1) * searchRequest.PageSize)
-                        .Take(searchRequest.PageSize).ToList();
+                            }).OrderBy(x => x.Order).AsEnumerable()
+                        });
+
+                var result = await PagedResult<CaseKeywordViewModel>.CreateAsync(query, searchRequest.PageNumber, searchRequest.PageSize);
 
                 return await Task.FromResult(result);
             }
@@ -245,7 +245,7 @@ namespace CaseMngmt.Repository.CaseKeywords
             }
         }
 
-        public async Task<IEnumerable<FileResponse>> GetFileKeywordsByCaseIdAAsync(Guid caseId)
+        public async Task<IEnumerable<FileResponse>> GetFileKeywordsByCaseIdAsync(Guid caseId)
         {
             try
             {

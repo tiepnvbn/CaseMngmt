@@ -137,7 +137,7 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                var fileKeywordsResult = await _caseKeywordService.GetFileKeywordsByCaseIdAAsync(caseId);
+                var fileKeywordsResult = await _caseKeywordService.GetFileKeywordsByCaseIdAsync(caseId);
                 var availableFileResult = _fileUploadService.GetAllFileByCaseIdAsync(caseId);
 
                 var result = fileKeywordsResult.ToList();
