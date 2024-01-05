@@ -1,18 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CaseMngmt.Models;
+using CaseMngmt.Models.FileUploads;
+using Microsoft.AspNetCore.Http;
 
 namespace CaseMngmt.Service.FileUploads
 {
     public interface IFileUploadService
     {
-        /// <summary>
-        /// Upload file and return the FileName after uploaded
-        /// </summary>
-        /// <param name="fileToUpload"></param>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        Task<string> UploadFileAsync(IFormFile fileToUpload, string filePath);
-        int DeleteFileByFilePath(string filePath);
-        List<string?> GetAllFileByCaseIdAsync(Guid caseId);
-        string GetUploadedFolderPath(Guid caseId);
+        Task<FileUploadResponse?> UploadFileAsync(IFormFile fileToUpload, Guid caseId, FileUploadSetting fileSetting, AWSSetting? awsSetting);
+        Task<int> DeleteFileByFilePath(string filePath, FileUploadSetting fileSetting, AWSSetting? awsSetting);
+        Task<List<string?>> GetAllFileByCaseIdAsync(Guid caseId, FileUploadSetting fileSetting, AWSSetting? awsSetting);
+        Task<string?> GetUploadedFolderPath(Guid caseId, FileUploadSetting fileSetting, AWSSetting? awsSetting);
+        Task<string?> GetFilePath(string filename, Guid caseId, FileUploadSetting fileSetting, AWSSetting? awsSetting);
     }
 }

@@ -1,4 +1,6 @@
-﻿using CaseMngmt.Models.CaseKeywords;
+﻿using CaseMngmt.Models;
+using CaseMngmt.Models.CaseKeywords;
+using CaseMngmt.Models.FileUploads;
 using CaseMngmt.Service.CaseKeywords;
 using CaseMngmt.Service.CompanyTemplates;
 using CaseMngmt.Service.FileUploads;
@@ -19,14 +21,17 @@ namespace CaseMngmt.Server.Controllers
         private readonly ITemplateService _templateService;
         private readonly IFileUploadService _fileUploadService;
         private readonly ICompanyTemplateService _companyTemplateService;
+        private readonly IConfiguration _configuration;
+
         public CaseController(ILogger<CaseController> logger, ICaseKeywordService caseKeywordService,
-            ITemplateService templateService, IFileUploadService fileUploadService, ICompanyTemplateService companyTemplateService)
+            ITemplateService templateService, IFileUploadService fileUploadService, ICompanyTemplateService companyTemplateService, IConfiguration configuration)
         {
             _logger = logger;
             _caseKeywordService = caseKeywordService;
             _templateService = templateService;
             _fileUploadService = fileUploadService;
             _companyTemplateService = companyTemplateService;
+            _configuration = configuration;
         }
 
         [HttpPost, Route("getAll")]
@@ -138,7 +143,26 @@ namespace CaseMngmt.Server.Controllers
             try
             {
                 var fileKeywordsResult = await _caseKeywordService.GetFileKeywordsByCaseIdAsync(caseId);
-                var availableFileResult = _fileUploadService.GetAllFileByCaseIdAsync(caseId);
+                AWSSetting? awsSetting = null;
+                if (!string.IsNullOrEmpty(_configuration["AWS:S3Bucket"]))
+                {
+                    awsSetting = new AWSSetting()
+                    {
+                        S3Bucket = _configuration["AWS:S3Bucket"],
+                        ACCESS_KEY = _configuration["AWS:ACCESS_KEY"],
+                        SECRET_KEY = _configuration["AWS:SECRET_KEY"],
+                        UploadFolder = _configuration["AWS:UploadFolder"]
+                    };
+                }
+                var fileSetting = new FileUploadSetting()
+                {
+                    AcceptTypes = _configuration["FileUploadSettings:acceptTypes"],
+                    InvalidFileExtensions = _configuration["FileUploadSettings:invalidFileExtensions"],
+                    UploadFolder = _configuration["FileUploadSettings:uploadFolder"],
+                    ValidFileTypes = _configuration["FileUploadSettings:validFileTypes"],
+                };
+
+                var availableFileResult = await _fileUploadService.GetAllFileByCaseIdAsync(caseId, fileSetting, awsSetting);
 
                 var result = fileKeywordsResult.ToList();
                 if (availableFileResult != null && fileKeywordsResult.Count() != availableFileResult.Count())

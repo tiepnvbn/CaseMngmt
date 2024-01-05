@@ -136,7 +136,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                             }).OrderBy(x => x.Order).AsEnumerable()
                         });
 
-                var result = await PagedResult<CaseKeywordViewModel>.CreateAsync(query, searchRequest.PageNumber, searchRequest.PageSize);
+                var result = PagedResult<CaseKeywordViewModel>.CreateAsync(query, searchRequest.PageNumber, searchRequest.PageSize);
 
                 return await Task.FromResult(result);
             }
