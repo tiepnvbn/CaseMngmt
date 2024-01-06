@@ -8,8 +8,12 @@ namespace CaseMngmt.Models.GenericValidation
         {
             try
             {
-                object valuse = TypeDescriptor.GetConverter(type).ConvertFromInvariantString(value);
-                if (valuse != null)
+                if (value == null)
+                {
+                    return true;
+                }
+                object? parseValue = TypeDescriptor.GetConverter(type).ConvertFromInvariantString(value);
+                if (parseValue != null)
                 {
                     if (maxlength != null)
                     {

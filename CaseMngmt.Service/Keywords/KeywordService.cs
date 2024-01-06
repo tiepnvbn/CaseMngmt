@@ -82,6 +82,8 @@ namespace CaseMngmt.Service.Keywords
                 entity.Order = request.Order;
                 entity.CaseSearchable = request.CaseSearchable;
                 entity.DocumentSearchable = request.DocumentSearchable;
+                entity.IsShowOnCaseList = request.IsShowOnCaseList;
+                entity.IsShowOnTemplate = request.IsShowOnTemplate;
                 entity.UpdatedDate = DateTime.UtcNow;
                 await _repository.UpdateAsync(entity);
                 return 1;

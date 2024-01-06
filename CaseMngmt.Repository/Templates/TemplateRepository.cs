@@ -47,10 +47,11 @@ namespace CaseMngmt.Repository.Templates
         {
             try
             {
-                var IQueryableTemplate = (from tempTemplate in _context.Template
+                var IQueryableTemplate = (from tempTemplate in _context.Template.Include(x => x.Keywords)
                                           join keyword in _context.Keyword on tempTemplate.Id equals keyword.TemplateId
                                           join type in _context.Type on keyword.TypeId equals type.Id
-                                          where !tempTemplate.Deleted && tempTemplate.Id == templateId
+                                          where !tempTemplate.Deleted
+                                            && tempTemplate.Id == templateId
                                           select new TemplateViewModel
                                           {
                                               Id = templateId,
@@ -59,27 +60,31 @@ namespace CaseMngmt.Repository.Templates
                                               Name = tempTemplate.Name,
                                               UpdatedBy = tempTemplate.UpdatedBy,
                                               UpdatedDate = tempTemplate.UpdatedDate,
-                                              Keywords = tempTemplate.Keywords.Select(x => new Models.Keywords.KeywordViewModel
-                                              {
-                                                  KeywordName = x.Name,
-                                                  UpdatedBy = x.UpdatedBy,
-                                                  UpdatedDate = x.UpdatedDate,
-                                                  CreatedBy = x.CreatedBy,
-                                                  CreatedDate = x.CreatedDate,
-                                                  KeywordId = x.Id,
-                                                  IsRequired = x.IsRequired,
-                                                  MaxLength = x.MaxLength,
-                                                  Order = x.Order,
-                                                  Searchable = x.CaseSearchable,
-                                                  DocumentSearchable = x.DocumentSearchable,
-                                                  TemplateId = templateId,
-                                                  TypeId = x.Type.Id,
-                                                  TypeName = x.Type.Name,
-                                                  TypeValue = x.Type.Value,
-                                                  Metadata = !string.IsNullOrEmpty(x.Type.Metadata)
+                                              Keywords = tempTemplate.Keywords
+                                                .Where(x => x.IsShowOnTemplate)
+                                                .Select(x => new Models.Keywords.KeywordViewModel
+                                                {
+                                                    KeywordName = x.Name,
+                                                    UpdatedBy = x.UpdatedBy,
+                                                    UpdatedDate = x.UpdatedDate,
+                                                    CreatedBy = x.CreatedBy,
+                                                    CreatedDate = x.CreatedDate,
+                                                    KeywordId = x.Id,
+                                                    IsRequired = x.IsRequired,
+                                                    MaxLength = x.MaxLength,
+                                                    Order = x.Order,
+                                                    Searchable = x.CaseSearchable,
+                                                    DocumentSearchable = x.DocumentSearchable,
+                                                    IsShowOnTemplate = x.IsShowOnTemplate,
+                                                    IsShowOnCaseList = x.IsShowOnCaseList,
+                                                    TemplateId = templateId,
+                                                    TypeId = x.Type.Id,
+                                                    TypeName = x.Type.Name,
+                                                    TypeValue = x.Type.Value,
+                                                    Metadata = !string.IsNullOrEmpty(x.Type.Metadata)
                                                     ? x.Type.Metadata.Split(',', StringSplitOptions.None).ToList()
                                                     : new List<string>()
-                                              }).OrderBy(x => x.Order).ToList()
+                                                }).OrderBy(x => x.Order).ToList()
                                           });
 
                 var result = await IQueryableTemplate.FirstOrDefaultAsync();
@@ -96,37 +101,39 @@ namespace CaseMngmt.Repository.Templates
             try
             {
                 var queryableTemplate = (from tempTemplate in _context.Template
-                                          join companyTemplate in _context.CompanyTemplate on tempTemplate.Id equals companyTemplate.TemplateId
-                                          join keyword in _context.Keyword on tempTemplate.Id equals keyword.TemplateId
-                                          join type in _context.Type on keyword.TypeId equals type.Id
-                                          where !tempTemplate.Deleted
-                                          select new TemplateViewModel
-                                          {
-                                              Id = tempTemplate.Id,
-                                              Name = tempTemplate.Name,
-                                              CreatedBy = tempTemplate.CreatedBy,
-                                              CreatedDate = tempTemplate.CreatedDate,
-                                              UpdatedBy = tempTemplate.UpdatedBy,
-                                              UpdatedDate = tempTemplate.UpdatedDate,
-                                              Keywords = tempTemplate.Keywords.Select(x => new Models.Keywords.KeywordViewModel
-                                              {
-                                                  KeywordName = x.Name,
-                                                  UpdatedBy = x.UpdatedBy,
-                                                  UpdatedDate = x.UpdatedDate,
-                                                  CreatedBy = x.CreatedBy,
-                                                  CreatedDate = x.CreatedDate,
-                                                  KeywordId = x.Id,
-                                                  IsRequired = x.IsRequired,
-                                                  MaxLength = x.MaxLength,
-                                                  Order = x.Order,
-                                                  Searchable = x.CaseSearchable,
-                                                  DocumentSearchable = x.DocumentSearchable,
-                                                  TemplateId = tempTemplate.Id,
-                                                  TypeId = x.Type.Id,
-                                                  TypeName = x.Type.Name,
-                                                  TypeValue = x.Type.Value,
-                                              }).ToList()
-                                          });
+                                         join companyTemplate in _context.CompanyTemplate on tempTemplate.Id equals companyTemplate.TemplateId
+                                         join keyword in _context.Keyword on tempTemplate.Id equals keyword.TemplateId
+                                         join type in _context.Type on keyword.TypeId equals type.Id
+                                         where !tempTemplate.Deleted
+                                         select new TemplateViewModel
+                                         {
+                                             Id = tempTemplate.Id,
+                                             Name = tempTemplate.Name,
+                                             CreatedBy = tempTemplate.CreatedBy,
+                                             CreatedDate = tempTemplate.CreatedDate,
+                                             UpdatedBy = tempTemplate.UpdatedBy,
+                                             UpdatedDate = tempTemplate.UpdatedDate,
+                                             Keywords = tempTemplate.Keywords.Select(x => new Models.Keywords.KeywordViewModel
+                                             {
+                                                 KeywordName = x.Name,
+                                                 UpdatedBy = x.UpdatedBy,
+                                                 UpdatedDate = x.UpdatedDate,
+                                                 CreatedBy = x.CreatedBy,
+                                                 CreatedDate = x.CreatedDate,
+                                                 KeywordId = x.Id,
+                                                 IsRequired = x.IsRequired,
+                                                 MaxLength = x.MaxLength,
+                                                 Order = x.Order,
+                                                 Searchable = x.CaseSearchable,
+                                                 DocumentSearchable = x.DocumentSearchable,
+                                                 IsShowOnTemplate = x.IsShowOnTemplate,
+                                                 IsShowOnCaseList = x.IsShowOnCaseList,
+                                                 TemplateId = tempTemplate.Id,
+                                                 TypeId = x.Type.Id,
+                                                 TypeName = x.Type.Name,
+                                                 TypeValue = x.Type.Value,
+                                             }).ToList()
+                                         });
 
                 //// TODO if have time
                 //if (companyId != Guid.Empty)

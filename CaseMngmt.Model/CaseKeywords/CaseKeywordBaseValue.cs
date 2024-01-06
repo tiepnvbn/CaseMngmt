@@ -1,6 +1,4 @@
-﻿using CaseMngmt.Models.FileUploads;
-using CaseMngmt.Models.GenericValidation;
-using Microsoft.AspNetCore.Http;
+﻿using CaseMngmt.Models.GenericValidation;
 using System.ComponentModel.DataAnnotations;
 
 namespace CaseMngmt.Models.CaseKeywords
@@ -33,7 +31,7 @@ namespace CaseMngmt.Models.CaseKeywords
         public string TypeValue { get; set; }
         public bool IsRequired { get; set; }
         public int? MaxLength { get; set; }
-        public bool Validate()
+        public bool IsValidModel()
         {
             try
             {
@@ -41,9 +39,15 @@ namespace CaseMngmt.Models.CaseKeywords
                 {
                     return false;
                 }
-                Type type;
+                
+                Type? type;
                 if (DataTypeDictionary.DataTypeAlias.TryGetValue(TypeValue.ToLower(), value: out type))
                 {
+                    if (type == null)
+                    {
+                        return false;
+                    }
+
                     var genericValidator = new GenericValidator();
                     return genericValidator.IsValid(type, Value, MaxLength);
                 }

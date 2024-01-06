@@ -19,11 +19,11 @@ namespace CaseMngmt.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(int? pageSize = 25, int? pageNumber = 1)
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                var result = await _fileTypeService.GetAllAsync(pageSize ?? 25, pageNumber ?? 1);
+                var result = await _fileTypeService.GetAllAsync();
                 return result != null && result.Any() ? Ok(result) : NotFound();
             }
             catch (Exception e)

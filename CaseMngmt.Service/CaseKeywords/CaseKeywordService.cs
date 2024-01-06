@@ -150,7 +150,7 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<Guid?> AddFileToKeywordAsync(CaseKeywordFileUpload fileUploadRequest, string filePath,  Guid templateId)
+        public async Task<Guid?> AddFileToKeywordAsync(Guid caseId, FileUploadResponse fileResponse, Guid templateId)
         {
             try
             {
@@ -170,7 +170,7 @@ namespace CaseMngmt.Service.Customers
 
                 var keyword = new Keyword()
                 {
-                    Name = fileUploadRequest.FileName,
+                    Name = fileResponse.FileName,
                     TypeId = fileType.Id,
                     TemplateId = templateId,
                     IsRequired = false,
@@ -184,9 +184,9 @@ namespace CaseMngmt.Service.Customers
 
                 var caseKeyword = new CaseKeyword
                 {
-                    CaseId = fileUploadRequest.CaseId,
+                    CaseId = caseId,
                     KeywordId = keyword.Id,
-                    Value = filePath
+                    Value = fileResponse.FilePath
                 };
 
                 var caseKeyResult = await _caseKeywordRepository.AddAsync(caseKeyword);
@@ -242,7 +242,7 @@ namespace CaseMngmt.Service.Customers
                     await _keywordRepository.DeleteAsync(keywordEntity.Id);
                 }
 
-                return 0;
+                return 1;
             }
             catch (Exception ex)
             {

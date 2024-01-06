@@ -15,6 +15,8 @@ namespace CaseMngmt.Models.Keywords
         public bool IsRequired { get; set; }
         public bool Searchable { get; set; }
         public bool DocumentSearchable { get; set; }
+        public bool IsShowOnTemplate { get; set; }
+        public bool IsShowOnCaseList { get; set; }
         public int Order { get; set; }
         public List<string> Metadata { get; set; }
         public Guid CreatedBy { get; set; }
