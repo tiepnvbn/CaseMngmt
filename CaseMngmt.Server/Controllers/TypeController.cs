@@ -20,7 +20,7 @@ namespace CaseMngmt.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(int? pageSize = 25, int? pageNumber = 1)
+        public async Task<IActionResult> GetAll()
         {
             try
             {
@@ -30,7 +30,7 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                var result = await _typeService.GetAllAsync(pageSize ?? 25, pageNumber ?? 1);
+                var result = await _typeService.GetAllAsync();
                 return result != null && result.Any() ? Ok(result) : NotFound();
             }
             catch (Exception e)

@@ -65,11 +65,10 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                //var filePath = await _fileUploadService.GetFilePath(fileUploadRequest.FileName, fileUploadRequest.CaseId, fileSetting, awsSetting);
                 var uploadResult = await _fileUploadService.UploadFileAsync(fileUploadRequest.FileToUpload, fileUploadRequest.CaseId, fileSetting, awsSetting);
                 if (uploadResult != null)
                 {
-                    var result = await _caseKeywordService.AddFileToKeywordAsync(fileUploadRequest, uploadResult.FilePath, templateId.Value);
+                    var result = await _caseKeywordService.AddFileToKeywordAsync(fileUploadRequest.CaseId, uploadResult, templateId.Value);
                     return result != null ? Ok(new FileResponse
                     {
                         FileName = uploadResult.FileName,
@@ -152,9 +151,7 @@ namespace CaseMngmt.Server.Controllers
                 var awsSetting = GetAWSSetting();
                 var fileSetting = GetFileUploadSetting();
 
-                var filePath = await _fileUploadService.GetFilePath(filename, caseId, fileSetting, awsSetting);
-
-                var deleteResult = await _fileUploadService.DeleteFileByFilePath(filePath, fileSetting, awsSetting);
+                var deleteResult = await _fileUploadService.DeleteFileAsync(filename, caseId, fileSetting, awsSetting);
                 if (deleteResult > 0)
                 {
                     var result = await _caseKeywordService.DeleteFileKeywordAsync(caseId, keywordId);

@@ -41,13 +41,13 @@ namespace CaseMngmt.Repository.FileTypes
             }
         }
 
-        public async Task<IEnumerable<FileType>?> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<IEnumerable<FileType>?> GetAllAsync()
         {
             try
             {
                 var IQueryableType = (from tempType in _context.FileType select tempType);
                 IQueryableType = IQueryableType.Where(x => !x.Deleted).OrderBy(m => m.Name);
-                var result = await IQueryableType.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+                var result = await IQueryableType.ToListAsync();
 
                 return result;
             }

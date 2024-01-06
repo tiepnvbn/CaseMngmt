@@ -1,13 +1,13 @@
-﻿using Amazon;
-using Amazon.Runtime;
+﻿using System.Net;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
+using Amazon;
 using Amazon.S3;
+using Amazon.Runtime;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using CaseMngmt.Models;
 using CaseMngmt.Models.FileUploads;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.FileProviders;
-using System.Net;
 
 namespace CaseMngmt.Service.FileUploads
 {
@@ -44,31 +44,19 @@ namespace CaseMngmt.Service.FileUploads
             }
         }
 
-        public async Task<string?> GetFilePath(string filename, Guid caseId, FileUploadSetting fileSetting, AWSSetting? awsSetting)
-        {
-            string ext = Path.GetExtension(filename).ToLower();
-            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filename);
-            var folderPath = await GetUploadedFolderPath(caseId, fileSetting, awsSetting);
-
-            if (folderPath == null)
-            {
-                return null;
-            }
-
-            var exactPath = Path.Combine(folderPath, $"{fileNameWithoutExt}{ext}");
-            return exactPath;
-        }
-
         public async Task<List<string?>> GetAllFileByCaseIdAsync(Guid caseId, FileUploadSetting fileSetting, AWSSetting? awsSetting)
         {
             try
             {
                 var folderPath = await GetUploadedFolderPath(caseId, fileSetting, awsSetting);
-                var result = new List<string?>();
+                if (folderPath == null)
+                {
+                    return new List<string?>();
+                }
 
                 if (awsSetting == null)
                 {
-                    result = Directory.GetFiles(folderPath, "*.*")
+                    return Directory.GetFiles(folderPath, "*.*")
                    .Select(Path.GetFileName)
                    .ToList();
                 }
@@ -77,22 +65,16 @@ namespace CaseMngmt.Service.FileUploads
                     BasicAWSCredentials credentials = new BasicAWSCredentials(awsSetting.ACCESS_KEY, awsSetting.SECRET_KEY);
                     using (var client = new AmazonS3Client(credentials, RegionEndpoint.APNortheast1))
                     {
-                        ListObjectsRequest request = new ListObjectsRequest
+                        ListObjectsV2Request request = new ListObjectsV2Request
                         {
                             BucketName = awsSetting.S3Bucket,
-                            Prefix = folderPath // "my-folder/sub-folder/"
+                            Prefix = $"{folderPath}/"
                         };
 
-                        ListObjectsResponse response = await client.ListObjectsAsync(request);
-                        //foreach (Amazon.S3.Model.S3Object obj in response.S3Objects)
-                        //{
-                        //    Console.WriteLine(obj.Key);
-                        //}
-                        result = response.S3Objects.Select(x => x.Key).ToList();
+                        ListObjectsV2Response response = await client.ListObjectsV2Async(request);
+                        return response.S3Objects.Select(x => x.Key).ToList();
                     }
                 }
-
-                return result;
             }
             catch (Exception)
             {
@@ -118,13 +100,13 @@ namespace CaseMngmt.Service.FileUploads
                 BasicAWSCredentials credentials = new BasicAWSCredentials(awsSetting.ACCESS_KEY, awsSetting.SECRET_KEY);
                 var client = new AmazonS3Client(credentials, RegionEndpoint.APNortheast1);
 
-                ListObjectsRequest request = new ListObjectsRequest
+                ListObjectsV2Request request = new ListObjectsV2Request
                 {
                     BucketName = awsSetting.S3Bucket,
                     Prefix = $"{awsSetting.UploadFolder}/"
                 };
 
-                ListObjectsResponse response = await client.ListObjectsAsync(request);
+                ListObjectsV2Response response = await client.ListObjectsV2Async(request);
 
                 var existFolder = response.S3Objects.FirstOrDefault(x => x.Key == $"{awsSetting.UploadFolder}/{caseId}/");
                 if (existFolder != null)
@@ -141,10 +123,16 @@ namespace CaseMngmt.Service.FileUploads
             return folderPath;
         }
 
-        public async Task<int> DeleteFileByFilePath(string filePath, FileUploadSetting fileSetting, AWSSetting? awsSetting)
+        public async Task<int> DeleteFileAsync(string filename, Guid caseId, FileUploadSetting fileSetting, AWSSetting? awsSetting)
         {
             try
             {
+                var filePath = await GetFilePath(filename, caseId, fileSetting, awsSetting);
+                if (filePath == null)
+                {
+                    return 0;
+                }
+
                 if (awsSetting == null)
                 {
                     IFileProvider physicalFileProvider = new PhysicalFileProvider(filePath);
@@ -166,8 +154,17 @@ namespace CaseMngmt.Service.FileUploads
                 }
                 else
                 {
-                    // TODO
-                    return 1;
+                    BasicAWSCredentials credentials = new BasicAWSCredentials(awsSetting.ACCESS_KEY, awsSetting.SECRET_KEY);
+                    using (var client = new AmazonS3Client(credentials, RegionEndpoint.APNortheast1))
+                    {
+                        var deleteFileRequest = new Amazon.S3.Model.DeleteObjectRequest
+                        {
+                            BucketName = awsSetting.S3Bucket,
+                            Key = filePath
+                        };
+                        DeleteObjectResponse fileDeleteResponse = await client.DeleteObjectAsync(deleteFileRequest);
+                        return fileDeleteResponse.HttpStatusCode == HttpStatusCode.NoContent ? 1 : 0;
+                    }
                 }
             }
             catch (Exception ex)
@@ -175,7 +172,24 @@ namespace CaseMngmt.Service.FileUploads
                 return 0;
             }
         }
+        
+        public async Task<string?> GetFilePath(string filename, Guid caseId, FileUploadSetting fileSetting, AWSSetting? awsSetting)
+        {
+            var folderPath = await GetUploadedFolderPath(caseId, fileSetting, awsSetting);
 
+            if (folderPath == null)
+            {
+                return null;
+            }
+            string ext = Path.GetExtension(filename).ToLower();
+            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filename);
+
+            var exactPath = awsSetting == null 
+                ? Path.Combine(folderPath, $"{fileNameWithoutExt}{ext}")
+                : $"{folderPath}/{fileNameWithoutExt}{ext}";
+
+            return exactPath;
+        }
 
         #endregion
 
@@ -193,7 +207,7 @@ namespace CaseMngmt.Service.FileUploads
                     ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256,
                     CannedACL = S3CannedACL.Private,
                     Key = awsFolderName,
-                    ContentBody = awsFolderName
+                    ContentBody = string.Empty
                 };
 
                 var response = await client.PutObjectAsync(putObjectRequest);
@@ -276,7 +290,7 @@ namespace CaseMngmt.Service.FileUploads
                             InputStream = newMemoryStream,
                             Key = currentFilePath,
                             BucketName = awsSetting.S3Bucket,
-                            CannedACL = S3CannedACL.PublicRead
+                            StorageClass = S3StorageClass.Standard
                         };
 
                         var fileTransferUtility = new TransferUtility(client);

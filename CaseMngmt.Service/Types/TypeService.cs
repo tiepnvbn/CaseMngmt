@@ -40,11 +40,11 @@ namespace CaseMngmt.Service.Types
             }
         }
 
-        public async Task<IEnumerable<TypeViewModel>?> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<IEnumerable<TypeViewModel>?> GetAllAsync()
         {
             try
             {
-                var typesFromRepository = await _repository.GetAllAsync(pageSize, pageNumber);
+                var typesFromRepository = await _repository.GetAllAsync();
 
                 var result = _mapper.Map<List<TypeViewModel>>(typesFromRepository);
 

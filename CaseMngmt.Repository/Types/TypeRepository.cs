@@ -41,13 +41,13 @@ namespace CaseMngmt.Repository.Types
             }
         }
 
-        public async Task<IEnumerable<Type>?> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<IEnumerable<Type>?> GetAllAsync()
         {
             try
             {
                 var IQueryableType = (from tempType in _context.Type select tempType);
                 IQueryableType = IQueryableType.Where(x => !x.Deleted && x.IsDefaultType).OrderBy(m => m.Name);
-                var result = await IQueryableType.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+                var result = await IQueryableType.ToListAsync();
 
                 return result;
             }
@@ -133,7 +133,7 @@ namespace CaseMngmt.Repository.Types
 
         public async Task<Type?> GetByTypeNameAsync(string name)
         {
-             try
+            try
             {
                 var result = await _context.Type.FirstOrDefaultAsync(x => x.Name == name);
                 return result;

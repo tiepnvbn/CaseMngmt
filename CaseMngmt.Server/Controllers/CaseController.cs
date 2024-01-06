@@ -167,7 +167,7 @@ namespace CaseMngmt.Server.Controllers
                 var result = fileKeywordsResult.ToList();
                 if (availableFileResult != null && fileKeywordsResult.Count() != availableFileResult.Count())
                 {
-                    result = fileKeywordsResult.Where(x => availableFileResult.Contains(x.FileName)).ToList();
+                    result = fileKeywordsResult.Where(x => availableFileResult.Contains(x.FilePath)).ToList();
                 }
 
                 return result.Any()
@@ -209,7 +209,7 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                var isInValidModel = request.KeywordValues.Any(x => !x.Validate());
+                var isInValidModel = request.KeywordValues.Any(x => !x.IsValidModel());
                 if (isInValidModel)
                 {
                     return BadRequest("KeywordValues is wrong format");
@@ -218,8 +218,8 @@ namespace CaseMngmt.Server.Controllers
                 var userKeywordSetting = userTemplate.Keywords.Select(x => x.KeywordId).ToList();
                 var requestKeywords = request.KeywordValues.Select(x => x.KeywordId).ToList();
 
-                var allOfUserKeywordsIsInRequest = userKeywordSetting.Intersect(requestKeywords).Count() == userKeywordSetting.Count();
-                if (!allOfUserKeywordsIsInRequest)
+                var isValidKeywords = userKeywordSetting.All(requestKeywords.Contains) && userKeywordSetting.Count == requestKeywords.Count;
+                if (!isValidKeywords)
                 {
                     return BadRequest("KeywordValues is wrong");
                 }
@@ -263,7 +263,7 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                var isInValidModel = request.KeywordValues.Any(x => !x.Validate());
+                var isInValidModel = request.KeywordValues.Any(x => !x.IsValidModel());
                 if (isInValidModel)
                 {
                     return BadRequest("KeywordValues is wrong format");

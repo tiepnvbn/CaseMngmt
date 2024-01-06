@@ -64,6 +64,7 @@ namespace CaseMngmt.Repository.Keywords
                 var IQueryableKeyword = (from tempKeyword in _context.Keyword
                                          join tempType in _context.Type on tempKeyword.TypeId equals tempType.Id
                                          where !tempKeyword.Deleted 
+                                            && tempKeyword.IsShowOnTemplate
                                          select new KeywordViewModel
                                          {
                                              KeywordName = tempKeyword.Name,
@@ -77,6 +78,8 @@ namespace CaseMngmt.Repository.Keywords
                                              Order = tempKeyword.Order,
                                              Searchable = tempKeyword.CaseSearchable,
                                              DocumentSearchable = tempKeyword.DocumentSearchable,
+                                             IsShowOnTemplate = tempKeyword.IsShowOnTemplate,
+                                             IsShowOnCaseList = tempKeyword.IsShowOnCaseList,
                                              TypeId = tempKeyword.Type.Id,
                                              TypeName = tempKeyword.Type.Name,
                                              TypeValue = tempKeyword.Type.Value,

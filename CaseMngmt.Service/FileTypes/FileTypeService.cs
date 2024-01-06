@@ -39,12 +39,11 @@ namespace CaseMngmt.Service.FileTypes
             }
         }
 
-        public async Task<IEnumerable<FileTypeViewModel>?> GetAllAsync(int pageSize, int pageNumber)
+        public async Task<IEnumerable<FileTypeViewModel>?> GetAllAsync()
         {
             try
             {
-                var typesFromRepository = await _repository.GetAllAsync(pageSize, pageNumber);
-
+                var typesFromRepository = await _repository.GetAllAsync();
                 var result = _mapper.Map<List<FileTypeViewModel>>(typesFromRepository);
 
                 return result;
