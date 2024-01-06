@@ -15,7 +15,7 @@ namespace CaseMngmt.Models.CaseKeywords
         [Required]
         public IFormFile FileToUpload { get; set; }
 
-        public bool Validate()
+        public bool Validate(FileUploadSetting fileSetting)
         {
             try
             {
@@ -36,7 +36,6 @@ namespace CaseMngmt.Models.CaseKeywords
                     FileName = $"{FileName}{fileExt}";
                 }
                
-                var fileSetting = new FileUploadSettings();
                 var validFileTypes = fileSetting.AcceptTypes.Split(',').ToList();
 
                 if (validFileTypes.Contains(fileExt))

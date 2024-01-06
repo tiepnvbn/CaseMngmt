@@ -6,4 +6,10 @@
         public string FilePath { get; set; }
         public string FileName { get; set; }
     }
+
+    public class FileUploadResponse
+    {
+        public string FilePath { get; set; }
+        public string FileName { get; set; }
+    }
 }

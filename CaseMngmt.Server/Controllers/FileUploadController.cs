@@ -1,4 +1,5 @@
-﻿using CaseMngmt.Models.CaseKeywords;
+﻿using CaseMngmt.Models;
+using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.FileUploads;
 using CaseMngmt.Service.CaseKeywords;
 using CaseMngmt.Service.CompanyTemplates;
@@ -18,13 +19,15 @@ namespace CaseMngmt.Server.Controllers
         private readonly IFileUploadService _fileUploadService;
         private readonly ICaseKeywordService _caseKeywordService;
         private readonly ICompanyTemplateService _companyTemplateService;
+        private readonly IConfiguration _configuration;
 
-        public FileUploadController(ILogger<FileUploadController> logger, IFileUploadService fileUploadService, ICaseKeywordService caseKeywordService, ICompanyTemplateService companyTemplateService)
+        public FileUploadController(ILogger<FileUploadController> logger, IFileUploadService fileUploadService, ICaseKeywordService caseKeywordService, ICompanyTemplateService companyTemplateService, IConfiguration configuration)
         {
             _logger = logger;
             _fileUploadService = fileUploadService;
             _caseKeywordService = caseKeywordService;
             _companyTemplateService = companyTemplateService;
+            _configuration = configuration;
         }
 
         [HttpPost]
@@ -42,7 +45,10 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                if (!fileUploadRequest.Validate())
+                var awsSetting = GetAWSSetting();
+                var fileSetting = GetFileUploadSetting();
+
+                if (!fileUploadRequest.Validate(fileSetting))
                 {
                     return BadRequest("Your file is not supported");
                 }
@@ -59,16 +65,15 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                var filePath = GetFilePath(fileUploadRequest.FileName, fileUploadRequest.CaseId);
-                var uploadResult = await _fileUploadService.UploadFileAsync(fileUploadRequest.FileToUpload, filePath);
-
+                //var filePath = await _fileUploadService.GetFilePath(fileUploadRequest.FileName, fileUploadRequest.CaseId, fileSetting, awsSetting);
+                var uploadResult = await _fileUploadService.UploadFileAsync(fileUploadRequest.FileToUpload, fileUploadRequest.CaseId, fileSetting, awsSetting);
                 if (uploadResult != null)
                 {
-                    var result = await _caseKeywordService.AddFileToKeywordAsync(fileUploadRequest, filePath, templateId.Value);
+                    var result = await _caseKeywordService.AddFileToKeywordAsync(fileUploadRequest, uploadResult.FilePath, templateId.Value);
                     return result != null ? Ok(new FileResponse
                     {
-                        FileName = uploadResult,
-                        FilePath = filePath,
+                        FileName = uploadResult.FileName,
+                        FilePath = uploadResult.FilePath,
                         KeywordId = result.Value
                     }) : BadRequest();
                 }
@@ -98,15 +103,28 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest("The filename need file type");
                 }
 
-                var filePath = GetFilePath(filename, caseId);
-                var provider = new FileExtensionContentTypeProvider();
-                if (!provider.TryGetContentType(filePath, out var contenttype))
+                var awsSetting = GetAWSSetting();
+                var fileSetting = GetFileUploadSetting();
+
+                if (awsSetting == null)
                 {
-                    contenttype = "application/octet-stream";
+                    var filePath = await _fileUploadService.GetFilePath(filename, caseId, fileSetting, awsSetting);
+
+                    var provider = new FileExtensionContentTypeProvider();
+                    if (!provider.TryGetContentType(filePath, out var contenttype))
+                    {
+                        contenttype = "application/octet-stream";
+                    }
+
+                    var bytes = await System.IO.File.ReadAllBytesAsync(filePath);
+                    return File(bytes, contenttype, Path.GetFileName(filePath));
+                }
+                else
+                {
+                    // TODO
+                    return null;
                 }
 
-                var bytes = await System.IO.File.ReadAllBytesAsync(filePath);
-                return File(bytes, contenttype, Path.GetFileName(filePath));
             }
             catch (Exception e)
             {
@@ -131,9 +149,12 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest("The filename need file type");
                 }
 
-                var filePath = GetFilePath(filename, caseId);
+                var awsSetting = GetAWSSetting();
+                var fileSetting = GetFileUploadSetting();
 
-                var deleteResult = _fileUploadService.DeleteFileByFilePath(filePath);
+                var filePath = await _fileUploadService.GetFilePath(filename, caseId, fileSetting, awsSetting);
+
+                var deleteResult = await _fileUploadService.DeleteFileByFilePath(filePath, fileSetting, awsSetting);
                 if (deleteResult > 0)
                 {
                     var result = await _caseKeywordService.DeleteFileKeywordAsync(caseId, keywordId);
@@ -149,15 +170,32 @@ namespace CaseMngmt.Server.Controllers
             }
         }
 
-        private string GetFilePath(string filename, Guid caseId)
+        private AWSSetting? GetAWSSetting()
         {
-            var folderPath = _fileUploadService.GetUploadedFolderPath(caseId);
+            AWSSetting? awsSetting = null;
+            if (!string.IsNullOrEmpty(_configuration["AWS:S3Bucket"]))
+            {
+                awsSetting = new AWSSetting()
+                {
+                    S3Bucket = _configuration["AWS:S3Bucket"],
+                    ACCESS_KEY = _configuration["AWS:ACCESS_KEY"],
+                    SECRET_KEY = _configuration["AWS:SECRET_KEY"],
+                    UploadFolder = _configuration["AWS:UploadFolder"]
+                };
+            }
+            return awsSetting;
+        }
 
-            string ext = Path.GetExtension(filename).ToLower();
-            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filename);
-            var exactpath = Path.Combine(folderPath, fileNameWithoutExt + ext);
-
-            return exactpath;
+        private FileUploadSetting GetFileUploadSetting()
+        {
+            var fileSetting = new FileUploadSetting()
+            {
+                AcceptTypes = _configuration["FileUploadSettings:acceptTypes"],
+                InvalidFileExtensions = _configuration["FileUploadSettings:invalidFileExtensions"],
+                UploadFolder = _configuration["FileUploadSettings:uploadFolder"],
+                ValidFileTypes = _configuration["FileUploadSettings:validFileTypes"],
+            };
+            return fileSetting;
         }
     }
 }

@@ -8,6 +8,9 @@
     ".NETCoreApp,Version=v6.0": {
       "CaseMngmt.Service/1.0.0": {
         "dependencies": {
+          "AWSSDK.Core": "3.7.300.29",
+          "AWSSDK.S3": "3.7.305.4",
+          "Amazon.S3": "0.27.2",
           "AutoMapper": "12.0.1",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
           "CaseMngmt.Models": "1.0.0",
@@ -15,6 +18,26 @@
         },
         "runtime": {
           "CaseMngmt.Service.dll": {}
+        }
+      },
+      "Amazon.Core/0.28.0": {
+        "runtime": {
+          "lib/net6.0/Amazon.Core.dll": {
+            "assemblyVersion": "0.28.0.0",
+            "fileVersion": "0.28.0.0"
+          }
+        }
+      },
+      "Amazon.S3/0.27.2": {
+        "dependencies": {
+          "Amazon.Core": "0.28.0",
+          "Carbon.Storage": "3.12.0"
+        },
+        "runtime": {
+          "lib/net6.0/Amazon.S3.dll": {
+            "assemblyVersion": "0.27.2.0",
+            "fileVersion": "0.27.2.0"
+          }
         }
       },
       "AutoMapper/12.0.1": {
@@ -37,6 +60,33 @@
           "lib/netstandard2.1/AutoMapper.Extensions.Microsoft.DependencyInjection.dll": {
             "assemblyVersion": "12.0.0.0",
             "fileVersion": "12.0.1.0"
+          }
+        }
+      },
+      "AWSSDK.Core/3.7.300.29": {
+        "runtime": {
+          "lib/netcoreapp3.1/AWSSDK.Core.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.300.29"
+          }
+        }
+      },
+      "AWSSDK.S3/3.7.305.4": {
+        "dependencies": {
+          "AWSSDK.Core": "3.7.300.29"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/AWSSDK.S3.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.305.4"
+          }
+        }
+      },
+      "Carbon.Storage/3.12.0": {
+        "runtime": {
+          "lib/net6.0/Carbon.Storage.dll": {
+            "assemblyVersion": "3.12.0.0",
+            "fileVersion": "3.12.0.0"
           }
         }
       },
@@ -666,6 +716,20 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Amazon.Core/0.28.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vYhEhobvPUynA3sQ4GMMJnu2iqrEa4H5zt3YHLwNbOPylgzb4fcUi7ClwfgnrV49L7OSL3NJDsiW+Dfz8VadNg==",
+      "path": "amazon.core/0.28.0",
+      "hashPath": "amazon.core.0.28.0.nupkg.sha512"
+    },
+    "Amazon.S3/0.27.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ItBwKgvh96dX6eceqC/M4pwuvRkZrWVBTF07MfMcV4G1r8oZ4mvvk7w0Nmk3D7g6odBp56+FSRMb1bbWc98ZLQ==",
+      "path": "amazon.s3/0.27.2",
+      "hashPath": "amazon.s3.0.27.2.nupkg.sha512"
+    },
     "AutoMapper/12.0.1": {
       "type": "package",
       "serviceable": true,
@@ -679,6 +743,27 @@
       "sha512": "sha512-+g/K+Vpe3gGMKGzjslMOdqNlkikScDjWfVvmWTayrDHaG/n2pPmFBMa+jKX1r/h6BDGFdkyRjAuhFE3ykW+r1g==",
       "path": "automapper.extensions.microsoft.dependencyinjection/12.0.1",
       "hashPath": "automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512"
+    },
+    "AWSSDK.Core/3.7.300.29": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-BMvjbKNzA7Y1eFbhnRbexaUKZ6FwR/hAdvmPYYYA35kw0Ig5E12shMiCEqtRL1EQYVpAqmLdSPZNxV4hu5Ncng==",
+      "path": "awssdk.core/3.7.300.29",
+      "hashPath": "awssdk.core.3.7.300.29.nupkg.sha512"
+    },
+    "AWSSDK.S3/3.7.305.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1s3dXEDgcWEMhUe6tLlV7uhgE9WagoGTGXQ6JZyzHvH9FjCyEBSAtojPviNyApqvmIJjMPrqgZxC8+VixPmxAA==",
+      "path": "awssdk.s3/3.7.305.4",
+      "hashPath": "awssdk.s3.3.7.305.4.nupkg.sha512"
+    },
+    "Carbon.Storage/3.12.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-unebPP+3Z/xw40yrnwx60OXS5ugbEJOG4MsOLbH7+Q6/hRP3jvRFK8Czf/IZiBHgeMAK4Q3lKSbKUCIMFE8dCw==",
+      "path": "carbon.storage/3.12.0",
+      "hashPath": "carbon.storage.3.12.0.nupkg.sha512"
     },
     "EntityFramework/6.4.4": {
       "type": "package",

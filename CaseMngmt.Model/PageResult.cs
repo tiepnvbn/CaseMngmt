@@ -23,13 +23,23 @@ namespace CaseMngmt.Models
         public static async Task<PagedResult<T>> CreateAsync(IQueryable<T> source, int pageNumber, int pageSize)
         {
             var count = await source.CountAsync();
+            if (count <= pageSize && pageNumber > 1)
+            {
+                pageNumber = 1;
+            }
+
             var items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             return new PagedResult<T>(items, count, pageNumber, pageSize);
         }
 
-        public static async Task<PagedResult<T>> CreateAsync(IEnumerable<T> source, int pageNumber, int pageSize)
+        public static PagedResult<T> CreateAsync(IEnumerable<T> source, int pageNumber, int pageSize)
         {
             var count = source.Count();
+            if (count <= pageSize && pageNumber > 1)
+            {
+                pageNumber = 1;
+            }
+
             var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             return new PagedResult<T>(items, count, pageNumber, pageSize);
         }
