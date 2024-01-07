@@ -262,8 +262,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                                   {
                                       KeywordId = caseKeyword.KeywordId,
                                       FileName = caseKeyword.Keyword.Name,
-                                      FilePath = caseKeyword.Value,
-                                      IsImage = false
+                                      FilePath = caseKeyword.Value
                                   };
                 var result = await IQueryable.OrderBy(x => x.FileName).ToListAsync();
                 return result;

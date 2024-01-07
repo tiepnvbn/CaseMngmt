@@ -67,7 +67,7 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                var uploadResult = await _fileUploadService.UploadFileAsync(fileUploadRequest.FileToUpload, fileUploadRequest.CaseId, fileSetting, awsSetting);
+                var uploadResult = await _fileUploadService.UploadFileAsync(fileUploadRequest, fileSetting, awsSetting);
                 if (uploadResult != null)
                 {
                     var result = await _caseKeywordService.AddFileToKeywordAsync(fileUploadRequest.CaseId, uploadResult, templateId.Value);
@@ -76,7 +76,7 @@ namespace CaseMngmt.Server.Controllers
                         FileName = uploadResult.FileName,
                         FilePath = uploadResult.FilePath,
                         KeywordId = result.Value,
-                        IsImage = DataTypeDictionary.ImageTypes.Contains(Path.GetExtension(uploadResult.FileName).ToLower())
+                        IsImage = uploadResult.IsImage,
                     }) : BadRequest();
                 }
 
