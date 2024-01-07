@@ -1,12 +1,14 @@
 ﻿using CaseMngmt.Models;
 using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.FileUploads;
+using CaseMngmt.Models.GenericValidation;
 using CaseMngmt.Service.CaseKeywords;
 using CaseMngmt.Service.CompanyTemplates;
 using CaseMngmt.Service.FileUploads;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CaseMngmt.Server.Controllers
 {
@@ -20,7 +22,7 @@ namespace CaseMngmt.Server.Controllers
         private readonly ICaseKeywordService _caseKeywordService;
         private readonly ICompanyTemplateService _companyTemplateService;
         private readonly IConfiguration _configuration;
-
+        
         public FileUploadController(ILogger<FileUploadController> logger, IFileUploadService fileUploadService, ICaseKeywordService caseKeywordService, ICompanyTemplateService companyTemplateService, IConfiguration configuration)
         {
             _logger = logger;
@@ -73,7 +75,8 @@ namespace CaseMngmt.Server.Controllers
                     {
                         FileName = uploadResult.FileName,
                         FilePath = uploadResult.FilePath,
-                        KeywordId = result.Value
+                        KeywordId = result.Value,
+                        IsImage = DataTypeDictionary.ImageTypes.Contains(Path.GetExtension(uploadResult.FileName).ToLower())
                     }) : BadRequest();
                 }
 
@@ -104,11 +107,14 @@ namespace CaseMngmt.Server.Controllers
 
                 var awsSetting = GetAWSSetting();
                 var fileSetting = GetFileUploadSetting();
+                var filePath = await _fileUploadService.GetFilePath(filename, caseId, fileSetting, awsSetting);
+                if (filePath == null)
+                {
+                    return BadRequest();
+                }
 
                 if (awsSetting == null)
                 {
-                    var filePath = await _fileUploadService.GetFilePath(filename, caseId, fileSetting, awsSetting);
-
                     var provider = new FileExtensionContentTypeProvider();
                     if (!provider.TryGetContentType(filePath, out var contenttype))
                     {
@@ -120,8 +126,8 @@ namespace CaseMngmt.Server.Controllers
                 }
                 else
                 {
-                    // TODO
-                    return null;
+                    var result = await _fileUploadService.DownloadFileS3Async(filePath, awsSetting);
+                    return result != null ? File(result, "application/octet-stream", filePath) : BadRequest();
                 }
 
             }

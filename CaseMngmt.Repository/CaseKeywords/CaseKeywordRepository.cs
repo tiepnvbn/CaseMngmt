@@ -249,7 +249,7 @@ namespace CaseMngmt.Repository.CaseKeywords
         {
             try
             {
-                var IQueryable = (from caseKeyword in _context.CaseKeyword.Include(x => x.Keyword).Include(x => x.Keyword.Type)
+                var IQueryable = from caseKeyword in _context.CaseKeyword.Include(x => x.Keyword).Include(x => x.Keyword.Type)
                                   join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
                                   join type in _context.Type on keyword.TypeId equals type.Id
                                   where !caseKeyword.Deleted
@@ -262,8 +262,9 @@ namespace CaseMngmt.Repository.CaseKeywords
                                   {
                                       KeywordId = caseKeyword.KeywordId,
                                       FileName = caseKeyword.Keyword.Name,
-                                      FilePath = caseKeyword.Value
-                                  });
+                                      FilePath = caseKeyword.Value,
+                                      IsImage = false
+                                  };
                 var result = await IQueryable.OrderBy(x => x.FileName).ToListAsync();
                 return result;
             }
