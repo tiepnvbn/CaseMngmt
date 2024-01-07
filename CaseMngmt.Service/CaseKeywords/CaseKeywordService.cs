@@ -2,6 +2,7 @@
 using CaseMngmt.Models;
 using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.FileUploads;
+using CaseMngmt.Models.GenericValidation;
 using CaseMngmt.Models.Keywords;
 using CaseMngmt.Repository.CaseKeywords;
 using CaseMngmt.Repository.Cases;
@@ -255,6 +256,11 @@ namespace CaseMngmt.Service.Customers
             try
             {
                 var fileKeywordsResult = await _caseKeywordRepository.GetFileKeywordsByCaseIdAsync(caseId);
+                foreach (var item in fileKeywordsResult)
+                {
+                    string ext = Path.GetExtension(item.FileName).ToLower();
+                    item.IsImage = DataTypeDictionary.ImageTypes.Contains(ext);
+                }
                 return fileKeywordsResult;
             }
             catch (Exception ex)

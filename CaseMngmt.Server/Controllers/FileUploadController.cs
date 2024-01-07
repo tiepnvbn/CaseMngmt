@@ -1,13 +1,14 @@
 ﻿using CaseMngmt.Models;
 using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.FileUploads;
+using CaseMngmt.Models.GenericValidation;
 using CaseMngmt.Service.CaseKeywords;
 using CaseMngmt.Service.CompanyTemplates;
 using CaseMngmt.Service.FileUploads;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-using System.Net.Mime;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CaseMngmt.Server.Controllers
 {
@@ -21,7 +22,7 @@ namespace CaseMngmt.Server.Controllers
         private readonly ICaseKeywordService _caseKeywordService;
         private readonly ICompanyTemplateService _companyTemplateService;
         private readonly IConfiguration _configuration;
-
+        
         public FileUploadController(ILogger<FileUploadController> logger, IFileUploadService fileUploadService, ICaseKeywordService caseKeywordService, ICompanyTemplateService companyTemplateService, IConfiguration configuration)
         {
             _logger = logger;
@@ -74,7 +75,8 @@ namespace CaseMngmt.Server.Controllers
                     {
                         FileName = uploadResult.FileName,
                         FilePath = uploadResult.FilePath,
-                        KeywordId = result.Value
+                        KeywordId = result.Value,
+                        IsImage = DataTypeDictionary.ImageTypes.Contains(Path.GetExtension(uploadResult.FileName).ToLower())
                     }) : BadRequest();
                 }
 

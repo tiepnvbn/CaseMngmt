@@ -21,5 +21,17 @@
             { "list" , typeof(string) },
             { "textarea" , typeof(string) }
         };
+
+        public static readonly List<string> ImageTypes = new List<string> {
+            ".jpeg",
+            ".jpg",
+            ".png",
+            ".gif",
+            ".tiff",
+            ".psd",
+            ".pdf",
+            ".svg",
+            ".raw"
+        };
     }
 }
