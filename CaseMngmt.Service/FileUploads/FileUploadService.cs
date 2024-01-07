@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
 using Amazon;
 using Amazon.S3;
@@ -8,6 +7,9 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using CaseMngmt.Models;
 using CaseMngmt.Models.FileUploads;
+using CaseMngmt.Models.CaseKeywords;
+using CaseMngmt.Models.GenericValidation;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CaseMngmt.Service.FileUploads
 {
@@ -19,11 +21,11 @@ namespace CaseMngmt.Service.FileUploads
 
         #region Public methods
 
-        public async Task<FileUploadResponse?> UploadFileAsync(IFormFile fileToUpload, Guid caseId, FileUploadSetting fileSetting, AWSSetting? awsSetting)
+        public async Task<FileUploadResponse?> UploadFileAsync(CaseKeywordFileUpload fileUpload, FileUploadSetting fileSetting, AWSSetting? awsSetting)
         {
             try
             {
-                var folderPath = await GetUploadedFolderPath(caseId, fileSetting, awsSetting);
+                var folderPath = await GetUploadedFolderPath(fileUpload.CaseId, fileSetting, awsSetting);
                 if (folderPath == null)
                 {
                     return null;
@@ -31,11 +33,11 @@ namespace CaseMngmt.Service.FileUploads
 
                 if (awsSetting == null)
                 {
-                    return await UploadLocalFileAsync(fileToUpload, folderPath);
+                    return await UploadLocalFileAsync(fileUpload, folderPath);
                 }
                 else
                 {
-                    return await UploadAWSS3FileAsync(fileToUpload, folderPath, awsSetting);
+                    return await UploadAWSS3FileAsync(fileUpload, folderPath, awsSetting);
                 }
             }
             catch (Exception ex)
@@ -278,10 +280,10 @@ namespace CaseMngmt.Service.FileUploads
             }
         }
 
-        private async Task<FileUploadResponse?> UploadLocalFileAsync(IFormFile fileToUpload, string folderPath)
+        private async Task<FileUploadResponse?> UploadLocalFileAsync(CaseKeywordFileUpload fileUpload, string folderPath)
         {
             var count = 0;
-            var currentFilePath = $"{folderPath}/{fileToUpload.FileName}";
+            var currentFilePath = $"{folderPath}/{fileUpload.FileName}";
             while (File.Exists(currentFilePath))
             {
                 count++;
@@ -293,16 +295,18 @@ namespace CaseMngmt.Service.FileUploads
             }
             using var stream = File.Create(currentFilePath);
 
-            await fileToUpload.CopyToAsync(stream);
+            await fileUpload.FileToUpload.CopyToAsync(stream);
 
+            string ext = Path.GetExtension(currentFilePath).ToLower();
             return new FileUploadResponse
             {
                 FileName = Path.GetFileName(currentFilePath),
-                FilePath = currentFilePath
+                FilePath = currentFilePath,
+                IsImage = DataTypeDictionary.ImageTypes.Contains(ext),
             };
         }
 
-        private async Task<FileUploadResponse?> UploadAWSS3FileAsync(IFormFile fileToUpload, string folderPath, AWSSetting awsSetting)
+        private async Task<FileUploadResponse?> UploadAWSS3FileAsync(CaseKeywordFileUpload fileUpload, string folderPath, AWSSetting awsSetting)
         {
             try
             {
@@ -310,19 +314,19 @@ namespace CaseMngmt.Service.FileUploads
                 using (var client = new AmazonS3Client(credentials, RegionEndpoint.APNortheast1))
                 {
                     var count = 0;
-                    var currentFilePath = $"{folderPath}/{fileToUpload.FileName}";
+                    var currentFilePath = $"{folderPath}/{fileUpload.FileName}";
                     while (await CheckFileS3IsExists(currentFilePath, client, awsSetting))
                     {
                         count++;
                         currentFilePath = folderPath + "/"
-                            + Path.GetFileNameWithoutExtension(fileToUpload.FileName)
+                            + Path.GetFileNameWithoutExtension(fileUpload.FileName)
                             + count.ToString()
-                            + Path.GetExtension(fileToUpload.FileName);
+                            + Path.GetExtension(fileUpload.FileName);
                     }
 
                     using (var newMemoryStream = new MemoryStream())
                     {
-                        fileToUpload.CopyTo(newMemoryStream);
+                        fileUpload.FileToUpload.CopyTo(newMemoryStream);
 
                         var uploadRequest = new TransferUtilityUploadRequest
                         {
@@ -335,10 +339,13 @@ namespace CaseMngmt.Service.FileUploads
                         var fileTransferUtility = new TransferUtility(client);
                         await fileTransferUtility.UploadAsync(uploadRequest);
 
+                        string ext = Path.GetExtension(currentFilePath).ToLower();
+
                         return new FileUploadResponse
                         {
                             FileName = Path.GetFileName(currentFilePath),
-                            FilePath = currentFilePath
+                            FilePath = currentFilePath,
+                            IsImage = DataTypeDictionary.ImageTypes.Contains(ext),
                         };
                     }
                 }

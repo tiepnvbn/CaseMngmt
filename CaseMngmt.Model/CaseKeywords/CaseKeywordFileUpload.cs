@@ -24,7 +24,7 @@ namespace CaseMngmt.Models.CaseKeywords
                     FileName = FileToUpload.FileName;
                 }
 
-                if (!IsValidFilename())
+                if (!IsValidFilename(FileName))
                 {
                     return false;
                 }
@@ -35,7 +35,7 @@ namespace CaseMngmt.Models.CaseKeywords
                     fileExt = Path.GetExtension(FileToUpload.FileName).ToLower();
                     FileName = $"{FileName}{fileExt}";
                 }
-               
+
                 var validFileTypes = fileSetting.AcceptTypes.Split(',').ToList();
 
                 if (validFileTypes.Contains(fileExt))
@@ -50,15 +50,13 @@ namespace CaseMngmt.Models.CaseKeywords
             }
         }
 
-        private bool IsValidFilename()
+        private bool IsValidFilename(string fileName)
         {
             Regex containsABadCharacter = new Regex("[" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]");
-            if (containsABadCharacter.IsMatch(FileName))
+            if (containsABadCharacter.IsMatch(fileName))
             {
                 return false;
-            };
-
-            // other checks for UNC, drive-path format, etc
+            }
 
             return true;
         }
