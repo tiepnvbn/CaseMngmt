@@ -7,6 +7,7 @@ using CaseMngmt.Service.FileUploads;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using System.Net.Mime;
 
 namespace CaseMngmt.Server.Controllers
 {
@@ -104,11 +105,14 @@ namespace CaseMngmt.Server.Controllers
 
                 var awsSetting = GetAWSSetting();
                 var fileSetting = GetFileUploadSetting();
+                var filePath = await _fileUploadService.GetFilePath(filename, caseId, fileSetting, awsSetting);
+                if (filePath == null)
+                {
+                    return BadRequest();
+                }
 
                 if (awsSetting == null)
                 {
-                    var filePath = await _fileUploadService.GetFilePath(filename, caseId, fileSetting, awsSetting);
-
                     var provider = new FileExtensionContentTypeProvider();
                     if (!provider.TryGetContentType(filePath, out var contenttype))
                     {
@@ -120,8 +124,8 @@ namespace CaseMngmt.Server.Controllers
                 }
                 else
                 {
-                    // TODO
-                    return null;
+                    var result = await _fileUploadService.DownloadFileS3Async(filePath, awsSetting);
+                    return result != null ? File(result, "application/octet-stream", filePath) : BadRequest();
                 }
 
             }

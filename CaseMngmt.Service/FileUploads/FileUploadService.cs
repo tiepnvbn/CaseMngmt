@@ -172,7 +172,7 @@ namespace CaseMngmt.Service.FileUploads
                 return 0;
             }
         }
-        
+
         public async Task<string?> GetFilePath(string filename, Guid caseId, FileUploadSetting fileSetting, AWSSetting? awsSetting)
         {
             var folderPath = await GetUploadedFolderPath(caseId, fileSetting, awsSetting);
@@ -184,11 +184,50 @@ namespace CaseMngmt.Service.FileUploads
             string ext = Path.GetExtension(filename).ToLower();
             string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filename);
 
-            var exactPath = awsSetting == null 
+            var exactPath = awsSetting == null
                 ? Path.Combine(folderPath, $"{fileNameWithoutExt}{ext}")
                 : $"{folderPath}/{fileNameWithoutExt}{ext}";
 
             return exactPath;
+        }
+
+        public async Task<byte[]?> DownloadFileS3Async(string fileName, AWSSetting awsSetting)
+        {
+            try
+            {
+                MemoryStream? ms = null;
+                BasicAWSCredentials credentials = new BasicAWSCredentials(awsSetting.ACCESS_KEY, awsSetting.SECRET_KEY);
+                using (var client = new AmazonS3Client(credentials, RegionEndpoint.APNortheast1))
+                {
+                    Amazon.S3.Model.GetObjectRequest getObjectRequest = new Amazon.S3.Model.GetObjectRequest
+                    {
+                        BucketName = awsSetting.S3Bucket,
+                        Key = fileName
+                    };
+
+                    using (var response = await client.GetObjectAsync(getObjectRequest))
+                    {
+                        if (response.HttpStatusCode == HttpStatusCode.OK)
+                        {
+                            using (ms = new MemoryStream())
+                            {
+                                await response.ResponseStream.CopyToAsync(ms);
+                            }
+                        }
+                    }
+
+                    if (ms is null || ms.ToArray().Length < 1)
+                    {
+                        return null;
+                    }
+
+                    return ms.ToArray();
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         #endregion

@@ -11,5 +11,6 @@ namespace CaseMngmt.Service.FileUploads
         Task<List<string?>> GetAllFileByCaseIdAsync(Guid caseId, FileUploadSetting fileSetting, AWSSetting? awsSetting);
         Task<string?> GetUploadedFolderPath(Guid caseId, FileUploadSetting fileSetting, AWSSetting? awsSetting);
         Task<string?> GetFilePath(string filename, Guid caseId, FileUploadSetting fileSetting, AWSSetting? awsSetting);
+        Task<byte[]?> DownloadFileS3Async(string fileName, AWSSetting awsSetting);
     }
 }

@@ -48,7 +48,7 @@ namespace CaseMngmt.Repository.Companies
             }
         }
 
-        public async Task<PagedResult<Company>?> GetAllAsync(string companyName, string phoneNumber, int pageSize, int pageNumber)
+        public async Task<PagedResult<Company>?> GetAllAsync(string? companyName, string? phoneNumber, int pageSize, int pageNumber)
         {
             try
             {
