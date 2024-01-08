@@ -89,17 +89,17 @@ namespace CaseMngmt.Server.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("Download")]
         public async Task<IActionResult> DownloadFile(DownloadFileRequest request)
         {
-            if (!ModelState.IsValid || string.IsNullOrEmpty(request.Filename))
+            if (!ModelState.IsValid || string.IsNullOrEmpty(request.FileName))
             {
                 return BadRequest();
             }
             try
             {
-                string ext = Path.GetExtension(request.Filename).ToLower();
+                string ext = Path.GetExtension(request.FileName).ToLower();
                 if (string.IsNullOrEmpty(ext))
                 {
                     return BadRequest("The filename need file type");
@@ -107,7 +107,7 @@ namespace CaseMngmt.Server.Controllers
 
                 var awsSetting = GetAWSSetting();
                 var fileSetting = GetFileUploadSetting();
-                var filePath = await _fileUploadService.GetFilePath(request.Filename, request.CaseId, fileSetting, awsSetting);
+                var filePath = await _fileUploadService.GetFilePath(request.FileName, request.CaseId, fileSetting, awsSetting);
                 if (filePath == null)
                 {
                     return BadRequest();
@@ -146,13 +146,13 @@ namespace CaseMngmt.Server.Controllers
         [Route("Delete")]
         public async Task<IActionResult> DeleteFile(DeleteFileRequest request)
         {
-            if (!ModelState.IsValid || string.IsNullOrEmpty(request.Filename))
+            if (!ModelState.IsValid || string.IsNullOrEmpty(request.FileName))
             {
                 return BadRequest();
             }
             try
             {
-                string ext = Path.GetExtension(request.Filename).ToLower();
+                string ext = Path.GetExtension(request.FileName).ToLower();
                 if (string.IsNullOrEmpty(ext))
                 {
                     return BadRequest("The filename need file type");
@@ -161,7 +161,7 @@ namespace CaseMngmt.Server.Controllers
                 var awsSetting = GetAWSSetting();
                 var fileSetting = GetFileUploadSetting();
 
-                var deleteResult = await _fileUploadService.DeleteFileAsync(request.Filename, request.CaseId, fileSetting, awsSetting);
+                var deleteResult = await _fileUploadService.DeleteFileAsync(request.FileName, request.CaseId, fileSetting, awsSetting);
                 if (deleteResult > 0)
                 {
                     var result = await _caseKeywordService.DeleteFileKeywordAsync(request.CaseId, request.KeywordId);
