@@ -107,8 +107,8 @@ namespace CaseMngmt.Repository.CaseKeywords
                 if (searchRequest.KeywordDateValues != null && searchRequest.KeywordDateValues.Any())
                 {
                     queryable = queryable.Where(z => searchRequest.KeywordDateValues.All(x => z.Any(c => c.caseKeyword.KeywordId.Equals(x.KeywordId) 
-                        && DateTime.Parse(c.caseKeyword.Value) >= DateTime.Parse(x.FromValue) 
-                        && DateTime.Parse(c.caseKeyword.Value) <= DateTime.Parse(x.ToValue))));
+                        && DateTime.Parse(c.caseKeyword.Value).Date >= DateTime.Parse(x.FromValue).Date 
+                        && DateTime.Parse(c.caseKeyword.Value).Date <= DateTime.Parse(x.ToValue).Date)));
                 }
 
                 if (searchRequest.KeywordValues != null && searchRequest.KeywordValues.Any())

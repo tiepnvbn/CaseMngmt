@@ -1,4 +1,6 @@
 ﻿
+using System.Globalization;
+
 namespace CaseMngmt.Models.CaseKeywords
 {
     public class CaseKeywordSearch
@@ -19,15 +21,19 @@ namespace CaseMngmt.Models.CaseKeywords
                         if (!string.IsNullOrEmpty(item.FromValue) && string.IsNullOrEmpty(item.ToValue))
                         {
                             DateTime.TryParse(item.FromValue, out _);
+                            item.FromValue = DateTime.ParseExact(item.FromValue, "yyyy/MM/dd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
                         }
                         else if (string.IsNullOrEmpty(item.FromValue) && !string.IsNullOrEmpty(item.ToValue))
                         {
                             DateTime.TryParse(item.ToValue, out _);
+                            item.ToValue = DateTime.ParseExact(item.ToValue, "yyyy/MM/dd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
                         }
                         else
                         {
                             DateTime.TryParse(item.FromValue, out _);
                             DateTime.TryParse(item.ToValue, out _);
+                            item.FromValue = DateTime.ParseExact(item.FromValue, "yyyy/MM/dd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
+                            item.ToValue = DateTime.ParseExact(item.ToValue, "yyyy/MM/dd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
                         }
                     }
                 }
