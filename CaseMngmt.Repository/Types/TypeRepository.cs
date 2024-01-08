@@ -41,12 +41,12 @@ namespace CaseMngmt.Repository.Types
             }
         }
 
-        public async Task<IEnumerable<Type>?> GetAllAsync()
+        public async Task<IEnumerable<Type>?> GetAllAsync(bool isFileType)
         {
             try
             {
                 var IQueryableType = (from tempType in _context.Type select tempType);
-                IQueryableType = IQueryableType.Where(x => !x.Deleted && x.IsDefaultType).OrderBy(m => m.Name);
+                IQueryableType = IQueryableType.Where(x => !x.Deleted && x.IsDefaultType && x.IsFileType).OrderBy(m => m.Name);
                 var result = await IQueryableType.ToListAsync();
 
                 return result;

@@ -5,14 +5,12 @@ using CaseMngmt.Models.Cases;
 using CaseMngmt.Models.Companies;
 using CaseMngmt.Models.CompanyTemplates;
 using CaseMngmt.Models.Customers;
-using CaseMngmt.Models.FileTypes;
 using CaseMngmt.Models.KeywordRoles;
 using CaseMngmt.Models.Keywords;
 using CaseMngmt.Models.RoleFileTypes;
 using CaseMngmt.Models.Templates;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Type = CaseMngmt.Models.Types.Type;
 
 namespace CaseMngmt.Models.Database
 {
@@ -37,13 +35,13 @@ namespace CaseMngmt.Models.Database
                   r => r.HasOne(e => e.Case).WithMany(e => e.CaseKeywords).HasForeignKey(e => e.CaseId)) //MapRightKey
               .HasKey(e => e.Id);
 
-            modelBuilder.Entity<FileType>()
+            modelBuilder.Entity<Types.Type>()
                 .HasMany(e => e.Roles)
                 .WithMany(e => e.FileTypes)
                 .UsingEntity<RoleFileType>(
                     l => l.HasOne(e => e.ApplicationRole).WithMany(e => e.RoleFileTypes).HasForeignKey(e => e.RoleId), //MapLeftKey
-                    r => r.HasOne(e => e.FileType).WithMany(e => e.RoleFileTypes).HasForeignKey(e => e.FileTypeId)) //MapRightKey
-              .HasKey(e => new { e.RoleId, e.FileTypeId });
+                    r => r.HasOne(e => e.FileType).WithMany(e => e.RoleFileTypes).HasForeignKey(e => e.TypeId)) //MapRightKey
+              .HasKey(e => new { e.RoleId, e.TypeId });
 
             modelBuilder.Entity<ApplicationRole>()
                 .HasMany(e => e.Keywords)
@@ -61,14 +59,13 @@ namespace CaseMngmt.Models.Database
 
         public DbSet<Company> Company { get; set; }
         public DbSet<Customer> Customer { get; set; }
-        public DbSet<Type> Type { get; set; }
+        public DbSet<Types.Type> Type { get; set; }
         public DbSet<Case> Case { get; set; }
         public DbSet<Template> Template { get; set; }
         public DbSet<Keyword> Keyword { get; set; }
         public DbSet<KeywordRole> KeywordRole { get; set; }
         public DbSet<CaseKeyword> CaseKeyword { get; set; }
         public DbSet<CompanyTemplate> CompanyTemplate { get; set; }
-        public DbSet<FileType> FileType { get; set; }
         public DbSet<RoleFileType> RoleFileType { get; set; }
     }
 }

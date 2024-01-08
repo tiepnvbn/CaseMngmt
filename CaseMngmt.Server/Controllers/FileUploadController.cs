@@ -70,7 +70,7 @@ namespace CaseMngmt.Server.Controllers
                 var uploadResult = await _fileUploadService.UploadFileAsync(fileUploadRequest, fileSetting, awsSetting);
                 if (uploadResult != null)
                 {
-                    var result = await _caseKeywordService.AddFileToKeywordAsync(fileUploadRequest.CaseId, uploadResult, templateId.Value);
+                    var result = await _caseKeywordService.AddFileToKeywordAsync(fileUploadRequest.CaseId, fileUploadRequest.FileTypeId, uploadResult, templateId.Value);
                     return result != null ? Ok(new FileResponse
                     {
                         FileName = uploadResult.FileName,

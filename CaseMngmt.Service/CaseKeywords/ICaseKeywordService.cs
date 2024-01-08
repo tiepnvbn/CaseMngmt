@@ -12,7 +12,7 @@ namespace CaseMngmt.Service.CaseKeywords
         Task<int> CloseCaseByAsync(Guid caseId);
         Task<int> DeleteAsync(Guid caseId);
         Task<int> UpdateAsync(CaseKeywordRequest request);
-        Task<Guid?> AddFileToKeywordAsync(Guid caseId, FileUploadResponse fileResponse, Guid templateId);
+        Task<Guid?> AddFileToKeywordAsync(Guid caseId, Guid fileTypeId, FileUploadResponse fileResponse, Guid templateId);
         Task<IEnumerable<FileResponse>> GetFileKeywordsByCaseIdAsync(Guid caseId);
         Task<int> DeleteFileKeywordAsync(Guid caseId, Guid keywordId);
     }

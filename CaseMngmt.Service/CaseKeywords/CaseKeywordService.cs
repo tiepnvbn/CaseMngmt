@@ -16,15 +16,13 @@ namespace CaseMngmt.Service.Customers
     {
         private ICaseRepository _caseRepository;
         private ICaseKeywordRepository _caseKeywordRepository;
-        private ITypeRepository _typeRepository;
         private IKeywordRepository _keywordRepository;
 
         private readonly IMapper _mapper;
-        public CaseKeywordService(ICaseRepository caseRepository, ICaseKeywordRepository caseKeywordRepository, ITypeRepository typeRepository, IKeywordRepository keywordRepository, IMapper mapper)
+        public CaseKeywordService(ICaseRepository caseRepository, ICaseKeywordRepository caseKeywordRepository, IKeywordRepository keywordRepository, IMapper mapper)
         {
             _caseRepository = caseRepository;
             _caseKeywordRepository = caseKeywordRepository;
-            _typeRepository = typeRepository;
             _keywordRepository = keywordRepository;
             _mapper = mapper;
         }
@@ -151,28 +149,14 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<Guid?> AddFileToKeywordAsync(Guid caseId, FileUploadResponse fileResponse, Guid templateId)
+        public async Task<Guid?> AddFileToKeywordAsync(Guid caseId, Guid fileTypeId, FileUploadResponse fileResponse, Guid templateId)
         {
             try
             {
-                var fileType = await _typeRepository.GetByTypeNameAsync("file");
-                if (fileType == null)
-                {
-                    fileType = new Models.Types.Type()
-                    {
-                        Name = $"File",
-                        Value = "file",
-                        IsDefaultType = false,
-                        CreatedDate = DateTime.Now,
-                        UpdatedDate = DateTime.Now
-                    };
-                    await _typeRepository.AddAsync(fileType);
-                }
-
                 var keyword = new Keyword()
                 {
                     Name = fileResponse.FileName,
-                    TypeId = fileType.Id,
+                    TypeId = fileTypeId,
                     TemplateId = templateId,
                     IsRequired = false,
                     Order = 0,

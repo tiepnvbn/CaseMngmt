@@ -281,12 +281,10 @@ namespace CaseMngmt.Models.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BuildingName")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -317,27 +315,22 @@ namespace CaseMngmt.Models.Migrations
                         .HasColumnType("nvarchar(12)");
 
                     b.Property<string>("PostCode1")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("PostCode2")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("RoomNumber")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("StateProvince")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Street")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -352,37 +345,6 @@ namespace CaseMngmt.Models.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("Customer");
-                });
-
-            modelBuilder.Entity("CaseMngmt.Models.FileTypes.FileType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<Guid>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FileType");
                 });
 
             modelBuilder.Entity("CaseMngmt.Models.KeywordRoles.KeywordRole", b =>
@@ -467,12 +429,12 @@ namespace CaseMngmt.Models.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("FileTypeId")
+                    b.Property<Guid>("TypeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("RoleId", "FileTypeId");
+                    b.HasKey("RoleId", "TypeId");
 
-                    b.HasIndex("FileTypeId");
+                    b.HasIndex("TypeId");
 
                     b.ToTable("RoleFileType");
                 });
@@ -524,6 +486,9 @@ namespace CaseMngmt.Models.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDefaultType")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFileType")
                         .HasColumnType("bit");
 
                     b.Property<string>("Metadata")
@@ -745,15 +710,15 @@ namespace CaseMngmt.Models.Migrations
 
             modelBuilder.Entity("CaseMngmt.Models.RoleFileTypes.RoleFileType", b =>
                 {
-                    b.HasOne("CaseMngmt.Models.FileTypes.FileType", "FileType")
-                        .WithMany("RoleFileTypes")
-                        .HasForeignKey("FileTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CaseMngmt.Models.ApplicationRoles.ApplicationRole", "ApplicationRole")
                         .WithMany("RoleFileTypes")
                         .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CaseMngmt.Models.Types.Type", "FileType")
+                        .WithMany("RoleFileTypes")
+                        .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -834,11 +799,6 @@ namespace CaseMngmt.Models.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("CaseMngmt.Models.FileTypes.FileType", b =>
-                {
-                    b.Navigation("RoleFileTypes");
-                });
-
             modelBuilder.Entity("CaseMngmt.Models.Keywords.Keyword", b =>
                 {
                     b.Navigation("CaseKeywords");
@@ -856,6 +816,8 @@ namespace CaseMngmt.Models.Migrations
             modelBuilder.Entity("CaseMngmt.Models.Types.Type", b =>
                 {
                     b.Navigation("Keywords");
+
+                    b.Navigation("RoleFileTypes");
                 });
 #pragma warning restore 612, 618
         }

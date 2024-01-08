@@ -68,23 +68,6 @@ namespace CaseMngmt.Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FileType",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FileType", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Template",
                 columns: table => new
                 {
@@ -107,6 +90,7 @@ namespace CaseMngmt.Models.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDefaultType = table.Column<bool>(type: "bit", nullable: false),
+                    IsFileType = table.Column<bool>(type: "bit", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Source = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Metadata = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -181,13 +165,13 @@ namespace CaseMngmt.Models.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: false),
-                    PostCode1 = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    PostCode2 = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    StateProvince = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    City = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Street = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    BuildingName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    RoomNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    PostCode1 = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    PostCode2 = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    StateProvince = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    City = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Street = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    BuildingName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    RoomNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Note = table.Column<string>(type: "nvarchar(3000)", maxLength: 3000, nullable: true),
                     CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
@@ -204,30 +188,6 @@ namespace CaseMngmt.Models.Migrations
                         name: "FK_Customer_Company_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Company",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RoleFileType",
-                columns: table => new
-                {
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FileTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RoleFileType", x => new { x.RoleId, x.FileTypeId });
-                    table.ForeignKey(
-                        name: "FK_RoleFileType_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RoleFileType_FileType_FileTypeId",
-                        column: x => x.FileTypeId,
-                        principalTable: "FileType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -288,6 +248,30 @@ namespace CaseMngmt.Models.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Keyword_Type_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "Type",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RoleFileType",
+                columns: table => new
+                {
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoleFileType", x => new { x.RoleId, x.TypeId });
+                    table.ForeignKey(
+                        name: "FK_RoleFileType_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RoleFileType_Type_TypeId",
                         column: x => x.TypeId,
                         principalTable: "Type",
                         principalColumn: "Id",
@@ -510,9 +494,9 @@ namespace CaseMngmt.Models.Migrations
                 column: "KeywordId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoleFileType_FileTypeId",
+                name: "IX_RoleFileType_TypeId",
                 table: "RoleFileType",
-                column: "FileTypeId");
+                column: "TypeId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -558,9 +542,6 @@ namespace CaseMngmt.Models.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "FileType");
 
             migrationBuilder.DropTable(
                 name: "Company");

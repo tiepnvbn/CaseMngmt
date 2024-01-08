@@ -44,6 +44,11 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
+                if (!request.IsValidDatetime())
+                {
+                    return BadRequest("Invalid Datetime request");
+                }
+
                 // Get Template to check role of user
                 var currentUserRole = User?.FindAll(ClaimTypes.Role)?.Select(x => x.Value)?.ToList();
                 var currentCompanyId = User?.FindFirst("CompanyId")?.Value;
@@ -70,7 +75,8 @@ namespace CaseMngmt.Server.Controllers
                     TemplateId = templateId,
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
-                    KeywordValues = request.KeywordValues
+                    KeywordValues = request.KeywordValues,
+                    KeywordDateValues = request.KeywordDateValues
                 };
 
                 var result = await _caseKeywordService.GetAllAsync(searchRequest);

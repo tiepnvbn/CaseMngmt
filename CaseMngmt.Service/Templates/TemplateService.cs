@@ -36,7 +36,7 @@ namespace CaseMngmt.Service.Templates
                     return 0;
                 }
 
-                var typeList = (await _typeRepository.GetAllAsync())?.FirstOrDefault(x => x.IsDefaultType && x.Value == "list");
+                var typeList = (await _typeRepository.GetAllAsync(false))?.FirstOrDefault(x => x.IsDefaultType && x.Value == "list");
                 if (typeList == null)
                 {
                     return 0;
@@ -104,7 +104,7 @@ namespace CaseMngmt.Service.Templates
                 }
 
                 // Check new Type LIST
-                var typeList = (await _typeRepository.GetAllAsync())?.FirstOrDefault(x => x.IsDefaultType && x.Value == "list");
+                var typeList = (await _typeRepository.GetAllAsync(false))?.FirstOrDefault(x => x.IsDefaultType && x.Value == "list");
                 if (typeList == null)
                 {
                     return 0;

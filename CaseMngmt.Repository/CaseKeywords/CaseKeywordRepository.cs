@@ -89,24 +89,32 @@ namespace CaseMngmt.Repository.CaseKeywords
             try
             {
                 var queryable = (from caseKeyword in _context.CaseKeyword.Include(x => x.Keyword).Include(x => x.Keyword.Type)
-                             join tempCase in _context.Case on caseKeyword.CaseId equals tempCase.Id
-                             join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
-                             join template in _context.Template on keyword.TemplateId equals template.Id
-                             join companyTemplate in _context.CompanyTemplate on template.Id equals companyTemplate.TemplateId
-                             where !caseKeyword.Deleted
-                                && !tempCase.Deleted
-                                && !keyword.Deleted
-                                && keyword.TemplateId == searchRequest.TemplateId
-                                && companyTemplate.CompanyId == searchRequest.CompanyId
-                                && caseKeyword.Keyword.IsShowOnTemplate
-                                && caseKeyword.Case.Status == "Open"
-                             select new { tempCase, caseKeyword })
+                                 join tempCase in _context.Case on caseKeyword.CaseId equals tempCase.Id
+                                 join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
+                                 join template in _context.Template on keyword.TemplateId equals template.Id
+                                 join companyTemplate in _context.CompanyTemplate on template.Id equals companyTemplate.TemplateId
+                                 where !caseKeyword.Deleted
+                                    && !tempCase.Deleted
+                                    && !keyword.Deleted
+                                    && keyword.TemplateId == searchRequest.TemplateId
+                                    && companyTemplate.CompanyId == searchRequest.CompanyId
+                                    && caseKeyword.Keyword.IsShowOnTemplate
+                                    && caseKeyword.Case.Status == "Open"
+                                 select new { tempCase, caseKeyword })
                             .AsEnumerable()
                             .GroupBy(x => new { x.tempCase.Id, x.tempCase.Name, x.tempCase.Status });
 
+                if (searchRequest.KeywordDateValues != null && searchRequest.KeywordDateValues.Any())
+                {
+                    queryable = queryable.Where(z => searchRequest.KeywordDateValues.All(x => z.Any(c => c.caseKeyword.KeywordId.Equals(x.KeywordId) 
+                        && DateTime.Parse(c.caseKeyword.Value) >= DateTime.Parse(x.FromValue) 
+                        && DateTime.Parse(c.caseKeyword.Value) <= DateTime.Parse(x.ToValue))));
+                }
+
                 if (searchRequest.KeywordValues != null && searchRequest.KeywordValues.Any())
                 {
-                    queryable = queryable.Where(z => searchRequest.KeywordValues.All(x => z.Any(c => c.caseKeyword.KeywordId.Equals(x.KeywordId) && c.caseKeyword.Value.Contains(x.Value))));
+                    queryable = queryable.Where(z => searchRequest.KeywordValues.All(x => z.Any(c => c.caseKeyword.KeywordId.Equals(x.KeywordId) 
+                        && c.caseKeyword.Value.Contains(x.Value))));
                 }
 
                 var query = queryable
@@ -250,20 +258,20 @@ namespace CaseMngmt.Repository.CaseKeywords
             try
             {
                 var IQueryable = from caseKeyword in _context.CaseKeyword.Include(x => x.Keyword).Include(x => x.Keyword.Type)
-                                  join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
-                                  join type in _context.Type on keyword.TypeId equals type.Id
-                                  where !caseKeyword.Deleted
-                                    && !keyword.Deleted
-                                    && !type.Deleted
-                                    && caseKeyword.CaseId == caseId
-                                    && !caseKeyword.Keyword.IsShowOnTemplate
-                                    && caseKeyword.Case.Status == "Open"
-                                  select new FileResponse
-                                  {
-                                      KeywordId = caseKeyword.KeywordId,
-                                      FileName = caseKeyword.Keyword.Name,
-                                      FilePath = caseKeyword.Value
-                                  };
+                                 join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
+                                 join type in _context.Type on keyword.TypeId equals type.Id
+                                 where !caseKeyword.Deleted
+                                   && !keyword.Deleted
+                                   && !type.Deleted
+                                   && caseKeyword.CaseId == caseId
+                                   && !caseKeyword.Keyword.IsShowOnTemplate
+                                   && caseKeyword.Case.Status == "Open"
+                                 select new FileResponse
+                                 {
+                                     KeywordId = caseKeyword.KeywordId,
+                                     FileName = caseKeyword.Keyword.Name,
+                                     FilePath = caseKeyword.Value
+                                 };
                 var result = await IQueryable.OrderBy(x => x.FileName).ToListAsync();
                 return result;
             }

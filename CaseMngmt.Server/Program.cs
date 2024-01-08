@@ -8,7 +8,6 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using AutoMapper;
-using CaseMngmt.Server;
 using CaseMngmt.Models.Database;
 using CaseMngmt.Models.AutoMapper;
 using CaseMngmt.Models.ApplicationUsers;
@@ -22,7 +21,6 @@ using CaseMngmt.Service.Cases;
 using CaseMngmt.Service.CaseKeywords;
 using CaseMngmt.Service.CompanyTemplates;
 using CaseMngmt.Service.FileUploads;
-using CaseMngmt.Service.FileTypes;
 using CaseMngmt.Repository.Companies;
 using CaseMngmt.Repository.Customers;
 using CaseMngmt.Repository.Types;
@@ -31,7 +29,6 @@ using CaseMngmt.Repository.Templates;
 using CaseMngmt.Repository.Cases;
 using CaseMngmt.Repository.CaseKeywords;
 using CaseMngmt.Repository.CompanyTemplates;
-using CaseMngmt.Repository.FileTypes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,9 +90,6 @@ builder.Services.AddTransient<ITypeRepository, TypeRepository>();
 
 builder.Services.AddTransient<ICompanyTemplateService, CompanyTemplateService>();
 builder.Services.AddTransient<ICompanyTemplateRepository, CompanyTemplateRepository>();
-
-builder.Services.AddTransient<IFileTypeRepository, FileTypeRepository>();
-builder.Services.AddTransient<IFileTypeService, FileTypeService>();
 
 builder.Services.AddTransient<IFileUploadService, FileUploadService>();
 

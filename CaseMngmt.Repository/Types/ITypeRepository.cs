@@ -6,7 +6,7 @@ namespace CaseMngmt.Repository.Types
     {
         Task<int> AddAsync(Type Type);
         Task<int> AddMultiAsync(List<Type> Types);
-        Task<IEnumerable<Type>?> GetAllAsync();
+        Task<IEnumerable<Type>?> GetAllAsync(bool isFileType);
         Task<Type?> GetByIdAsync(Guid id);
         Task<Type?> GetByTypeNameAsync(string name);
         Task<int> DeleteAsync(Guid id);

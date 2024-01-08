@@ -20,7 +20,8 @@ namespace CaseMngmt.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [Route("type")]
+        public async Task<IActionResult> GetAllType()
         {
             try
             {
@@ -30,7 +31,29 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                var result = await _typeService.GetAllAsync();
+                var result = await _typeService.GetAllAsync(false);
+                return result != null && result.Any() ? Ok(result) : NotFound();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, nameof(TypeController), true, e);
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        [Route("file-type")]
+        public async Task<IActionResult> GetAllFileType()
+        {
+            try
+            {
+                var companyId = User?.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(companyId))
+                {
+                    return BadRequest();
+                }
+
+                var result = await _typeService.GetAllAsync(true);
                 return result != null && result.Any() ? Ok(result) : NotFound();
             }
             catch (Exception e)

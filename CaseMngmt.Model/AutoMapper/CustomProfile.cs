@@ -31,10 +31,10 @@ namespace CaseMngmt.Models.AutoMapper
             CreateMap<Type, TypeRequest>();
             CreateMap<TypeRequest, Type>().ForMember(x => x.Id, opt => opt.Ignore());
 
-            CreateMap<FileTypeViewModel, FileType>();
-            CreateMap<FileType, FileTypeViewModel>();
-            CreateMap<FileType, FileTypeRequest>();
-            CreateMap<FileTypeRequest, FileType>().ForMember(x => x.Id, opt => opt.Ignore());
+            CreateMap<FileTypeViewModel, Types.Type>();
+            CreateMap<Types.Type, FileTypeViewModel>();
+            CreateMap<Types.Type, FileTypeRequest>();
+            CreateMap<FileTypeRequest, Types.Type>().ForMember(x => x.Id, opt => opt.Ignore());
 
             CreateMap<Keyword, KeywordRequest>();
             CreateMap<KeywordRequest, Keyword>().ForMember(x => x.Id, opt => opt.Ignore());

@@ -2,12 +2,10 @@
 using CaseMngmt.Models.ApplicationRoles;
 using CaseMngmt.Models.ApplicationUsers;
 using CaseMngmt.Models.Database;
-using CaseMngmt.Models.FileTypes;
 using CaseMngmt.Models.Keywords;
 using CaseMngmt.Models.Templates;
 using CaseMngmt.Repository.Companies;
 using CaseMngmt.Repository.CompanyTemplates;
-using CaseMngmt.Repository.FileTypes;
 using CaseMngmt.Repository.Keywords;
 using CaseMngmt.Repository.Templates;
 using CaseMngmt.Repository.Types;
@@ -33,7 +31,6 @@ namespace CaseMngmt.Server
                 var templateManager = scope.ServiceProvider.GetRequiredService<ITemplateRepository>();
                 var keywordManager = scope.ServiceProvider.GetRequiredService<IKeywordRepository>();
                 var companyTemplateManager = scope.ServiceProvider.GetRequiredService<ICompanyTemplateRepository>();
-                var fileTypeManager = scope.ServiceProvider.GetRequiredService<IFileTypeRepository>();
 
                 #region Company
 
@@ -98,6 +95,57 @@ namespace CaseMngmt.Server
                 var listSubmissionStatusGuid = Guid.NewGuid();
 
                 var listType = new List<Models.Types.Type>() {
+                    new Models.Types.Type
+                    {
+                        Name = "Delivery Receipt",
+                        Value = "string",
+                        IsFileType = true,
+                    },
+                    new Models.Types.Type
+                    {
+                        Name = "Invoice",
+                        Value = "string",IsFileType = true,
+                    },
+                    new Models.Types.Type
+                    {
+                        Name = "Purchase Order",Value = "string",IsFileType = true,
+                    },
+                    new Models.Types.Type
+                    {
+                        Name = "Other",Value = "string",IsFileType = true,
+                    },
+                    new Models.Types.Type
+                    {
+                        Name = "Shipment Schedule",Value = "string",IsFileType = true,
+                    },
+                    new Models.Types.Type
+                    {
+                        Name = "Request Form",Value = "string",IsFileType = true,
+                    },
+                    new Models.Types.Type
+                    {
+                        Name = "Guide Map",Value = "string",IsFileType = true,
+                    },
+                    new Models.Types.Type
+                    {
+                        Name = "Photos",Value = "string",IsFileType = true,
+                    },
+                    new Models.Types.Type
+                    {
+                        Name = "Measurement File",Value = "string",IsFileType = true,
+                    },
+                    new Models.Types.Type
+                    {
+                        Name = "Design File",Value = "string",IsFileType = true,
+                    },
+                    new Models.Types.Type
+                    {
+                        Name = "Site Map",Value = "string",IsFileType = true,
+                    },
+                    new Models.Types.Type
+                    {
+                        Name = "Report Email",Value = "string",IsFileType = true,
+                    },
                     new Models.Types.Type
                     {
                         Id = defaultNumbericTypeGuid,
@@ -177,62 +225,6 @@ namespace CaseMngmt.Server
                     }
                 };
                 typeManager.AddMultiAsync(listType).ConfigureAwait(false);
-                Thread.Sleep(2000);
-                #endregion
-
-                #region FileType
-
-                var listFileType = new List<FileType>() {
-                    new FileType
-                    {
-                        Name = "Delivery Receipt",
-                    },
-                    new FileType
-                    {
-                        Name = "Invoice",
-                    },
-                    new FileType
-                    {
-                        Name = "Purchase Order",
-                    },
-                    new FileType
-                    {
-                        Name = "Other",
-                    },
-                    new FileType
-                    {
-                        Name = "Shipment Schedule",
-                    },
-                    new FileType
-                    {
-                        Name = "Request Form",
-                    },
-                    new FileType
-                    {
-                        Name = "Guide Map",
-                    },
-                    new FileType
-                    {
-                        Name = "Photos",
-                    },
-                    new FileType
-                    {
-                        Name = "Measurement File",
-                    },
-                    new FileType
-                    {
-                        Name = "Design File",
-                    },
-                    new FileType
-                    {
-                        Name = "Site Map",
-                    },
-                    new FileType
-                    {
-                        Name = "Report Email",
-                    }
-                };
-                fileTypeManager.AddMultiAsync(listFileType).ConfigureAwait(false);
                 Thread.Sleep(2000);
                 #endregion
 

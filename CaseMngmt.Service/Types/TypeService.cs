@@ -40,11 +40,11 @@ namespace CaseMngmt.Service.Types
             }
         }
 
-        public async Task<IEnumerable<TypeViewModel>?> GetAllAsync()
+        public async Task<IEnumerable<TypeViewModel>?> GetAllAsync(bool isFileType)
         {
             try
             {
-                var typesFromRepository = await _repository.GetAllAsync();
+                var typesFromRepository = await _repository.GetAllAsync(isFileType);
 
                 var result = _mapper.Map<List<TypeViewModel>>(typesFromRepository);
 

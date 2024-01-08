@@ -16,7 +16,7 @@ namespace CaseMngmt.Models.ApplicationRoles
         public List<Keyword> Keywords { get; set; } = new();
         public List<KeywordRole> KeywordRoles { get; }
 
-        public List<FileType> FileTypes { get; set; } = new();
+        public List<Types.Type> FileTypes { get; set; } = new();
         public List<RoleFileType> RoleFileTypes { get; set; }
     }
 }
