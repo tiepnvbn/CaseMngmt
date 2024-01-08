@@ -122,12 +122,16 @@ namespace CaseMngmt.Server.Controllers
                     }
 
                     var bytes = await System.IO.File.ReadAllBytesAsync(filePath);
-                    return File(bytes, contenttype, Path.GetFileName(filePath));
+                    string file = Convert.ToBase64String(bytes);
+                    return Ok(file);
+                    //return File(bytes, contenttype, Path.GetFileName(filePath));
                 }
                 else
                 {
                     var result = await _fileUploadService.DownloadFileS3Async(filePath, awsSetting);
-                    return result != null ? File(result, "application/octet-stream", filePath) : BadRequest();
+                    string file = Convert.ToBase64String(result);
+                    return Ok(file);
+                    //return result != null ? File(result, "application/octet-stream", filePath) : BadRequest();
                 }
 
             }
