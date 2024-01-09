@@ -8,6 +8,7 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using AutoMapper;
+using CaseMngmt.Server;
 using CaseMngmt.Models.Database;
 using CaseMngmt.Models.AutoMapper;
 using CaseMngmt.Models.ApplicationUsers;
@@ -29,7 +30,7 @@ using CaseMngmt.Repository.Templates;
 using CaseMngmt.Repository.Cases;
 using CaseMngmt.Repository.CaseKeywords;
 using CaseMngmt.Repository.CompanyTemplates;
-using CaseMngmt.Server;
+using CaseMngmt.Repository.KeywordRoles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,6 +92,8 @@ builder.Services.AddTransient<ITypeRepository, TypeRepository>();
 
 builder.Services.AddTransient<ICompanyTemplateService, CompanyTemplateService>();
 builder.Services.AddTransient<ICompanyTemplateRepository, CompanyTemplateRepository>();
+
+builder.Services.AddTransient<IKeywordRoleRepository, KeywordRoleRepository>();
 
 builder.Services.AddTransient<IFileUploadService, FileUploadService>();
 
@@ -177,7 +180,7 @@ var app = builder.Build();
 //Configure the HTTP-request pipeline
 if (app.Environment.IsDevelopment())
 {
-    //app.UseItToSeedSqlServer();
+    // await app.UseItToSeedSqlServer();
     //configure other services
 }
 

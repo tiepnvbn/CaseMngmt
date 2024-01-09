@@ -2,10 +2,12 @@
 using CaseMngmt.Models.ApplicationRoles;
 using CaseMngmt.Models.ApplicationUsers;
 using CaseMngmt.Models.Database;
+using CaseMngmt.Models.KeywordRoles;
 using CaseMngmt.Models.Keywords;
 using CaseMngmt.Models.Templates;
 using CaseMngmt.Repository.Companies;
 using CaseMngmt.Repository.CompanyTemplates;
+using CaseMngmt.Repository.KeywordRoles;
 using CaseMngmt.Repository.Keywords;
 using CaseMngmt.Repository.Templates;
 using CaseMngmt.Repository.Types;
@@ -15,7 +17,7 @@ namespace CaseMngmt.Server
 {
     internal static class DbInitializerExtension
     {
-        public static IApplicationBuilder UseItToSeedSqlServer(this IApplicationBuilder app)
+        public static async Task<IApplicationBuilder> UseItToSeedSqlServer(this IApplicationBuilder app)
         {
             ArgumentNullException.ThrowIfNull(app, nameof(app));
 
@@ -31,18 +33,18 @@ namespace CaseMngmt.Server
                 var templateManager = scope.ServiceProvider.GetRequiredService<ITemplateRepository>();
                 var keywordManager = scope.ServiceProvider.GetRequiredService<IKeywordRepository>();
                 var companyTemplateManager = scope.ServiceProvider.GetRequiredService<ICompanyTemplateRepository>();
+                var keywordRoleAssignManager = scope.ServiceProvider.GetRequiredService<IKeywordRoleRepository>();
 
                 #region Company
 
                 var defaultCompanyGuid = Guid.Parse("A4B11694-A5C9-48D7-BF6D-F12C019482DE");
-                var defaultCompany2Guid = Guid.Parse("A4B11694-A5C9-48D7-BF6D-F12C019482DD");
-                var defaultCompany3Guid = Guid.Parse("A4B11694-A5C9-48D7-BF6D-F12C019482DF");
-                var checkData = companyManager.GetByIdAsync(defaultCompanyGuid);
-                if (checkData.Result != null)
+                var boatCompanyGuid = Guid.Parse("A4B11694-A5C9-48D7-BF6D-F12C019482DD");
+                var checkData = await companyManager.GetByIdAsync(defaultCompanyGuid);
+                if (checkData != null)
                 {
                     return app;
                 }
-                companyManager.AddAsync(new Models.Companies.Company
+                await companyManager.AddAsync(new Models.Companies.Company
                 {
                     Id = defaultCompanyGuid,
                     Name = "CASE Company DEFAULT",
@@ -60,27 +62,9 @@ namespace CaseMngmt.Server
                     PostCode2 = "2",
                     Deleted = false,
                 });
-                companyManager.AddAsync(new Models.Companies.Company
+                await companyManager.AddAsync(new Models.Companies.Company
                 {
-                    Id = defaultCompany2Guid,
-                    Name = "CASE Company",
-                    BuildingName = "CASE Company",
-                    City = "Ha Noi",
-                    StateProvince = "Cau Giay",
-                    Street = "Pham Van Bach",
-                    RoomNumber = "10",
-                    CreatedDate = DateTime.Now,
-                    UpdatedDate = DateTime.Now,
-                    CreatedBy = Guid.Empty,
-                    UpdatedBy = Guid.Empty,
-                    PhoneNumber = "09099999999",
-                    PostCode1 = "1",
-                    PostCode2 = "2",
-                    Deleted = false,
-                });
-                companyManager.AddAsync(new Models.Companies.Company
-                {
-                    Id = defaultCompany3Guid,
+                    Id = boatCompanyGuid,
                     Name = "BOAT Company",
                     BuildingName = "BOAT Company",
                     City = "Japan",
@@ -122,54 +106,51 @@ namespace CaseMngmt.Server
                 var listType = new List<Models.Types.Type>() {
                     new Models.Types.Type
                     {
-                        Name = "Delivery Receipt",
-                        Value = "string",
-                        IsFileType = true,
+                        Name = "納品書", Value = "string", IsFileType = true,
                     },
                     new Models.Types.Type
                     {
-                        Name = "Invoice",
-                        Value = "string",IsFileType = true,
+                        Name = "請求書", Value = "string",IsFileType = true,
                     },
                     new Models.Types.Type
                     {
-                        Name = "Purchase Order",Value = "string",IsFileType = true,
+                        Name = "注文書",Value = "string",IsFileType = true,
                     },
                     new Models.Types.Type
                     {
-                        Name = "Other",Value = "string",IsFileType = true,
+                        Name = "その他",Value = "string",IsFileType = true,
                     },
                     new Models.Types.Type
                     {
-                        Name = "Shipment Schedule",Value = "string",IsFileType = true,
+                        Name = "出荷予定一覧",Value = "string",IsFileType = true,
                     },
                     new Models.Types.Type
                     {
-                        Name = "Request Form",Value = "string",IsFileType = true,
+                        Name = "依頼書",Value = "string",IsFileType = true,
                     },
                     new Models.Types.Type
                     {
-                        Name = "Guide Map",Value = "string",IsFileType = true,
+                        Name = "案内図",Value = "string",IsFileType = true,
                     },
                     new Models.Types.Type
                     {
-                        Name = "Photos",Value = "string",IsFileType = true,
+                        Name = "現場写真",Value = "string",IsFileType = true,
                     },
                     new Models.Types.Type
                     {
-                        Name = "Measurement File",Value = "string",IsFileType = true,
+                        Name = "現場計測データ",Value = "string",IsFileType = true,
                     },
                     new Models.Types.Type
                     {
-                        Name = "Design File",Value = "string",IsFileType = true,
+                        Name = "現場図面",Value = "string",IsFileType = true,
                     },
                     new Models.Types.Type
                     {
-                        Name = "Site Map",Value = "string",IsFileType = true,
+                        Name = "現場地図",Value = "string",IsFileType = true,
                     },
                     new Models.Types.Type
                     {
-                        Name = "Report Email",Value = "string",IsFileType = true,
+                        Name = "速報メール",Value = "string",IsFileType = true,
                     },
                     new Models.Types.Type
                     {
@@ -227,27 +208,27 @@ namespace CaseMngmt.Server
                         Value = "list",
                         IsDefaultType = true
                     },
-                    new Models.Types.Type
-                    {
-                        Id = listRequestTypeGuid,
-                        Name = "List (Alphanumeric)",
-                        Value = "list",
-                        Metadata = "Land Parcel Survey,Topographic Survey,Geological Survey,Seismic Survey,Groundwater Survey,Architectural Design,New Construction,Remodeling/Renovation Construction,Demolition Construction",
-                    },
-                    new Models.Types.Type
-                    {
-                        Id = listSubmissionStatusGuid,
-                        Name = "List (Alphanumeric)",
-                        Value = "list",
-                        Metadata = "Not yet,Done",
-                    },
-                    new Models.Types.Type
-                    {
-                        Id = listPaymentStatusGuid,
-                        Name = "List (Alphanumeric)",
-                        Value = "list",
-                        Metadata = "Billed,Check Payment,Complete",
-                    },
+                    //new Models.Types.Type
+                    //{
+                    //    Id = listRequestTypeGuid,
+                    //    Name = "List (Alphanumeric)",
+                    //    Value = "list",
+                    //    Metadata = "Land Parcel Survey,Topographic Survey,Geological Survey,Seismic Survey,Groundwater Survey,Architectural Design,New Construction,Remodeling/Renovation Construction,Demolition Construction",
+                    //},
+                    //new Models.Types.Type
+                    //{
+                    //    Id = listSubmissionStatusGuid,
+                    //    Name = "List (Alphanumeric)",
+                    //    Value = "list",
+                    //    Metadata = "Not yet,Done",
+                    //},
+                    //new Models.Types.Type
+                    //{
+                    //    Id = listPaymentStatusGuid,
+                    //    Name = "List (Alphanumeric)",
+                    //    Value = "list",
+                    //    Metadata = "Billed,Check Payment,Complete",
+                    //},
                     new Models.Types.Type
                     {
                         Id = listBoat1Guid,
@@ -291,30 +272,27 @@ namespace CaseMngmt.Server
                         Metadata = "請求済,入金要確認,入金完了",
                     }
                 };
-                typeManager.AddMultiAsync(listType).ConfigureAwait(false);
-                Thread.Sleep(5000);
+                await typeManager.AddMultiAsync(listType);
 
                 #endregion
 
                 #region Template
 
-                var defaultTemplateId = Guid.NewGuid();
                 var boatTemplateId = Guid.NewGuid();
-                templateManager.AddAsync(new Template { Id = defaultTemplateId, Name = "Default Template" });
-                templateManager.AddAsync(new Template { Id = boatTemplateId, Name = "BOAT Template" });
+                await templateManager.AddAsync(new Template { Id = boatTemplateId, Name = "BOAT Template" });
 
                 #endregion
 
                 #region CompanyTemplate
-
-                companyTemplateManager.AddAsync(new Models.CompanyTemplates.CompanyTemplate
+                await companyTemplateManager.AddAsync(new Models.CompanyTemplates.CompanyTemplate
                 {
-                    CompanyId = defaultCompany2Guid,
-                    TemplateId = defaultTemplateId
+                    CompanyId = defaultCompanyGuid,
+                    TemplateId = boatTemplateId
                 });
-                companyTemplateManager.AddAsync(new Models.CompanyTemplates.CompanyTemplate
+
+                await companyTemplateManager.AddAsync(new Models.CompanyTemplates.CompanyTemplate
                 {
-                    CompanyId = defaultCompany3Guid,
+                    CompanyId = boatCompanyGuid,
                     TemplateId = boatTemplateId
                 });
 
@@ -322,196 +300,9 @@ namespace CaseMngmt.Server
 
                 #region Keyword
 
-                var listKeywordDefault = new List<Keyword> {
-                    new Keyword
-                    {
-                        Name = "Customer Name",
-                        TypeId = defaultAlphanumericTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 20,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        DocumentSearchable = true,
-                        Order = 1,
-                        IsShowOnCaseList = true
-                    },
-                    new Keyword
-                    {
-                        Name = "Address",
-                        TypeId = defaultAlphanumericTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 50,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 2,
-                    },
-                    new Keyword
-                    {
-                        Name = "Phone Number",
-                        TypeId = defaultAlphanumericTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 12,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 3,
-                    },
-                    new Keyword
-                    {
-                        Name = "Customer Contact Person",
-                        TypeId = defaultAlphanumericTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 4,
-                    },
-                    new Keyword
-                    {
-                        Name = "Reception Date",
-                        TypeId = defaultDatetimeTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        DocumentSearchable = true,
-                        Order = 5,
-                    },
-                    new Keyword
-                    {
-                        Name = "Request Type",
-                        TypeId = listRequestTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 6,
-                        IsShowOnCaseList = true
-                    },
-                    new Keyword
-                    {
-                        Name = "Site Address",
-                        TypeId = defaultAlphanumericTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 7,
-                    },
-                    new Keyword
-                    {
-                        Name = "Scheduled Date",
-                        TypeId = defaultDatetimeTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 8,
-                    },
-                    new Keyword
-                    {
-                        Name = "Internal PIC",
-                        TypeId = defaultAlphanumericTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 9,
-                        IsShowOnCaseList = true
-                    },
-                    new Keyword
-                    {
-                        Name = "Submission Status",
-                        TypeId = listSubmissionStatusGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 10,
-                    },
-                    new Keyword
-                    {
-                        Name = "Submission Date",
-                        TypeId = defaultDatetimeTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 11,
-                    },
-                    new Keyword
-                    {
-                        Name = "Payment Status",
-                        TypeId = listPaymentStatusGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 12,
-                    },
-                    new Keyword
-                    {
-                        Name = "Invoice Amount",
-                        TypeId = defaultCurrencyTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 13,
-                    },
-                    new Keyword
-                    {
-                        Name = "Invoice Date",
-                        TypeId = defaultDatetimeTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 14,
-                    },
-                    new Keyword
-                    {
-                        Name = "Arrival Date",
-                        TypeId = defaultDatetimeTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 15,
-                    },
-                    new Keyword
-                    {
-                        Name = "Payment Amount",
-                        TypeId = defaultCurrencyTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired = true,
-                        CaseSearchable = true,
-                        DocumentSearchable = true,
-                        Order = 16,
-                    },
-                    new Keyword
-                    {
-                        Name = "Payment Date",
-                        TypeId = defaultDatetimeTypeGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 100,
-                        IsRequired = true,
-                        CaseSearchable = true,
-                        Order = 17,
-                    },
-                    new Keyword
-                    {
-                        Name = "Note",
-                        TypeId = listTextAreaGuid,
-                        TemplateId = defaultTemplateId,
-                        MaxLength = 1000,
-                        IsRequired =true,
-                        CaseSearchable =true,
-                        Order = 18,
-                    }
-                };
-                keywordManager.AddMultiAsync(listKeywordDefault).ConfigureAwait(false);
-                Thread.Sleep(2000);
+                Guid keyword1PermissionId = Guid.NewGuid();
+                Guid keyword2PermissionId = Guid.NewGuid();
+                Guid keyword3PermissionId = Guid.NewGuid();
 
                 var listKeywordBoat = new List<Keyword> {
                     new Keyword
@@ -666,6 +457,7 @@ namespace CaseMngmt.Server
                     },
                     new Keyword
                     {
+                        Id = keyword1PermissionId,
                         Name = "入金状況",
                         TypeId = listBoat6Guid,
                         TemplateId = boatTemplateId,
@@ -676,6 +468,7 @@ namespace CaseMngmt.Server
                     new Keyword
                     {
                         Name = "請求日",
+                        Id = keyword2PermissionId,
                         TypeId = defaultDatetimeTypeGuid,
                         TemplateId = boatTemplateId,
                         CaseSearchable = true,
@@ -684,6 +477,7 @@ namespace CaseMngmt.Server
                     new Keyword
                     {
                         Name = "入金日",
+                        Id = keyword3PermissionId,
                         TypeId = defaultDatetimeTypeGuid,
                         TemplateId = boatTemplateId,
                         CaseSearchable = true,
@@ -697,15 +491,14 @@ namespace CaseMngmt.Server
                         Order = 21,
                     }
                 };
-                keywordManager.AddMultiAsync(listKeywordBoat).ConfigureAwait(false);
-                Thread.Sleep(2000);
+                await keywordManager.AddMultiAsync(listKeywordBoat);
 
                 #endregion
 
                 #region Users & Roles
 
-                var userExists = userManager.FindByNameAsync("SuperAdmin");
-                if (userExists.Result == null)
+                var userExists = await userManager.FindByNameAsync("SuperAdmin");
+                if (userExists == null)
                 {
                     var user = new ApplicationUser
                     {
@@ -714,50 +507,65 @@ namespace CaseMngmt.Server
                         UserName = "SuperAdmin",
                         CompanyId = defaultCompanyGuid
                     };
-                    userManager.CreateAsync(user, "Admin@123");
-                    Thread.Sleep(2000);
+                    await userManager.CreateAsync(user, "Admin@123");
 
-                    var user2 = new ApplicationUser
+                    var boatAdminUser = new ApplicationUser
                     {
                         Email = "tanbc0901@gmail.com",
                         SecurityStamp = Guid.NewGuid().ToString(),
-                        UserName = "Admin",
-                        CompanyId = defaultCompany2Guid
-                    };
-                    userManager.CreateAsync(user2, "Admin@123");
-                    Thread.Sleep(2000);
-
-                    var boatUser = new ApplicationUser
-                    {
-                        Email = "demo@gmail.com",
-                        SecurityStamp = Guid.NewGuid().ToString(),
                         UserName = "BoatAdmin",
-                        CompanyId = defaultCompany3Guid
+                        CompanyId = boatCompanyGuid
                     };
-                    userManager.CreateAsync(boatUser, "Admin@123");
-                    Thread.Sleep(2000);
+                    await userManager.CreateAsync(boatAdminUser, "Admin@123");
 
-                    var roleSuperAdminCheck = roleManager.RoleExistsAsync("SuperAdmin");
-                    if (!roleSuperAdminCheck.Result)
+                    var boatNormalUser = new ApplicationUser
                     {
-                        roleManager.CreateAsync(new ApplicationRole(UserRoles.SuperAdmin));
-                    }
-                    var roleAdminCheck = roleManager.RoleExistsAsync("Admin");
-                    if (!roleAdminCheck.Result)
-                    {
-                        roleManager.CreateAsync(new ApplicationRole(UserRoles.Admin));
-                    }
+                        Email = "tiepnvbn@gmail.com",
+                        SecurityStamp = Guid.NewGuid().ToString(),
+                        UserName = "BoatNormalUser",
+                        CompanyId = boatCompanyGuid
+                    };
+                    await userManager.CreateAsync(boatNormalUser, "Admin@123");
 
-                    Thread.Sleep(2000);
-                    userManager.AddToRoleAsync(user, "SuperAdmin");
-                    Thread.Sleep(2000);
-                    userManager.AddToRoleAsync(user2, "Admin");
-                    Thread.Sleep(2000);
-                    userManager.AddToRoleAsync(boatUser, "Admin");
-                    Thread.Sleep(2000);
+                    await roleManager.CreateAsync(new ApplicationRole(UserRoles.SuperAdmin));
+                    await roleManager.CreateAsync(new ApplicationRole(UserRoles.Admin));
+                    await roleManager.CreateAsync(new ApplicationRole(UserRoles.User));
+
+                    await userManager.AddToRoleAsync(user, UserRoles.SuperAdmin);
+                    await userManager.AddToRoleAsync(boatAdminUser, UserRoles.Admin);
+                    await userManager.AddToRoleAsync(boatNormalUser, UserRoles.User);
 
                     #endregion
 
+                    #region Assign Keyword to Role of USER
+                    var roleSuperAdmin = await roleManager.FindByNameAsync(UserRoles.SuperAdmin);
+                    var roleAdmin = await roleManager.FindByNameAsync(UserRoles.Admin);
+                    var roleUser = await roleManager.FindByNameAsync(UserRoles.User);
+
+                    var assignSuperAdmin = listKeywordBoat
+                        .Select(x => new KeywordRole
+                        {
+                            KeywordId = x.Id,
+                            RoleId = roleSuperAdmin.Id
+                        }).ToList();
+                    var assignAdmin = listKeywordBoat
+                        .Select(x => new KeywordRole
+                        {
+                            KeywordId = x.Id,
+                            RoleId = roleAdmin.Id
+                        }).ToList();
+                    var assignUser = listKeywordBoat.Where(x => x.Id != keyword1PermissionId && x.Id != keyword2PermissionId && x.Id != keyword3PermissionId)
+                        .Select(x => new KeywordRole
+                        {
+                            KeywordId = x.Id,
+                            RoleId = roleUser.Id
+                        }).ToList();
+
+                    await keywordRoleAssignManager.AddMultiAsync(assignSuperAdmin);
+                    await keywordRoleAssignManager.AddMultiAsync(assignAdmin);
+                    await keywordRoleAssignManager.AddMultiAsync(assignUser);
+
+                    #endregion
                 }
             }
             catch (Exception ex)
