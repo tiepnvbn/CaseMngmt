@@ -252,5 +252,19 @@ namespace CaseMngmt.Service.Customers
                 return new List<FileResponse>();
             }
         }
+
+        public async Task<PagedResult<CaseKeywordViewModel>?> GetDocumentsAsync(DocumentSearchRequest searchRequest)
+        {
+            try
+            {
+                var result = await _caseKeywordRepository.GetDocumentsAsync(searchRequest);
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }

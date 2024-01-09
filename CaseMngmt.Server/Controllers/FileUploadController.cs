@@ -1,14 +1,13 @@
 ﻿using CaseMngmt.Models;
 using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.FileUploads;
-using CaseMngmt.Models.GenericValidation;
 using CaseMngmt.Service.CaseKeywords;
 using CaseMngmt.Service.CompanyTemplates;
 using CaseMngmt.Service.FileUploads;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-using static System.Net.Mime.MediaTypeNames;
+using System.Security.Claims;
 
 namespace CaseMngmt.Server.Controllers
 {
@@ -22,7 +21,7 @@ namespace CaseMngmt.Server.Controllers
         private readonly ICaseKeywordService _caseKeywordService;
         private readonly ICompanyTemplateService _companyTemplateService;
         private readonly IConfiguration _configuration;
-        
+
         public FileUploadController(ILogger<FileUploadController> logger, IFileUploadService fileUploadService, ICaseKeywordService caseKeywordService, ICompanyTemplateService companyTemplateService, IConfiguration configuration)
         {
             _logger = logger;
@@ -30,6 +29,61 @@ namespace CaseMngmt.Server.Controllers
             _caseKeywordService = caseKeywordService;
             _companyTemplateService = companyTemplateService;
             _configuration = configuration;
+        }
+
+        [HttpPost, Route("Search")]
+        public async Task<IActionResult> GetAll(DocumentSearch request)
+        {
+            if (!ModelState.IsValid || request == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                if (!request.IsValid())
+                {
+                    return BadRequest("Invalid currency request");
+                }
+
+                // Get Template to check role of user
+                var currentUserRole = User?.FindAll(ClaimTypes.Role)?.Select(x => x.Value)?.ToList();
+                var currentCompanyId = User?.FindFirst("CompanyId")?.Value;
+                if (currentUserRole == null || currentUserRole.Count < 1 || string.IsNullOrEmpty(currentCompanyId))
+                {
+                    return BadRequest("Wrong Claim");
+                }
+
+                var companyId = User?.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(companyId))
+                {
+                    return BadRequest();
+                }
+                var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
+                var templateId = companyTemplate.FirstOrDefault()?.TemplateId;
+                if (templateId == null || templateId == Guid.Empty)
+                {
+                    return BadRequest();
+                }
+
+                var searchRequest = new DocumentSearchRequest
+                {
+                    CompanyId = Guid.Parse(currentCompanyId),
+                    TemplateId = templateId,
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    KeywordValues = request.KeywordValues,
+                    KeywordDecimalValues = request.KeywordDecimalValues
+                };
+
+                var result = await _caseKeywordService.GetDocumentsAsync(searchRequest);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, nameof(FileUploadController), true, e);
+                return BadRequest();
+            }
         }
 
         [HttpPost]

@@ -10,7 +10,7 @@ namespace CaseMngmt.Models.CaseKeywords
         public string Value { get; set; }
     }
 
-    public class KeywordDatetimeValue
+    public class KeywordSearchRangeValue
     {
         [Required]
         public Guid KeywordId { get; set; }

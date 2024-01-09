@@ -1,16 +1,17 @@
-﻿
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace CaseMngmt.Models.CaseKeywords
 {
-    public class CaseKeywordSearch
+    public class DocumentSearch
     {
+        public Guid? FileTypeId { get; set; }
         public List<KeywordValue> KeywordValues { get; set; }
         public List<KeywordSearchRangeValue> KeywordDateValues { get; set; }
+        public List<KeywordSearchRangeValue> KeywordDecimalValues { get; set; }
         public int PageSize { get; set; } = 25;
         public int PageNumber { get; set; } = 1;
 
-        public bool IsValidDatetime()
+        public bool IsValid()
         {
             try
             {
@@ -37,6 +38,26 @@ namespace CaseMngmt.Models.CaseKeywords
                         }
                     }
                 }
+
+                if (KeywordDecimalValues != null && KeywordDecimalValues.Any())
+                {
+                    foreach (var item in KeywordDecimalValues)
+                    {
+                        if (!string.IsNullOrEmpty(item.FromValue) && string.IsNullOrEmpty(item.ToValue))
+                        {
+                            decimal.TryParse(item.FromValue, out _);
+                        }
+                        else if (string.IsNullOrEmpty(item.FromValue) && !string.IsNullOrEmpty(item.ToValue))
+                        {
+                            decimal.TryParse(item.ToValue, out _);
+                        }
+                        else
+                        {
+                            decimal.TryParse(item.FromValue, out _);
+                            decimal.TryParse(item.ToValue, out _);
+                        }
+                    }
+                }
                 return true;
             }
             catch (Exception)
@@ -46,7 +67,7 @@ namespace CaseMngmt.Models.CaseKeywords
         }
     }
 
-    public class CaseKeywordSearchRequest : CaseKeywordSearch
+    public class DocumentSearchRequest : DocumentSearch
     {
         public Guid? TemplateId { get; set; }
         public Guid? CompanyId { get; set; }
