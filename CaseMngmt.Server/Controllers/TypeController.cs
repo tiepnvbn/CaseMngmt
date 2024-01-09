@@ -25,12 +25,6 @@ namespace CaseMngmt.Server.Controllers
         {
             try
             {
-                var companyId = User?.FindFirst("CompanyId")?.Value;
-                if (string.IsNullOrEmpty(companyId))
-                {
-                    return BadRequest();
-                }
-
                 var result = await _typeService.GetAllAsync(false);
                 return result != null && result.Any() ? Ok(result) : NotFound();
             }
@@ -47,12 +41,6 @@ namespace CaseMngmt.Server.Controllers
         {
             try
             {
-                var companyId = User?.FindFirst("CompanyId")?.Value;
-                if (string.IsNullOrEmpty(companyId))
-                {
-                    return BadRequest();
-                }
-
                 var result = await _typeService.GetAllAsync(true);
                 return result != null && result.Any() ? Ok(result) : NotFound();
             }

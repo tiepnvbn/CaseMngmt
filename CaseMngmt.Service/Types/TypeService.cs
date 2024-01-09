@@ -44,7 +44,9 @@ namespace CaseMngmt.Service.Types
         {
             try
             {
-                var typesFromRepository = await _repository.GetAllAsync(isFileType);
+                var typesFromRepository =  isFileType 
+                    ? await _repository.GetAllFileTypeAsync()
+                    : await _repository.GetAllAsync();
 
                 var result = _mapper.Map<List<TypeViewModel>>(typesFromRepository);
 

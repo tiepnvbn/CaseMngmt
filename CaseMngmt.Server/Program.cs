@@ -29,6 +29,7 @@ using CaseMngmt.Repository.Templates;
 using CaseMngmt.Repository.Cases;
 using CaseMngmt.Repository.CaseKeywords;
 using CaseMngmt.Repository.CompanyTemplates;
+using CaseMngmt.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
