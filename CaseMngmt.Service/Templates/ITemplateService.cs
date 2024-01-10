@@ -8,8 +8,8 @@ namespace CaseMngmt.Service.Templates
         Task<int> AddAsync(TemplateRequest template);
         Task<Models.PagedResult<TemplateViewModel>?> GetAllAsync(Guid? companyId, int pageSize, int pageNumber);
         Task<TemplateViewModel?> GetByIdAsync(Guid id);
-        Task<List<KeywordSearchModel>> GetCaseSearchModelByIdAsync(Guid id);
-        Task<List<KeywordSearchModel>> GetDocumentSearchModelByIdAsync(Guid id);
+        Task<List<KeywordSearchModel>> GetCaseSearchModelByIdAsync(Guid templateId, List<Guid> roleIds);
+        Task<List<KeywordSearchModel>> GetDocumentSearchModelByIdAsync(Guid templateId);
         Task<int> DeleteAsync(Guid id);
         Task<int> UpdateAsync(TemplateViewRequest template);
     }

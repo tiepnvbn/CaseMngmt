@@ -192,7 +192,7 @@ namespace CaseMngmt.Repository.Templates
             }
         }
 
-        public async Task<List<KeywordSearchModel>> GetCaseSearchModelByIdAsync(Guid templateId)
+        public async Task<List<KeywordSearchModel>> GetCaseSearchModelByIdAsync(Guid templateId, List<Guid> roleIds)
         {
             try
             {
@@ -202,6 +202,7 @@ namespace CaseMngmt.Repository.Templates
                                           where !tempTemplate.Deleted
                                             && tempTemplate.Id == templateId
                                             && keyword.CaseSearchable
+                                            && keyword.KeywordRoles.Any(x => roleIds.Contains(x.RoleId))
                                           select new KeywordSearchModel
                                           {
                                               KeywordName = keyword.Name,

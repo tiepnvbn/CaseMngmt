@@ -9,7 +9,7 @@ namespace CaseMngmt.Repository.Templates
         Task<int> AddAsync(Template customer);
         Task<PagedResult<TemplateViewModel>?> GetAllAsync(Guid? companyId, int pageSize, int pageNumber);
         Task<TemplateViewModel?> GetTemplateViewModelByIdAsync(Guid templateId);
-        Task<List<KeywordSearchModel>> GetCaseSearchModelByIdAsync(Guid templateId);
+        Task<List<KeywordSearchModel>> GetCaseSearchModelByIdAsync(Guid templateId, List<Guid> roleIds);
         Task<List<KeywordSearchModel>> GetDocumentSearchModelByIdAsync(Guid templateId);
         Task<Template?> GetByIdAsync(Guid id);
         Task<int> DeleteAsync(Guid id);

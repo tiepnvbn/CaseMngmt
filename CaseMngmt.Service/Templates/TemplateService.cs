@@ -210,11 +210,11 @@ namespace CaseMngmt.Service.Templates
             }
         }
 
-        public async Task<List<KeywordSearchModel>> GetCaseSearchModelByIdAsync(Guid id)
+        public async Task<List<KeywordSearchModel>> GetCaseSearchModelByIdAsync(Guid templateId, List<Guid> roleIds)
         {
             try
             {
-                var resultFromRepo = await _repository.GetCaseSearchModelByIdAsync(id);
+                var resultFromRepo = await _repository.GetCaseSearchModelByIdAsync(templateId, roleIds);
 
                 var result = new List<KeywordSearchModel>();
 
@@ -244,11 +244,11 @@ namespace CaseMngmt.Service.Templates
             }
         }
 
-        public async Task<List<KeywordSearchModel>> GetDocumentSearchModelByIdAsync(Guid id)
+        public async Task<List<KeywordSearchModel>> GetDocumentSearchModelByIdAsync(Guid templateId)
         {
             try
             {
-                var resultFromRepo = await _repository.GetDocumentSearchModelByIdAsync(id);
+                var resultFromRepo = await _repository.GetDocumentSearchModelByIdAsync(templateId);
 
                 var result = new List<KeywordSearchModel>();
 

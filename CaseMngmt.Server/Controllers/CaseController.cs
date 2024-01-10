@@ -72,16 +72,17 @@ namespace CaseMngmt.Server.Controllers
                     {
                         return BadRequest();
                     }
+
+                    List<KeywordSearchModel> result = await _templateService.GetCaseSearchModelByIdAsync(templateId.Value, roles.Select(x => x.Id).ToList());
+                    if (!result.Any())
+                    {
+                        return BadRequest();
+                    }
+
+                    return Ok(result);
                 }
 
-                List<KeywordSearchModel> result = await _templateService.GetCaseSearchModelByIdAsync(templateId.Value);
-
-                if (!result.Any())
-                {
-                    return NotFound();
-                }
-
-                return Ok(result);
+                return BadRequest();
             }
             catch (Exception e)
             {
@@ -134,6 +135,7 @@ namespace CaseMngmt.Server.Controllers
                     {
                         return BadRequest();
                     }
+
                     var searchRequest = new CaseKeywordSearchRequest
                     {
                         RoleIds = roles.Select(x => x.Id).ToList(),

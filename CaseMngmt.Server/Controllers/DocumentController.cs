@@ -55,7 +55,7 @@ namespace CaseMngmt.Server.Controllers
 
                 if (!result.Any())
                 {
-                    return NotFound();
+                    return BadRequest();
                 }
 
                 return Ok(result);
