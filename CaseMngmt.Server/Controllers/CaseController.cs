@@ -54,11 +54,24 @@ namespace CaseMngmt.Server.Controllers
                 {
                     return BadRequest();
                 }
+
                 var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
                 var templateId = companyTemplate.FirstOrDefault()?.TemplateId;
                 if (templateId == null || templateId == Guid.Empty)
                 {
                     return BadRequest();
+                }
+
+                var userId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user != null)
+                {
+                    var roleNames = await _userManager.GetRolesAsync(user);
+                    List<ApplicationRole> roles = _roleManager.Roles.Where(r => roleNames.Contains(r.Name)).ToList();
+                    if (!roles.Any())
+                    {
+                        return BadRequest();
+                    }
                 }
 
                 List<KeywordSearchModel> result = await _templateService.GetCaseSearchModelByIdAsync(templateId.Value);
@@ -92,7 +105,6 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest("Invalid Datetime request");
                 }
 
-                // Get Template to check role of user
                 var currentUserRole = User?.FindAll(ClaimTypes.Role)?.Select(x => x.Value)?.ToList();
                 if (currentUserRole == null || currentUserRole.Count < 1)
                 {
@@ -104,12 +116,14 @@ namespace CaseMngmt.Server.Controllers
                 {
                     return BadRequest();
                 }
+
                 var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
                 var templateId = companyTemplate.FirstOrDefault()?.TemplateId;
                 if (templateId == null || templateId == Guid.Empty)
                 {
                     return BadRequest();
                 }
+
                 var userId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var user = await _userManager.FindByIdAsync(userId);
                 if (user != null)
@@ -134,6 +148,7 @@ namespace CaseMngmt.Server.Controllers
                     var result = await _caseKeywordService.GetAllAsync(searchRequest);
                     return Ok(result);
                 }
+
                 return BadRequest();
             }
             catch (Exception e)

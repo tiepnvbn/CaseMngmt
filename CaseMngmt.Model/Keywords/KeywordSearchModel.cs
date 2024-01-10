@@ -2,7 +2,7 @@
 
 namespace CaseMngmt.Models.Keywords
 {
-    public class KeywordSearchModel
+    public class KeywordSearchModel : ICloneable
     {
         public Guid KeywordId { get; set; }
         [MaxLength(256)]
@@ -13,8 +13,13 @@ namespace CaseMngmt.Models.Keywords
         public Guid TypeId { get; set; }
         public string? TypeName { get; set; }
         public string? TypeValue { get; set; }
-        public string Value { get; set; }
+        public string Value { get; set; } = string.Empty;
         public bool? QueryFrom { get; set; }
         public bool? QueryTo { get; set; }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

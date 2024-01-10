@@ -4,6 +4,7 @@ using CaseMngmt.Repository.Keywords;
 using CaseMngmt.Repository.Templates;
 using CaseMngmt.Models.Keywords;
 using CaseMngmt.Repository.Types;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CaseMngmt.Service.Templates
 {
@@ -213,7 +214,28 @@ namespace CaseMngmt.Service.Templates
         {
             try
             {
-                var result = await _repository.GetCaseSearchModelByIdAsync(id);
+                var resultFromRepo = await _repository.GetCaseSearchModelByIdAsync(id);
+
+                var result = new List<KeywordSearchModel>();
+
+                foreach (var item in resultFromRepo)
+                {
+                    if (item.TypeValue == "datetime")
+                    {
+                        KeywordSearchModel itemFromClone = (KeywordSearchModel)item.Clone();
+                        itemFromClone.QueryFrom = true;
+                        result.Add(itemFromClone);
+
+                        KeywordSearchModel itemToClone = (KeywordSearchModel)item.Clone();
+                        itemToClone.QueryTo = true;
+                        result.Add(itemToClone);
+                    }
+                    else
+                    {
+                        result.Add(item);
+                    }
+                }
+
                 return result;
             }
             catch (Exception ex)
@@ -226,7 +248,38 @@ namespace CaseMngmt.Service.Templates
         {
             try
             {
-                var result = await _repository.GetDocumentSearchModelByIdAsync(id);
+                var resultFromRepo = await _repository.GetDocumentSearchModelByIdAsync(id);
+
+                var result = new List<KeywordSearchModel>();
+
+                foreach (var item in resultFromRepo)
+                {
+                    if (item.TypeValue == "datetime")
+                    {
+                        KeywordSearchModel itemFromClone = (KeywordSearchModel)item.Clone();
+                        itemFromClone.QueryFrom = true;
+                        result.Add(itemFromClone);
+
+                        KeywordSearchModel itemToClone = (KeywordSearchModel)item.Clone();
+                        itemToClone.QueryTo = true;
+                        result.Add(itemToClone);
+                    }
+                    else if (item.TypeValue == "decimal")
+                    {
+                        KeywordSearchModel itemFromClone = (KeywordSearchModel)item.Clone();
+                        itemFromClone.QueryFrom = true;
+                        result.Add(itemFromClone);
+
+                        KeywordSearchModel itemToClone = (KeywordSearchModel)item.Clone();
+                        itemToClone.QueryTo = true;
+                        result.Add(itemToClone);
+                    }
+                    else
+                    {
+                        result.Add(item);
+                    }
+                }
+
                 return result;
             }
             catch (Exception ex)
