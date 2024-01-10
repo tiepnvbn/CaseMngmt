@@ -323,7 +323,7 @@ namespace CaseMngmt.Server
                         TypeId = defaultAlphanumericTypeGuid,
                         TemplateId = boatTemplateId,
                         MaxLength = 250,
-                        IsRequired = false,
+                        IsRequired = true,
                         CaseSearchable = false,
                         Order = 2,
                     },

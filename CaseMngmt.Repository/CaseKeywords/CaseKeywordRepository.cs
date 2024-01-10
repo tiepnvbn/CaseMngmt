@@ -99,6 +99,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                                     && keyword.TemplateId == searchRequest.TemplateId
                                     && companyTemplate.CompanyId == searchRequest.CompanyId
                                     && caseKeyword.Keyword.IsShowOnTemplate
+                                    && !caseKeyword.Keyword.DocumentSearchable
                                     && caseKeyword.Case.Status == "Open"
                                  select new { tempCase, caseKeyword })
                             .AsEnumerable()
@@ -169,6 +170,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                                     && keyword.TemplateId == searchRequest.TemplateId
                                     && companyTemplate.CompanyId == searchRequest.CompanyId
                                     && caseKeyword.Keyword.IsShowOnTemplate
+                                    && caseKeyword.Keyword.DocumentSearchable
                                     && caseKeyword.Case.Status == "Open"
                                  select new { tempCase, caseKeyword })
                             .AsEnumerable()

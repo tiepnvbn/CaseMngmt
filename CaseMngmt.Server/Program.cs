@@ -31,6 +31,7 @@ using CaseMngmt.Repository.Cases;
 using CaseMngmt.Repository.CaseKeywords;
 using CaseMngmt.Repository.CompanyTemplates;
 using CaseMngmt.Repository.KeywordRoles;
+using CaseMngmt.Service.KeywordRoles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,6 +94,7 @@ builder.Services.AddTransient<ITypeRepository, TypeRepository>();
 builder.Services.AddTransient<ICompanyTemplateService, CompanyTemplateService>();
 builder.Services.AddTransient<ICompanyTemplateRepository, CompanyTemplateRepository>();
 
+builder.Services.AddTransient<IKeywordRoleService, KeywordRoleService>();
 builder.Services.AddTransient<IKeywordRoleRepository, KeywordRoleRepository>();
 
 builder.Services.AddTransient<IFileUploadService, FileUploadService>();
