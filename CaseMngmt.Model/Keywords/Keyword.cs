@@ -2,6 +2,7 @@
 using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.Cases;
 using CaseMngmt.Models.KeywordRoles;
+using CaseMngmt.Models.Templates;
 using Type = CaseMngmt.Models.Types.Type;
 
 namespace CaseMngmt.Models.Keywords
@@ -18,6 +19,7 @@ namespace CaseMngmt.Models.Keywords
         public bool IsShowOnCaseList { get; set; }
         public int Order { get; set; }
         public Type Type { get; set; } = null!;
+        public Template Template { get; set; } = null!;
 
         public List<Case> Cases { get; set; } = new();
         public List<CaseKeyword> CaseKeywords { get; set; }

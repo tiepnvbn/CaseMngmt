@@ -253,7 +253,7 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<PagedResult<CaseKeywordViewModel>?> GetDocumentsAsync(DocumentSearchRequest searchRequest)
+        public async Task<PagedResult<CaseKeywordBaseValue>?> GetDocumentsAsync(DocumentSearchRequest searchRequest)
         {
             try
             {

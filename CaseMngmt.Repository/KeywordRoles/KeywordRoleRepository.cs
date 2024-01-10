@@ -33,9 +33,9 @@ namespace CaseMngmt.Repository.KeywordRoles
         {
             try
             {
-                var IQueryableKeyword = (from tempKeyword in _context.KeywordRole select tempKeyword);
-                IQueryableKeyword = IQueryableKeyword.Where(x => x.RoleId == roleId);
-                var result = await IQueryableKeyword.ToListAsync();
+                var query = (from tempKeyword in _context.KeywordRole select tempKeyword);
+                query = query.Where(x => x.RoleId == roleId);
+                var result = await query.ToListAsync();
 
                 return result;
             }
@@ -51,10 +51,13 @@ namespace CaseMngmt.Repository.KeywordRoles
             {
                 var data = _context.KeywordRole.Where(a => a.RoleId == roleId).ToList();
                 _context.KeywordRole.RemoveRange(data);
-                await _context.SaveChangesAsync();
+                var result = await _context.SaveChangesAsync();
 
-                await _context.KeywordRole.AddRangeAsync(keywordRoles);
-                var result = _context.SaveChanges();
+                if (keywordRoles.Any())
+                {
+                    await _context.KeywordRole.AddRangeAsync(keywordRoles);
+                    result = _context.SaveChanges();
+                }
 
                 return result;
             }

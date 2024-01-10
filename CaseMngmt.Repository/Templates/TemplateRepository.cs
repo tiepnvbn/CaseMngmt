@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using CaseMngmt.Models.Templates;
 using CaseMngmt.Models;
+using CaseMngmt.Models.Keywords;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace CaseMngmt.Repository.Templates
 {
@@ -50,8 +52,7 @@ namespace CaseMngmt.Repository.Templates
                 var IQueryableTemplate = (from tempTemplate in _context.Template.Include(x => x.Keywords)
                                           join keyword in _context.Keyword on tempTemplate.Id equals keyword.TemplateId
                                           join type in _context.Type on keyword.TypeId equals type.Id
-                                          where !tempTemplate.Deleted
-                                            && tempTemplate.Id == templateId
+                                          where !tempTemplate.Deleted && tempTemplate.Id == templateId
                                           select new TemplateViewModel
                                           {
                                               Id = templateId,
@@ -62,7 +63,7 @@ namespace CaseMngmt.Repository.Templates
                                               UpdatedDate = tempTemplate.UpdatedDate,
                                               Keywords = tempTemplate.Keywords
                                                 .Where(x => x.IsShowOnTemplate)
-                                                .Select(x => new Models.Keywords.KeywordViewModel
+                                                .Select(x => new KeywordViewModel
                                                 {
                                                     KeywordName = x.Name,
                                                     UpdatedBy = x.UpdatedBy,
@@ -188,6 +189,72 @@ namespace CaseMngmt.Repository.Templates
             catch (Exception ex)
             {
                 return 0;
+            }
+        }
+
+        public async Task<List<KeywordSearchModel>> GetCaseSearchModelByIdAsync(Guid templateId)
+        {
+            try
+            {
+                var IQueryableTemplate = (from tempTemplate in _context.Template.Include(x => x.Keywords)
+                                          join keyword in _context.Keyword on tempTemplate.Id equals keyword.TemplateId
+                                          join type in _context.Type on keyword.TypeId equals type.Id
+                                          where !tempTemplate.Deleted
+                                            && tempTemplate.Id == templateId
+                                            && keyword.CaseSearchable
+                                          select new KeywordSearchModel
+                                          {
+                                              KeywordName = keyword.Name,
+                                              KeywordId = keyword.Id,
+                                              MaxLength = keyword.MaxLength,
+                                              Order = keyword.Order,
+                                              TypeId = keyword.Type.Id,
+                                              TypeName = keyword.Type.Name,
+                                              TypeValue = keyword.Type.Value,
+                                              Metadata = !string.IsNullOrEmpty(keyword.Type.Metadata)
+                                                    ? keyword.Type.Metadata.Split(',', StringSplitOptions.None).ToList()
+                                                    : new List<string>()
+                                          }).OrderBy(x => x.Order);
+
+                var result = await IQueryableTemplate.ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return new List<KeywordSearchModel>();
+            }
+        }
+
+        public async Task<List<KeywordSearchModel>> GetDocumentSearchModelByIdAsync(Guid templateId)
+        {
+            try
+            {
+                var IQueryableTemplate = (from tempTemplate in _context.Template.Include(x => x.Keywords)
+                                          join keyword in _context.Keyword on tempTemplate.Id equals keyword.TemplateId
+                                          join type in _context.Type on keyword.TypeId equals type.Id
+                                          where !tempTemplate.Deleted
+                                            && tempTemplate.Id == templateId
+                                            && keyword.DocumentSearchable
+                                          select new KeywordSearchModel
+                                          {
+                                              KeywordName = keyword.Name,
+                                              KeywordId = keyword.Id,
+                                              MaxLength = keyword.MaxLength,
+                                              Order = keyword.Order,
+                                              TypeId = keyword.Type.Id,
+                                              TypeName = keyword.Type.Name,
+                                              TypeValue = keyword.Type.Value,
+                                              Metadata = !string.IsNullOrEmpty(keyword.Type.Metadata)
+                                                    ? keyword.Type.Metadata.Split(',', StringSplitOptions.None).ToList()
+                                                    : new List<string>()
+                                          }).OrderBy(x => x.Order);
+
+                var result = await IQueryableTemplate.ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return new List<KeywordSearchModel>();
             }
         }
     }

@@ -208,5 +208,31 @@ namespace CaseMngmt.Service.Templates
                 return null;
             }
         }
+
+        public async Task<List<KeywordSearchModel>> GetCaseSearchModelByIdAsync(Guid id)
+        {
+            try
+            {
+                var result = await _repository.GetCaseSearchModelByIdAsync(id);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return new List<KeywordSearchModel>();
+            }
+        }
+
+        public async Task<List<KeywordSearchModel>> GetDocumentSearchModelByIdAsync(Guid id)
+        {
+            try
+            {
+                var result = await _repository.GetDocumentSearchModelByIdAsync(id);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return new List<KeywordSearchModel>();
+            }
+        }
     }
 }

@@ -1,12 +1,17 @@
 ﻿using CaseMngmt.Models;
+using CaseMngmt.Models.ApplicationRoles;
+using CaseMngmt.Models.ApplicationUsers;
 using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.FileUploads;
+using CaseMngmt.Models.Keywords;
 using CaseMngmt.Service.CaseKeywords;
 using CaseMngmt.Service.CompanyTemplates;
 using CaseMngmt.Service.FileUploads;
 using CaseMngmt.Service.Templates;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using System.Security.Claims;
 
 namespace CaseMngmt.Server.Controllers
@@ -17,21 +22,59 @@ namespace CaseMngmt.Server.Controllers
     public class CaseController : ControllerBase
     {
         private readonly ILogger<CaseController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly ICaseKeywordService _caseKeywordService;
         private readonly ITemplateService _templateService;
         private readonly IFileUploadService _fileUploadService;
         private readonly ICompanyTemplateService _companyTemplateService;
         private readonly IConfiguration _configuration;
 
-        public CaseController(ILogger<CaseController> logger, ICaseKeywordService caseKeywordService,
-            ITemplateService templateService, IFileUploadService fileUploadService, ICompanyTemplateService companyTemplateService, IConfiguration configuration)
+        public CaseController(ILogger<CaseController> logger, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager,
+            ICaseKeywordService caseKeywordService, ITemplateService templateService, IFileUploadService fileUploadService,
+            ICompanyTemplateService companyTemplateService, IConfiguration configuration)
         {
             _logger = logger;
+            _userManager = userManager;
+            _roleManager = roleManager;
             _caseKeywordService = caseKeywordService;
             _templateService = templateService;
             _fileUploadService = fileUploadService;
             _companyTemplateService = companyTemplateService;
             _configuration = configuration;
+        }
+
+        [HttpGet("template")]
+        public async Task<IActionResult> GetTemplate()
+        {
+            try
+            {
+                var companyId = User?.FindFirst("CompanyId")?.Value;
+                if (string.IsNullOrEmpty(companyId))
+                {
+                    return BadRequest();
+                }
+                var companyTemplate = await _companyTemplateService.GetTemplateByCompanyIdAsync(Guid.Parse(companyId));
+                var templateId = companyTemplate.FirstOrDefault()?.TemplateId;
+                if (templateId == null || templateId == Guid.Empty)
+                {
+                    return BadRequest();
+                }
+
+                List<KeywordSearchModel> result = await _templateService.GetCaseSearchModelByIdAsync(templateId.Value);
+
+                if (!result.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, nameof(ControllerBase), true, e);
+                return BadRequest();
+            }
         }
 
         [HttpPost, Route("getAll")]
@@ -51,8 +94,7 @@ namespace CaseMngmt.Server.Controllers
 
                 // Get Template to check role of user
                 var currentUserRole = User?.FindAll(ClaimTypes.Role)?.Select(x => x.Value)?.ToList();
-                var currentCompanyId = User?.FindFirst("CompanyId")?.Value;
-                if (currentUserRole == null || currentUserRole.Count < 1 || string.IsNullOrEmpty(currentCompanyId))
+                if (currentUserRole == null || currentUserRole.Count < 1)
                 {
                     return BadRequest("Wrong Claim");
                 }
@@ -68,19 +110,31 @@ namespace CaseMngmt.Server.Controllers
                 {
                     return BadRequest();
                 }
-
-                var searchRequest = new CaseKeywordSearchRequest
+                var userId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user != null)
                 {
-                    CompanyId = Guid.Parse(currentCompanyId),
-                    TemplateId = templateId,
-                    PageNumber = request.PageNumber,
-                    PageSize = request.PageSize,
-                    KeywordValues = request.KeywordValues,
-                    KeywordDateValues = request.KeywordDateValues
-                };
+                    var roleNames = await _userManager.GetRolesAsync(user);
+                    List<ApplicationRole> roles = _roleManager.Roles.Where(r => roleNames.Contains(r.Name)).ToList();
+                    if (!roles.Any())
+                    {
+                        return BadRequest();
+                    }
+                    var searchRequest = new CaseKeywordSearchRequest
+                    {
+                        RoleIds = roles.Select(x => x.Id).ToList(),
+                        CompanyId = Guid.Parse(companyId),
+                        TemplateId = templateId.Value,
+                        PageNumber = request.PageNumber,
+                        PageSize = request.PageSize,
+                        KeywordValues = request.KeywordValues,
+                        KeywordDateValues = request.KeywordDateValues
+                    };
 
-                var result = await _caseKeywordService.GetAllAsync(searchRequest);
-                return Ok(result);
+                    var result = await _caseKeywordService.GetAllAsync(searchRequest);
+                    return Ok(result);
+                }
+                return BadRequest();
             }
             catch (Exception e)
             {

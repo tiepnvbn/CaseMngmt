@@ -48,7 +48,8 @@ namespace CaseMngmt.Models.CaseKeywords
 
     public class CaseKeywordSearchRequest : CaseKeywordSearch
     {
-        public Guid? TemplateId { get; set; }
-        public Guid? CompanyId { get; set; }
+        public List<Guid> RoleIds { get; set; }
+        public Guid TemplateId { get; set; }
+        public Guid CompanyId { get; set; }
     }
 }

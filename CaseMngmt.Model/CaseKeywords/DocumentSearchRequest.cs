@@ -69,7 +69,7 @@ namespace CaseMngmt.Models.CaseKeywords
 
     public class DocumentSearchRequest : DocumentSearch
     {
-        public Guid? TemplateId { get; set; }
-        public Guid? CompanyId { get; set; }
+        public Guid TemplateId { get; set; }
+        public Guid CompanyId { get; set; }
     }
 }

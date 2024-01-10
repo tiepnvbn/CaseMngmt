@@ -88,7 +88,7 @@ namespace CaseMngmt.Repository.CaseKeywords
         {
             try
             {
-                var queryable = (from caseKeyword in _context.CaseKeyword.Include(x => x.Keyword).Include(x => x.Keyword.Type)
+                var queryable = (from caseKeyword in _context.CaseKeyword.Include(x => x.Keyword).Include(x => x.Keyword.Type).Include(x => x.Keyword.KeywordRoles)
                                  join tempCase in _context.Case on caseKeyword.CaseId equals tempCase.Id
                                  join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
                                  join template in _context.Template on keyword.TemplateId equals template.Id
@@ -101,6 +101,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                                     && caseKeyword.Keyword.IsShowOnTemplate
                                     && !caseKeyword.Keyword.DocumentSearchable
                                     && caseKeyword.Case.Status == "Open"
+                                    && keyword.KeywordRoles.Any(x => searchRequest.RoleIds.Contains(x.RoleId))
                                  select new { tempCase, caseKeyword })
                             .AsEnumerable()
                             .GroupBy(x => new { x.tempCase.Id, x.tempCase.Name, x.tempCase.Status });
@@ -155,7 +156,7 @@ namespace CaseMngmt.Repository.CaseKeywords
             }
         }
 
-        public async Task<PagedResult<CaseKeywordViewModel>?> GetDocumentsAsync(DocumentSearchRequest searchRequest)
+        public async Task<PagedResult<CaseKeywordBaseValue>?> GetDocumentsAsync(DocumentSearchRequest searchRequest)
         {
             try
             {
@@ -167,68 +168,60 @@ namespace CaseMngmt.Repository.CaseKeywords
                                  where !caseKeyword.Deleted
                                     && !tempCase.Deleted
                                     && !keyword.Deleted
-                                    && keyword.TemplateId == searchRequest.TemplateId
                                     && companyTemplate.CompanyId == searchRequest.CompanyId
-                                    && caseKeyword.Keyword.IsShowOnTemplate
+                                    && caseKeyword.Keyword.TemplateId == searchRequest.TemplateId
+                                    && !caseKeyword.Keyword.IsShowOnTemplate
                                     && caseKeyword.Keyword.DocumentSearchable
                                     && caseKeyword.Case.Status == "Open"
-                                 select new { tempCase, caseKeyword })
-                            .AsEnumerable()
-                            .GroupBy(x => new { x.tempCase.Id, x.tempCase.Name, x.tempCase.Status });
+                                 select new { caseKeyword })
+                            .AsEnumerable();
 
                 if (searchRequest.FileTypeId != null && searchRequest.FileTypeId != Guid.Empty)
                 {
-                    queryable = queryable.Where(z => z.Any(x => x.caseKeyword.Keyword.Type.Id == searchRequest.FileTypeId));
+                    queryable = queryable.Where(z => z.caseKeyword.Keyword.Type.Id == searchRequest.FileTypeId);
                 }
 
                 if (searchRequest.KeywordValues != null && searchRequest.KeywordValues.Any())
                 {
-                    queryable = queryable.Where(z => searchRequest.KeywordValues.All(x => z.Any(c => c.caseKeyword.KeywordId.Equals(x.KeywordId)
-                        && c.caseKeyword.Value.Contains(x.Value))));
+                    queryable = queryable.Where(z => searchRequest.KeywordValues.Any(x => z.caseKeyword.Keyword.Id.Equals(x.KeywordId) && z.caseKeyword.Value.Contains(x.Value)));
                 }
 
                 if (searchRequest.KeywordDateValues != null && searchRequest.KeywordDateValues.Any())
                 {
-                    queryable = queryable.Where(z => searchRequest.KeywordDateValues.All(x => z.Any(c => c.caseKeyword.KeywordId.Equals(x.KeywordId)
-                        && DateTime.Parse(c.caseKeyword.Value).Date >= DateTime.Parse(x.FromValue).Date
-                        && DateTime.Parse(c.caseKeyword.Value).Date <= DateTime.Parse(x.ToValue).Date)));
+                    queryable = queryable.Where(z => searchRequest.KeywordDateValues.Any(x => z.caseKeyword.Keyword.Id.Equals(x.KeywordId)
+                        && DateTime.Parse(z.caseKeyword.Value).Date >= DateTime.Parse(x.FromValue).Date
+                        && DateTime.Parse(z.caseKeyword.Value).Date <= DateTime.Parse(x.ToValue).Date));
                 }
 
                 if (searchRequest.KeywordDecimalValues != null && searchRequest.KeywordDecimalValues.Any())
                 {
-                    queryable = queryable.Where(z => searchRequest.KeywordDecimalValues.All(x => z.Any(c => c.caseKeyword.KeywordId.Equals(x.KeywordId)
-                        && decimal.Parse(c.caseKeyword.Value) >= decimal.Parse(x.FromValue)
-                        && decimal.Parse(c.caseKeyword.Value) <= decimal.Parse(x.ToValue))));
+                    queryable = queryable.Where(z => searchRequest.KeywordDecimalValues.Any(x => z.caseKeyword.Keyword.Id.Equals(x.KeywordId)
+                        && decimal.Parse(z.caseKeyword.Value) >= decimal.Parse(x.FromValue)
+                        && decimal.Parse(z.caseKeyword.Value) <= decimal.Parse(x.ToValue)));
                 }
 
                 var query = queryable
-                        .Select(z => new CaseKeywordViewModel
+                        .Select(x => new CaseKeywordBaseValue
                         {
-                            CaseId = z.Key.Id,
-                            CaseName = z.Key.Name,
-                            Status = z.Key.Status,
-                            CaseKeywordValues = z.Select(x => new CaseKeywordBaseValue
-                            {
-                                KeywordId = x.caseKeyword.Keyword.Id,
-                                KeywordName = x.caseKeyword.Keyword.Name,
-                                Value = x.caseKeyword.Value,
-                                IsRequired = x.caseKeyword.Keyword.IsRequired,
-                                MaxLength = x.caseKeyword.Keyword.MaxLength,
-                                Searchable = x.caseKeyword.Keyword.CaseSearchable,
-                                DocumentSearchable = x.caseKeyword.Keyword.DocumentSearchable,
-                                IsShowOnCaseList = x.caseKeyword.Keyword.IsShowOnCaseList,
-                                IsShowOnTemplate = x.caseKeyword.Keyword.IsShowOnTemplate,
-                                Order = x.caseKeyword.Keyword.Order,
-                                TypeId = x.caseKeyword.Keyword.Type.Id,
-                                TypeName = x.caseKeyword.Keyword.Type.Name,
-                                TypeValue = x.caseKeyword.Keyword.Type.Value,
-                                Metadata = !string.IsNullOrEmpty(x.caseKeyword.Keyword.Type.Metadata)
+                            KeywordId = x.caseKeyword.Keyword.Id,
+                            KeywordName = x.caseKeyword.Keyword.Name,
+                            Value = x.caseKeyword.Value,
+                            IsRequired = x.caseKeyword.Keyword.IsRequired,
+                            MaxLength = x.caseKeyword.Keyword.MaxLength,
+                            Searchable = x.caseKeyword.Keyword.CaseSearchable,
+                            DocumentSearchable = x.caseKeyword.Keyword.DocumentSearchable,
+                            IsShowOnCaseList = x.caseKeyword.Keyword.IsShowOnCaseList,
+                            IsShowOnTemplate = x.caseKeyword.Keyword.IsShowOnTemplate,
+                            Order = x.caseKeyword.Keyword.Order,
+                            TypeId = x.caseKeyword.Keyword.Type.Id,
+                            TypeName = x.caseKeyword.Keyword.Type.Name,
+                            TypeValue = x.caseKeyword.Keyword.Type.Value,
+                            Metadata = !string.IsNullOrEmpty(x.caseKeyword.Keyword.Type.Metadata)
                                   ? x.caseKeyword.Keyword.Type.Metadata.Split(',', StringSplitOptions.None).ToList()
                                   : new List<string>()
-                            }).OrderBy(x => x.Order).AsEnumerable()
-                        });
+                        }).OrderBy(x => x.Order).AsEnumerable();
 
-                var result = PagedResult<CaseKeywordViewModel>.CreateAsync(query, searchRequest.PageNumber, searchRequest.PageSize);
+                var result = PagedResult<CaseKeywordBaseValue>.CreateAsync(query, searchRequest.PageNumber, searchRequest.PageSize);
 
                 return await Task.FromResult(result);
             }
@@ -309,7 +302,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                 }
                 await _context.SaveChangesAsync();
 
-                if (caseKeys != null)
+                if (caseKeys != null && caseKeys.Any())
                 {
                     await _context.CaseKeyword.AddRangeAsync(caseKeys);
                     var result = _context.SaveChanges();

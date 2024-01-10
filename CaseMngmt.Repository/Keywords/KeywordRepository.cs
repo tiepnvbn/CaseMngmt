@@ -45,9 +45,9 @@ namespace CaseMngmt.Repository.Keywords
         {
             try
             {
-                var IQueryableKeyword = (from tempKeyword in _context.Keyword select tempKeyword);
-                IQueryableKeyword = IQueryableKeyword.Where(x => !x.Deleted && x.TemplateId == templateId).OrderBy(m => m.Name);
-                var result = await IQueryableKeyword.ToListAsync();
+                var query = (from tempKeyword in _context.Keyword select tempKeyword);
+                query = query.Where(x => !x.Deleted && x.TemplateId == templateId).OrderBy(m => m.Name);
+                var result = await query.ToListAsync();
 
                 return result;
             }
