@@ -205,6 +205,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                     .SelectMany(z => z.Where(x => !x.caseKeyword.Keyword.IsShowOnTemplate && x.caseKeyword.Keyword.DocumentSearchable)
                         .Select(x => new CaseKeywordBaseValue
                         {
+                            CaseId = z.Key.Id,
                             KeywordId = x.caseKeyword.Keyword.Id,
                             KeywordName = x.caseKeyword.Keyword.Name,
                             Value = x.caseKeyword.Value,

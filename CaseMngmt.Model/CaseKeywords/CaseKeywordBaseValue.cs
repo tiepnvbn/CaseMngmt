@@ -5,6 +5,7 @@ namespace CaseMngmt.Models.CaseKeywords
 {
     public class CaseKeywordBaseValue
     {
+        public Guid? CaseId { get; set; }
         [Required]
         public Guid KeywordId { get; set; }
         [MaxLength(256)]
