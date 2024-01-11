@@ -15,4 +15,10 @@ namespace CaseMngmt.Models
         public DateTime UpdatedDate { get; set; } = DateTime.UtcNow;
         public bool Deleted { get; set; }
     }
+
+    public class UpdateByModel
+    {
+        public Guid? CreatedBy { get; set; }
+        public Guid? UpdatedBy { get; set; }
+    }
 }

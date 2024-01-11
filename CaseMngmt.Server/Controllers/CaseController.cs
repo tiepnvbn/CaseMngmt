@@ -3,7 +3,6 @@ using CaseMngmt.Models.ApplicationRoles;
 using CaseMngmt.Models.ApplicationUsers;
 using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.FileUploads;
-using CaseMngmt.Models.Keywords;
 using CaseMngmt.Service.CaseKeywords;
 using CaseMngmt.Service.CompanyTemplates;
 using CaseMngmt.Service.FileUploads;
@@ -281,6 +280,12 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
+                var currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId))
+                {
+                    return BadRequest();
+                }
+
                 var companyId = User?.FindFirst("CompanyId")?.Value;
                 if (string.IsNullOrEmpty(companyId))
                 {
@@ -314,6 +319,8 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest("KeywordValues is wrong");
                 }
 
+                request.UpdatedBy = Guid.Parse(currentUserId);
+                request.CreatedBy = Guid.Parse(currentUserId);
                 var result = await _caseKeywordService.AddAsync(request);
 
                 return result != null ? Ok(result) : BadRequest();
@@ -335,6 +342,12 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
+                var currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId))
+                {
+                    return BadRequest();
+                }
+
                 var companyId = User?.FindFirst("CompanyId")?.Value;
                 if (string.IsNullOrEmpty(companyId))
                 {
@@ -368,6 +381,7 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest("KeywordValues is wrong");
                 }
 
+                request.UpdatedBy = Guid.Parse(currentUserId);
                 var result = await _caseKeywordService.UpdateAsync(request);
                 return result > 0 ? Ok(result) : BadRequest();
             }

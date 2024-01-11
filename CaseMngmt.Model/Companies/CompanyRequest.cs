@@ -2,7 +2,7 @@
 
 namespace CaseMngmt.Models.Companies
 {
-    public class CompanyRequest
+    public class CompanyRequest : UpdateByModel
     {
         [MaxLength(256)]
         [Required]
@@ -42,8 +42,5 @@ namespace CaseMngmt.Models.Companies
 
         [MaxLength(3000)]
         public string? Note { get; set; }
-
-        public Guid? CreatedBy { get; set; }
-        public Guid? UpdatedBy { get; set; }
     }
 }

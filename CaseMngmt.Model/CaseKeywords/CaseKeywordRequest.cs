@@ -2,7 +2,7 @@
 
 namespace CaseMngmt.Models.CaseKeywords
 {
-    public class CaseKeywordRequest
+    public class CaseKeywordRequest : UpdateByModel
     {
         [Required]
         public Guid CaseId { get; set; }
@@ -10,7 +10,7 @@ namespace CaseMngmt.Models.CaseKeywords
         public List<CaseKeywordValue> KeywordValues { get; set; }
     }
 
-    public class CaseKeywordAddRequest
+    public class CaseKeywordAddRequest : UpdateByModel
     {
         [Required]
         public List<CaseKeywordValue> KeywordValues { get; set; }

@@ -2,7 +2,7 @@
 
 namespace CaseMngmt.Models.Customers
 {
-    public class CustomerRequest
+    public class CustomerRequest : UpdateByModel
     {
         [MaxLength(256)]
         [Required]
@@ -37,8 +37,5 @@ namespace CaseMngmt.Models.Customers
         public string? Note { get; set; }
         [Required]
         public Guid CompanyId { get; set; }
-
-        public Guid? CreatedBy { get; set; }
-        public Guid? UpdatedBy { get; set; }
     }
 }

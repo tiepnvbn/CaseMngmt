@@ -7,7 +7,6 @@ using CaseMngmt.Models.Keywords;
 using CaseMngmt.Repository.CaseKeywords;
 using CaseMngmt.Repository.Cases;
 using CaseMngmt.Repository.Keywords;
-using CaseMngmt.Repository.Types;
 using CaseMngmt.Service.CaseKeywords;
 
 namespace CaseMngmt.Service.Customers
@@ -78,7 +77,9 @@ namespace CaseMngmt.Service.Customers
                 var caseModel = new Models.Cases.Case
                 {
                     Name = $"CASE{((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds()}",
-                    Status = "Open"
+                    Status = "Open",
+                    CreatedBy = request.CreatedBy.Value,
+                    UpdatedBy = request.UpdatedBy.Value,
                 };
                 var caseResult = await _caseRepository.AddAsync(caseModel);
 
@@ -116,6 +117,9 @@ namespace CaseMngmt.Service.Customers
                 {
                     return 0;
                 }
+
+                entity.UpdatedBy = request.UpdatedBy.Value;
+                await _caseRepository.UpdateAsync(entity);
 
                 var caseKeywords = request.KeywordValues.Select(x => new CaseKeyword
                 {

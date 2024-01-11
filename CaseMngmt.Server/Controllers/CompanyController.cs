@@ -60,17 +60,17 @@ namespace CaseMngmt.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CompanyRequest Company)
+        public async Task<IActionResult> Create(CompanyRequest company)
         {
-            if (!ModelState.IsValid || Company == null)
+            if (!ModelState.IsValid || company == null)
             {
                 return BadRequest(ModelState);
             }
 
             try
             {
-                Company.CreatedBy = Guid.Parse(User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000");
-                var result = await _service.AddAsync(Company);
+                company.CreatedBy = Guid.Parse(User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000");
+                var result = await _service.AddAsync(company);
 
                 return result > 0 ? Ok(result) : BadRequest();
             }
