@@ -39,6 +39,11 @@ namespace CaseMngmt.Models.CaseKeywords
                 {
                     return false;
                 }
+
+                if (!IsRequired && string.IsNullOrEmpty(Value))
+                {
+                    return true;
+                }
                 
                 Type? type;
                 if (DataTypeDictionary.DataTypeAlias.TryGetValue(TypeValue.ToLower(), value: out type))
