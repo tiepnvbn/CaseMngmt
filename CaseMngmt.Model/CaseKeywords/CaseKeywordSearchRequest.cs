@@ -20,16 +20,20 @@ namespace CaseMngmt.Models.CaseKeywords
                     {
                         if (!string.IsNullOrEmpty(item.FromValue) && string.IsNullOrEmpty(item.ToValue))
                         {
+                            item.FromValue.Replace("-", "/");
                             DateTime.TryParse(item.FromValue, out _);
                             item.FromValue = DateTime.ParseExact(item.FromValue, "yyyy/MM/dd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
                         }
                         else if (string.IsNullOrEmpty(item.FromValue) && !string.IsNullOrEmpty(item.ToValue))
                         {
+                            item.ToValue.Replace("-", "/");
                             DateTime.TryParse(item.ToValue, out _);
                             item.ToValue = DateTime.ParseExact(item.ToValue, "yyyy/MM/dd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
                         }
                         else
                         {
+                            item.FromValue.Replace("-", "/");
+                            item.ToValue.Replace("-", "/");
                             DateTime.TryParse(item.FromValue, out _);
                             DateTime.TryParse(item.ToValue, out _);
                             item.FromValue = DateTime.ParseExact(item.FromValue, "yyyy/MM/dd", CultureInfo.InvariantCulture).ToString("yyyy/MM/dd");
