@@ -212,6 +212,7 @@ namespace CaseMngmt.Repository.Templates
                                               TypeId = keyword.Type.Id,
                                               TypeName = keyword.Type.Name,
                                               TypeValue = keyword.Type.Value,
+                                              FromTo = keyword.Type.Value == "datetime" ? true : false,
                                               Metadata = !string.IsNullOrEmpty(keyword.Type.Metadata)
                                                     ? keyword.Type.Metadata.Split(',', StringSplitOptions.None).ToList()
                                                     : new List<string>()
@@ -245,6 +246,7 @@ namespace CaseMngmt.Repository.Templates
                                               TypeId = keyword.Type.Id,
                                               TypeName = keyword.Type.Name,
                                               TypeValue = keyword.Type.Value,
+                                              FromTo = (keyword.Type.Value == "datetime" || keyword.Type.Value == "decimal") ? true : false,
                                               Metadata = !string.IsNullOrEmpty(keyword.Type.Metadata)
                                                     ? keyword.Type.Metadata.Split(',', StringSplitOptions.None).ToList()
                                                     : new List<string>()

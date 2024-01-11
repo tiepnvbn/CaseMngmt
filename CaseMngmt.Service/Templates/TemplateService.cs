@@ -216,27 +216,7 @@ namespace CaseMngmt.Service.Templates
             {
                 var resultFromRepo = await _repository.GetCaseSearchModelByIdAsync(templateId, roleIds);
 
-                var result = new List<KeywordSearchModel>();
-
-                foreach (var item in resultFromRepo)
-                {
-                    if (item.TypeValue == "datetime")
-                    {
-                        KeywordSearchModel itemFromClone = (KeywordSearchModel)item.Clone();
-                        itemFromClone.QueryFrom = true;
-                        result.Add(itemFromClone);
-
-                        KeywordSearchModel itemToClone = (KeywordSearchModel)item.Clone();
-                        itemToClone.QueryTo = true;
-                        result.Add(itemToClone);
-                    }
-                    else
-                    {
-                        result.Add(item);
-                    }
-                }
-
-                return result;
+                return resultFromRepo;
             }
             catch (Exception ex)
             {
@@ -249,38 +229,7 @@ namespace CaseMngmt.Service.Templates
             try
             {
                 var resultFromRepo = await _repository.GetDocumentSearchModelByIdAsync(templateId);
-
-                var result = new List<KeywordSearchModel>();
-
-                foreach (var item in resultFromRepo)
-                {
-                    if (item.TypeValue == "datetime")
-                    {
-                        KeywordSearchModel itemFromClone = (KeywordSearchModel)item.Clone();
-                        itemFromClone.QueryFrom = true;
-                        result.Add(itemFromClone);
-
-                        KeywordSearchModel itemToClone = (KeywordSearchModel)item.Clone();
-                        itemToClone.QueryTo = true;
-                        result.Add(itemToClone);
-                    }
-                    else if (item.TypeValue == "decimal")
-                    {
-                        KeywordSearchModel itemFromClone = (KeywordSearchModel)item.Clone();
-                        itemFromClone.QueryFrom = true;
-                        result.Add(itemFromClone);
-
-                        KeywordSearchModel itemToClone = (KeywordSearchModel)item.Clone();
-                        itemToClone.QueryTo = true;
-                        result.Add(itemToClone);
-                    }
-                    else
-                    {
-                        result.Add(item);
-                    }
-                }
-
-                return result;
+                return resultFromRepo;
             }
             catch (Exception ex)
             {
