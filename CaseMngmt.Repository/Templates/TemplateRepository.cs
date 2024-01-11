@@ -237,6 +237,7 @@ namespace CaseMngmt.Repository.Templates
                                           where !tempTemplate.Deleted
                                             && tempTemplate.Id == templateId
                                             && keyword.DocumentSearchable
+                                            && keyword.IsShowOnTemplate
                                           select new KeywordSearchModel
                                           {
                                               KeywordName = keyword.Name,
