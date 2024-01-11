@@ -10,7 +10,7 @@ namespace CaseMngmt.Repository.CaseKeywords
         Task<int> AddAsync(CaseKeyword caseKey);
         Task<PagedResult<CaseKeywordViewModel>?> GetAllAsync(CaseKeywordSearchRequest searchRequest);
         Task<PagedResult<CaseKeywordBaseValue>?> GetDocumentsAsync(DocumentSearchRequest searchRequest);
-        Task<IEnumerable<CaseKeywordBaseValue>?> GetByIdAsync(Guid caseId);
+        Task<IEnumerable<CaseKeywordBaseValue>?> GetByIdAsync(Guid caseId, List<Guid> roleIds);
         Task<CaseKeyword?> GetByCaseIdAndKeywordIdAsync(Guid caseId, Guid keywordId);
         Task<IEnumerable<FileResponse>> GetFileKeywordsByCaseIdAsync(Guid caseId);
         Task<int> DeleteAsync(Guid id);

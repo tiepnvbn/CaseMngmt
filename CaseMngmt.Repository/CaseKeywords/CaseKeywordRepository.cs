@@ -45,7 +45,7 @@ namespace CaseMngmt.Repository.CaseKeywords
             }
         }
 
-        public async Task<IEnumerable<CaseKeywordBaseValue>?> GetByIdAsync(Guid caseId)
+        public async Task<IEnumerable<CaseKeywordBaseValue>?> GetByIdAsync(Guid caseId, List<Guid> roleIds)
         {
             try
             {
@@ -56,6 +56,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                                     && caseKeyword.CaseId == caseId
                                     && caseKeyword.Keyword.IsShowOnTemplate
                                     && caseKeyword.Case.Status == "Open"
+                                    && keyword.KeywordRoles.Any(x => roleIds.Contains(x.RoleId))
                                   select new CaseKeywordBaseValue
                                   {
                                       KeywordId = caseKeyword.KeywordId,

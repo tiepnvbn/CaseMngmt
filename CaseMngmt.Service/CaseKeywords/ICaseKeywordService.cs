@@ -9,7 +9,7 @@ namespace CaseMngmt.Service.CaseKeywords
         Task<Guid?> AddAsync(CaseKeywordAddRequest request);
         Task<PagedResult<CaseKeywordViewModel>?> GetAllAsync(CaseKeywordSearchRequest searchRequest);
         Task<PagedResult<CaseKeywordBaseValue>?> GetDocumentsAsync(DocumentSearchRequest searchRequest);
-        Task<CaseKeywordViewModel?> GetByIdAsync(Guid caseId);
+        Task<CaseKeywordViewModel?> GetByIdAsync(Guid caseId, List<Guid> roleIds);
         Task<int> CloseCaseByAsync(Guid caseId);
         Task<int> DeleteAsync(Guid caseId);
         Task<int> UpdateAsync(CaseKeywordRequest request);

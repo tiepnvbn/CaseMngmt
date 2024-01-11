@@ -41,7 +41,7 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<CaseKeywordViewModel?> GetByIdAsync(Guid caseId)
+        public async Task<CaseKeywordViewModel?> GetByIdAsync(Guid caseId, List<Guid> roleIds)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace CaseMngmt.Service.Customers
                 {
                     return null;
                 }
-                var caseKeywordValues = await _caseKeywordRepository.GetByIdAsync(caseId);
+                var caseKeywordValues = await _caseKeywordRepository.GetByIdAsync(caseId, roleIds);
                 if (caseKeywordValues == null)
                 {
                     return null;

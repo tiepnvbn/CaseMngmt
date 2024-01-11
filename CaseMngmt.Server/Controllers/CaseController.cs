@@ -170,14 +170,27 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                CaseKeywordViewModel? result = await _caseKeywordService.GetByIdAsync(caseId);
-
-                if (result == null)
+                var userId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user != null)
                 {
-                    return NotFound();
-                }
+                    var roleNames = await _userManager.GetRolesAsync(user);
+                    List<ApplicationRole> roles = _roleManager.Roles.Where(r => roleNames.Contains(r.Name)).ToList();
+                    if (!roles.Any())
+                    {
+                        return BadRequest();
+                    }
 
-                return Ok(result);
+                    CaseKeywordViewModel? result = await _caseKeywordService.GetByIdAsync(caseId, roles.Select(x => x.Id).ToList());
+
+                    if (result == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return Ok(result);
+                }
+                return BadRequest();
             }
             catch (Exception e)
             {
