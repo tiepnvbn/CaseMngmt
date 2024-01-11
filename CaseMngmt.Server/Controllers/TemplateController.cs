@@ -74,7 +74,7 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                TemplateViewModel? result = await _templateService.GetByIdAsync(templateId.Value);
+                TemplateViewModel? result = await _templateService.GetByIdAsync(templateId.Value, isGetCustomer: true);
 
                 if (result == null)
                 {

@@ -6,18 +6,21 @@ using CaseMngmt.Models.Keywords;
 using CaseMngmt.Repository.Types;
 using CaseMngmt.Models.CaseKeywords;
 using CaseMngmt.Models.FileTypes;
+using CaseMngmt.Repository.Customers;
 
 namespace CaseMngmt.Service.Templates
 {
     public class TemplateService : ITemplateService
     {
         private ITemplateRepository _repository;
+        private ICustomerRepository _customerRepository;
         private IKeywordRepository _keywordRepository;
         private ITypeRepository _typeRepository;
         private readonly IMapper _mapper;
-        public TemplateService(ITemplateRepository repository, IKeywordRepository keywordRepository, ITypeRepository typeRepository, IMapper mapper)
+        public TemplateService(ITemplateRepository repository, ICustomerRepository customerRepository, IKeywordRepository keywordRepository, ITypeRepository typeRepository, IMapper mapper)
         {
             _repository = repository;
+            _customerRepository = customerRepository;
             _keywordRepository = keywordRepository;
             _typeRepository = typeRepository;
             _mapper = mapper;
@@ -198,11 +201,17 @@ namespace CaseMngmt.Service.Templates
             }
         }
 
-        public async Task<TemplateViewModel?> GetByIdAsync(Guid id)
+        public async Task<TemplateViewModel?> GetByIdAsync(Guid id, bool isGetCustomer = false)
         {
             try
             {
                 var result = await _repository.GetTemplateViewModelByIdAsync(id);
+                if (isGetCustomer && result != null)
+                {
+                    var customers = await _customerRepository.GetAllAsync();
+                    result.Customers = customers;
+                }
+
                 return result;
             }
             catch (Exception ex)
@@ -211,17 +220,23 @@ namespace CaseMngmt.Service.Templates
             }
         }
 
-        public async Task<List<KeywordSearchModel>> GetCaseSearchModelByIdAsync(Guid templateId, List<Guid> roleIds)
+        public async Task<CaseTemplate?> GetCaseSearchModelByIdAsync(Guid templateId, List<Guid> roleIds)
         {
             try
             {
-                var resultFromRepo = await _repository.GetCaseSearchModelByIdAsync(templateId, roleIds);
 
-                return resultFromRepo;
+                var caseKeywordValues = await _repository.GetCaseSearchModelByIdAsync(templateId, roleIds);
+                var customers = await _customerRepository.GetAllAsync();
+                var result = new CaseTemplate
+                {
+                    CaseKeywordValues = caseKeywordValues,
+                    Customers = customers
+                };
+                return result;
             }
             catch (Exception ex)
             {
-                return new List<KeywordSearchModel>();
+                return null;
             }
         }
 
@@ -232,9 +247,11 @@ namespace CaseMngmt.Service.Templates
 
                 var resultFromRepo = await _repository.GetDocumentSearchModelByIdAsync(templateId);
                 var fileTypes = await _typeRepository.GetAllFileTypeAsync();
+                var customers = await _customerRepository.GetAllAsync();
                 DocumentTemplateResponse result = new DocumentTemplateResponse
                 {
                     Keywords = resultFromRepo,
+                    Customers = customers,
                     FileType = new FileTypeSearchModel
                     {
                         Name = "File Type",

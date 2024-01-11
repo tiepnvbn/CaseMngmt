@@ -80,6 +80,22 @@ namespace CaseMngmt.Repository.Customers
             }
         }
 
+        public async Task<List<Customer>> GetAllAsync()
+        {
+             try
+            {
+                var queryableCustomer = (from tempCustomer in _context.Customer select tempCustomer).Where(x => !x.Deleted);
+                queryableCustomer = queryableCustomer.OrderBy(m => m.Name);
+                var result = await queryableCustomer.ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return new List<Customer>();
+            }
+        }
+
         public async Task<Customer?> GetByIdAsync(Guid id)
         {
             try

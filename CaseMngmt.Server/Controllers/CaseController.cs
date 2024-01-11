@@ -73,8 +73,8 @@ namespace CaseMngmt.Server.Controllers
                         return BadRequest();
                     }
 
-                    List<KeywordSearchModel> result = await _templateService.GetCaseSearchModelByIdAsync(templateId.Value, roles.Select(x => x.Id).ToList());
-                    if (!result.Any())
+                    CaseTemplate? result = await _templateService.GetCaseSearchModelByIdAsync(templateId.Value, roles.Select(x => x.Id).ToList());
+                    if (result == null)
                     {
                         return BadRequest();
                     }
