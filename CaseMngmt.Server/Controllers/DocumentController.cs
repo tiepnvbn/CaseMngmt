@@ -109,6 +109,7 @@ namespace CaseMngmt.Server.Controllers
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
                     KeywordValues = request.KeywordValues,
+                    KeywordDateValues= request.KeywordDateValues,
                     KeywordDecimalValues = request.KeywordDecimalValues
                 };
 
