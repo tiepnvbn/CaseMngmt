@@ -4,7 +4,8 @@ using CaseMngmt.Repository.Keywords;
 using CaseMngmt.Repository.Templates;
 using CaseMngmt.Models.Keywords;
 using CaseMngmt.Repository.Types;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using CaseMngmt.Models.CaseKeywords;
+using CaseMngmt.Models.FileTypes;
 
 namespace CaseMngmt.Service.Templates
 {
@@ -224,16 +225,28 @@ namespace CaseMngmt.Service.Templates
             }
         }
 
-        public async Task<List<KeywordSearchModel>> GetDocumentSearchModelByIdAsync(Guid templateId)
+        public async Task<DocumentTemplateResponse?> GetDocumentSearchModelByIdAsync(Guid templateId)
         {
             try
             {
+
                 var resultFromRepo = await _repository.GetDocumentSearchModelByIdAsync(templateId);
-                return resultFromRepo;
+                var fileTypes = await _typeRepository.GetAllFileTypeAsync();
+                DocumentTemplateResponse result = new DocumentTemplateResponse
+                {
+                    Keywords = resultFromRepo,
+                    FileType = new FileTypeSearchModel
+                    {
+                        Name = "File Type",
+                        FileTypes = _mapper.Map<List<FileTypeModel>>(fileTypes)
+                    }
+                };
+
+                return result;
             }
             catch (Exception ex)
             {
-                return new List<KeywordSearchModel>();
+                return null;
             }
         }
     }

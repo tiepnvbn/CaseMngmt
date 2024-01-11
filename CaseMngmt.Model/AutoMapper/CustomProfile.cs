@@ -4,7 +4,6 @@ using CaseMngmt.Models.Customers;
 using CaseMngmt.Models.FileTypes;
 using CaseMngmt.Models.Keywords;
 using CaseMngmt.Models.Types;
-using Type = CaseMngmt.Models.Types.Type;
 
 namespace CaseMngmt.Models.AutoMapper
 {
@@ -26,15 +25,15 @@ namespace CaseMngmt.Models.AutoMapper
             CreateMap<Company, CompanyRequest>();
             CreateMap<CompanyRequest, Company>().ForMember(x => x.Id, opt => opt.Ignore());
 
-            CreateMap<TypeViewModel, Type>();
-            CreateMap<Type, TypeViewModel>();
-            CreateMap<Type, TypeRequest>();
-            CreateMap<TypeRequest, Type>().ForMember(x => x.Id, opt => opt.Ignore());
+            CreateMap<TypeViewModel, Types.Type>();
+            CreateMap<Types.Type, TypeViewModel>();
+            CreateMap<Types.Type, TypeRequest>();
+            CreateMap<TypeRequest, Types.Type>().ForMember(x => x.Id, opt => opt.Ignore());
 
             CreateMap<FileTypeViewModel, Types.Type>();
             CreateMap<Types.Type, FileTypeViewModel>();
-            CreateMap<Types.Type, FileTypeRequest>();
-            CreateMap<FileTypeRequest, Types.Type>().ForMember(x => x.Id, opt => opt.Ignore());
+            CreateMap<Types.Type, FileTypeModel>();
+            CreateMap<FileTypeModel, Types.Type>();
 
             CreateMap<Keyword, KeywordRequest>();
             CreateMap<KeywordRequest, Keyword>().ForMember(x => x.Id, opt => opt.Ignore());

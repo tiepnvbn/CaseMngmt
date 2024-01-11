@@ -51,9 +51,9 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
 
-                List<KeywordSearchModel> result = await _templateService.GetDocumentSearchModelByIdAsync(templateId.Value);
+                DocumentTemplateResponse? result = await _templateService.GetDocumentSearchModelByIdAsync(templateId.Value);
 
-                if (!result.Any())
+                if (result == null)
                 {
                     return BadRequest();
                 }
