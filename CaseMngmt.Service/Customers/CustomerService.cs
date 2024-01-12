@@ -93,6 +93,7 @@ namespace CaseMngmt.Service.Customers
                 entity.PostCode2 = customer.PostCode2;
                 entity.StateProvince = customer.StateProvince;
                 entity.CompanyId = customer.CompanyId;
+                entity.Street = customer.Street;
                 entity.UpdatedBy = customer.UpdatedBy.Value;
                 entity.UpdatedDate = DateTime.UtcNow;
                 await _repository.UpdateAsync(entity);
