@@ -33,7 +33,16 @@ namespace CaseMngmt.Repository.Cases
         {
             try
             {
-                var result = await _context.Case.FindAsync(id);
+                var queryableCase = from tempCase in _context.Case
+                                    join caseKeyword in _context.CaseKeyword on tempCase.Id equals caseKeyword.CaseId
+                                    join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
+                                    where tempCase.Id == id 
+                                        && !keyword.IsShowOnTemplate && keyword.DocumentSearchable
+                                    select tempCase;
+
+                queryableCase = queryableCase.Where(x => !x.Deleted).OrderBy(m => m.Name);
+
+                var result = await queryableCase.FirstOrDefaultAsync();
                 return result;
             }
             catch (Exception ex)
