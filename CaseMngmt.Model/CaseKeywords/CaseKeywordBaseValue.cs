@@ -22,6 +22,7 @@ namespace CaseMngmt.Models.CaseKeywords
         public bool IsShowOnCaseList { get; set; }
         public int Order { get; set; }
         public IEnumerable<string>? Metadata { get; set; }
+        public bool? IsImage { get; set; }
     }
 
     public class CaseKeywordValue

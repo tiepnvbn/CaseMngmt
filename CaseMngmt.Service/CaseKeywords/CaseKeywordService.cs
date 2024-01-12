@@ -262,6 +262,14 @@ namespace CaseMngmt.Service.Customers
             try
             {
                 var result = await _caseKeywordRepository.GetDocumentsAsync(searchRequest);
+                if (result != null)
+                {
+                    foreach (var item in result.Items)
+                    {
+                        string ext = Path.GetExtension(item.KeywordName).ToLower();
+                        item.IsImage = DataTypeDictionary.ImageTypes.Contains(ext);
+                    }
+                }
 
                 return result;
             }
