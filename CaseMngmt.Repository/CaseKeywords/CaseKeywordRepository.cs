@@ -55,7 +55,6 @@ namespace CaseMngmt.Repository.CaseKeywords
                                   where !caseKeyword.Deleted
                                     && caseKeyword.CaseId == caseId
                                     && caseKeyword.Keyword.IsShowOnTemplate
-                                    && caseKeyword.Case.Status == "Open"
                                     && keyword.KeywordRoles.Any(x => roleIds.Contains(x.RoleId))
                                   select new CaseKeywordBaseValue
                                   {
@@ -170,7 +169,6 @@ namespace CaseMngmt.Repository.CaseKeywords
                                     && !keyword.Deleted
                                     && companyTemplate.CompanyId == searchRequest.CompanyId
                                     && caseKeyword.Keyword.TemplateId == searchRequest.TemplateId
-                                    && caseKeyword.Case.Status == "Open"
                                  select new { tempCase, caseKeyword })
                             .AsEnumerable()
                             .GroupBy(x => new { x.tempCase.Id });
@@ -345,7 +343,6 @@ namespace CaseMngmt.Repository.CaseKeywords
                                    && !type.Deleted
                                    && caseKeyword.CaseId == caseId
                                    && !caseKeyword.Keyword.IsShowOnTemplate
-                                   && caseKeyword.Case.Status == "Open"
                                  select new FileResponse
                                  {
                                      KeywordId = caseKeyword.KeywordId,
