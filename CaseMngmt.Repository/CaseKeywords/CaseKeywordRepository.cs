@@ -197,7 +197,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                         && decimal.Parse(c.caseKeyword.Value) >= decimal.Parse(x.FromValue)
                         && decimal.Parse(c.caseKeyword.Value) <= decimal.Parse(x.ToValue))));
                 }
-                
+
                 var query = queryable
                     .SelectMany(z => z.Where(x => !x.caseKeyword.Keyword.IsShowOnTemplate && x.caseKeyword.Keyword.DocumentSearchable)
                         .Select(x => new CaseKeywordBaseValue
@@ -295,12 +295,16 @@ namespace CaseMngmt.Repository.CaseKeywords
         {
             try
             {
-                var data = _context.CaseKeyword.Where(a => !a.Deleted && a.CaseId == caseId).ToList();
-                foreach (var item in data)
-                {
-                    item.Deleted = true;
-                    _context.CaseKeyword.Update(item);
-                }
+                var queryableCase = from tempCase in _context.Case
+                                    join caseKeyword in _context.CaseKeyword on tempCase.Id equals caseKeyword.CaseId
+                                    join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
+                                    where tempCase.Id == caseId
+                                        && keyword.IsShowOnTemplate
+                                    select caseKeyword;
+
+                var data = await queryableCase.Where(a => !a.Deleted).ToListAsync();
+
+                _context.CaseKeyword.RemoveRange(data);
                 await _context.SaveChangesAsync();
 
                 if (caseKeys != null && caseKeys.Any())
