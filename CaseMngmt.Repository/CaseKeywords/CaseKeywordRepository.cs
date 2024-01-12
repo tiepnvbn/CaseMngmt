@@ -101,7 +101,6 @@ namespace CaseMngmt.Repository.CaseKeywords
                                     && companyTemplate.CompanyId == searchRequest.CompanyId
                                     && caseKeyword.Keyword.IsShowOnTemplate
                                     && (!caseKeyword.Keyword.DocumentSearchable || (caseKeyword.Keyword.DocumentSearchable && caseKeyword.Keyword.IsShowOnTemplate))
-                                    && caseKeyword.Case.Status == "Open"
                                     && keyword.KeywordRoles.Any(x => searchRequest.RoleIds.Contains(x.RoleId))
                                  select new { tempCase, caseKeyword })
                             .AsEnumerable()

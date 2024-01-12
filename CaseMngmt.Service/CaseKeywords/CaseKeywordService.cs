@@ -76,7 +76,7 @@ namespace CaseMngmt.Service.Customers
             {
                 var caseModel = new Models.Cases.Case
                 {
-                    Name = $"CASE{((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds()}",
+                    Name = $"{((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds()}",
                     Status = "Open",
                     CreatedBy = request.CreatedBy.Value,
                     UpdatedBy = request.UpdatedBy.Value,
