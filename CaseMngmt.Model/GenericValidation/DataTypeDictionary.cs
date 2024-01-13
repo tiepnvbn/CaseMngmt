@@ -26,12 +26,6 @@
             ".jpeg",
             ".jpg",
             ".png",
-            ".gif",
-            ".tiff",
-            ".psd",
-            ".pdf",
-            ".svg",
-            ".raw"
         };
     }
 }
