@@ -6,7 +6,7 @@ namespace CaseMngmt.Service.CaseKeywords
 {
     public interface ICaseKeywordService
     {
-        Task<Guid?> AddAsync(CaseKeywordAddRequest request);
+        Task<Models.Cases.CaseResponse?> AddAsync(CaseKeywordAddRequest request);
         Task<PagedResult<CaseKeywordViewModel>?> GetAllAsync(CaseKeywordSearchRequest searchRequest);
         Task<PagedResult<CaseKeywordBaseValue>?> GetDocumentsAsync(DocumentSearchRequest searchRequest);
         Task<CaseKeywordViewModel?> GetByIdAsync(Guid caseId, List<Guid> roleIds);

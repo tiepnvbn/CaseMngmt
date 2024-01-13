@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CaseMngmt.Models;
 using CaseMngmt.Models.CaseKeywords;
+using CaseMngmt.Models.Cases;
 using CaseMngmt.Models.FileUploads;
 using CaseMngmt.Models.GenericValidation;
 using CaseMngmt.Models.Keywords;
@@ -70,7 +71,7 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<Guid?> AddAsync(CaseKeywordAddRequest request)
+        public async Task<Models.Cases.CaseResponse?> AddAsync(CaseKeywordAddRequest request)
         {
             try
             {
@@ -98,7 +99,7 @@ namespace CaseMngmt.Service.Customers
                 var caseKeywordResult = await _caseKeywordRepository.AddMultiAsync(caseKeywords);
                 if (caseKeywordResult > 0)
                 {
-                    return caseModel.Id;
+                    return new CaseResponse { Id = caseModel.Id, Name = caseModel.Name };
                 }
                 return null;
             }
