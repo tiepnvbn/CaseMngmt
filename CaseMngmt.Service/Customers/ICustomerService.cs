@@ -4,7 +4,7 @@ namespace CaseMngmt.Service.Customers
 {
     public interface ICustomerService
     {
-        Task<int> AddCustomerAsync(CustomerRequest customer);
+        Task<Guid?> AddCustomerAsync(CustomerRequest customer);
         Task<Models.PagedResult<CustomerViewModel>?> GetAllCustomersAsync(string? customerName, string? phoneNumber, string companyId, int pageSize, int pageNumber);
         Task<CustomerViewModel?> GetByIdAsync(Guid id);
         Task<int> DeleteAsync(Guid id);

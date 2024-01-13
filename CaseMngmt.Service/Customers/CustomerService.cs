@@ -14,7 +14,7 @@ namespace CaseMngmt.Service.Customers
             _mapper = mapper;
         }
 
-        public async Task<int> AddCustomerAsync(CustomerRequest customer)
+        public async Task<Guid?> AddCustomerAsync(CustomerRequest customer)
         {
             try
             {
@@ -22,11 +22,17 @@ namespace CaseMngmt.Service.Customers
                 entity.CompanyId = customer.CompanyId;
                 entity.CreatedBy = customer.CreatedBy.Value;
                 entity.UpdatedBy = customer.UpdatedBy.Value;
-                return await _repository.AddAsync(entity);
+                var result = await _repository.AddAsync(entity);
+
+                if (result > 0)
+                {
+                    return entity.Id;
+                }
+                return null;
             }
             catch (Exception ex)
             {
-                return 0;
+                return null;
             }
         }
 

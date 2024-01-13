@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CaseMngmt.Models;
 using CaseMngmt.Models.Companies;
-using CaseMngmt.Models.Customers;
 using CaseMngmt.Repository.Companies;
 
 namespace CaseMngmt.Service.Companies
@@ -16,16 +15,22 @@ namespace CaseMngmt.Service.Companies
             _mapper = mapper;
         }
 
-        public async Task<int> AddAsync(CompanyRequest company)
+        public async Task<Guid?> AddAsync(CompanyRequest company)
         {
             try
             {
                 var entity = _mapper.Map<Company>(company);
-                return await _repository.AddAsync(entity);
+                var result = await _repository.AddAsync(entity);
+
+                if (result > 0)
+                {
+                    return entity.Id;
+                }
+                return null;
             }
             catch (Exception ex)
             {
-                return 0;
+                return null;
             }
         }
 

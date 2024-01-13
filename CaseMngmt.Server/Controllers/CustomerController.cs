@@ -93,7 +93,7 @@ namespace CaseMngmt.Server.Controllers
                 customer.CompanyId = Guid.Parse(currentCompanyId);
 
                 var result = await _service.AddCustomerAsync(customer);
-                return result > 0 ? Ok(result) : BadRequest();
+                return result != null ? Ok(result) : BadRequest();
             }
             catch (Exception e)
             {

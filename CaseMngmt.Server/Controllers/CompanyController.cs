@@ -72,7 +72,7 @@ namespace CaseMngmt.Server.Controllers
                 company.CreatedBy = Guid.Parse(User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "00000000-0000-0000-0000-000000000000");
                 var result = await _service.AddAsync(company);
 
-                return result > 0 ? Ok(result) : BadRequest();
+                return result != null ? Ok(result) : BadRequest();
             }
             catch (Exception e)
             {
