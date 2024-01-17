@@ -379,11 +379,11 @@ namespace CaseMngmt.Repository.CaseKeywords
             try
             {
                 var queryableCase = from caseKeyword in _context.CaseKeyword
-                                    join tempCase in _context.Case on caseKeyword.Id equals tempCase.Id
+                                    join tempCase in _context.Case on caseKeyword.CaseId equals tempCase.Id
                                     join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
                                     where caseKeyword.Case.Status == "Open" 
-                                        && caseKeyword.Value == customerId.ToString() 
-                                        && caseKeyword.Keyword.IsShowOnTemplate 
+                                        && caseKeyword.Value == customerId.ToString()
+                                        && caseKeyword.Keyword.IsShowOnTemplate
                                         && caseKeyword.Keyword.Name == "取引先名"
                                     select caseKeyword;
 
