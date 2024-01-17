@@ -110,5 +110,18 @@ namespace CaseMngmt.Service.Customers
                 return 0;
             }
         }
+
+        public async Task<Customer?> GetCustomerByNameAndPhoneAsync(string customerName, string phoneNumber)
+        {
+            try
+            {
+                var result = await _repository.GetCustomerByNameAndPhoneAsync(customerName, phoneNumber);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

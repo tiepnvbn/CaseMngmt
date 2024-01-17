@@ -9,5 +9,6 @@ namespace CaseMngmt.Service.Customers
         Task<CustomerViewModel?> GetByIdAsync(Guid id);
         Task<int> DeleteAsync(Guid id);
         Task<int> UpdateCustomerAsync(Guid Id, CustomerRequest customer);
+        Task<Customer?> GetCustomerByNameAndPhoneAsync(string customerName, string phoneNumber);
     }
 }

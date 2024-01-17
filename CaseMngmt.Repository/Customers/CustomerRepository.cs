@@ -82,7 +82,7 @@ namespace CaseMngmt.Repository.Customers
 
         public async Task<List<Customer>> GetAllAsync()
         {
-             try
+            try
             {
                 var queryableCustomer = (from tempCustomer in _context.Customer select tempCustomer).Where(x => !x.Deleted);
                 queryableCustomer = queryableCustomer.OrderBy(m => m.Name);
@@ -101,6 +101,20 @@ namespace CaseMngmt.Repository.Customers
             try
             {
                 return await _context.Customer.FindAsync(id);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<Customer?> GetCustomerByNameAndPhoneAsync(string customerName, string phoneNumber)
+        {
+            try
+            {
+                var result = await (from tempCustomer in _context.Customer select tempCustomer)
+                    .Where(x => !x.Deleted && x.Name == customerName && x.PhoneNumber == phoneNumber).FirstOrDefaultAsync();
+                return result;
             }
             catch (Exception ex)
             {

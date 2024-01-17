@@ -11,5 +11,6 @@ namespace CaseMngmt.Repository.Customers
         Task<Customer?> GetByIdAsync(Guid id);
         Task<int> DeleteAsync(Guid id);
         Task<int> UpdateAsync(Customer customer);
+        Task<Customer?> GetCustomerByNameAndPhoneAsync(string customerName, string phoneNumber);
     }
 }

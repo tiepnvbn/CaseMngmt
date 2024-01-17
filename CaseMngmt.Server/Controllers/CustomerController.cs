@@ -88,6 +88,12 @@ namespace CaseMngmt.Server.Controllers
                     return BadRequest();
                 }
                 
+                var existCustomer = await _service.GetCustomerByNameAndPhoneAsync(customer.Name, customer.PhoneNumber);
+                if (existCustomer != null)
+                {
+                    return BadRequest("Customer is already exists.");
+                }
+
                 customer.CreatedBy = Guid.Parse(currentUserId);
                 customer.UpdatedBy = Guid.Parse(currentUserId);
                 customer.CompanyId = Guid.Parse(currentCompanyId);
