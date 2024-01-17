@@ -10,11 +10,12 @@ namespace CaseMngmt.Service.CaseKeywords
         Task<PagedResult<CaseKeywordViewModel>?> GetAllAsync(CaseKeywordSearchRequest searchRequest);
         Task<PagedResult<CaseKeywordBaseValue>?> GetDocumentsAsync(DocumentSearchRequest searchRequest);
         Task<CaseKeywordViewModel?> GetByIdAsync(Guid caseId, List<Guid> roleIds);
-        Task<int> CloseCaseByAsync(Guid caseId);
-        Task<int> DeleteAsync(Guid caseId);
+        Task<int> CloseCaseByAsync(Guid caseId, Guid currentUserId);
+        Task<int> DeleteAsync(Guid caseId, Guid currentUserId);
         Task<int> UpdateAsync(CaseKeywordRequest request);
         Task<Guid?> AddFileToKeywordAsync(Guid caseId, Guid fileTypeId, FileUploadResponse fileResponse, Guid templateId);
         Task<IEnumerable<FileResponse>> GetFileKeywordsByCaseIdAsync(Guid caseId);
         Task<int> DeleteFileKeywordAsync(Guid caseId, Guid keywordId);
+        Task<CaseKeyword?> GetByCustomerIdAsync(Guid customerId);
     }
 }

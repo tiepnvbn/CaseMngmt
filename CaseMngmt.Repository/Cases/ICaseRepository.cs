@@ -5,10 +5,10 @@ namespace CaseMngmt.Repository.Cases
 {
     public interface ICaseRepository
     {
-        Task<int> AddAsync(Case customer);
+        Task<int> AddAsync(Case model);
         Task<PagedResult<Case>?> GetAllAsync(int pageSize, int pageNumber);
         Task<Case?> GetByIdAsync(Guid id);
-        Task<int> DeleteAsync(Guid id);
-        Task<int> UpdateAsync(Case customer);
+        Task<int> DeleteAsync(Guid id, Guid currentUserId);
+        Task<int> UpdateAsync(Case model);
     }
 }

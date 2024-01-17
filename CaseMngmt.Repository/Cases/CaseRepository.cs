@@ -88,7 +88,7 @@ namespace CaseMngmt.Repository.Cases
             }
         }
 
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<int> DeleteAsync(Guid id, Guid currentUserId)
         {
             try
             {
@@ -96,6 +96,8 @@ namespace CaseMngmt.Repository.Cases
                 if (caseModel != null)
                 {
                     caseModel.Deleted = true;
+                    caseModel.UpdatedDate = DateTime.UtcNow;
+                    caseModel.UpdatedBy = currentUserId;
                     await _context.SaveChangesAsync();
                     return 1;
                 }

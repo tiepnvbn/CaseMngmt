@@ -36,11 +36,11 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<int> DeleteAsync(Guid id, Guid currenUserId)
         {
             try
             {
-                return await _repository.DeleteAsync(id);
+                return await _repository.DeleteAsync(id, currenUserId);
             }
             catch (Exception ex)
             {

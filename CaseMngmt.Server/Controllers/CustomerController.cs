@@ -1,4 +1,5 @@
 ﻿using CaseMngmt.Models.Customers;
+using CaseMngmt.Service.CaseKeywords;
 using CaseMngmt.Service.Customers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,13 @@ namespace CaseMngmt.Server.Controllers
     {
         private readonly ILogger<CustomerController> _logger;
         private readonly ICustomerService _service;
-        public CustomerController(ILogger<CustomerController> logger, ICustomerService service)
+        private readonly ICaseKeywordService _caseKeywordService;
+
+        public CustomerController(ILogger<CustomerController> logger, ICustomerService service, ICaseKeywordService caseKeywordService)
         {
             _logger = logger;
             _service = service;
+            _caseKeywordService = caseKeywordService;
         }
 
         [HttpGet, Route("getAll")]
@@ -87,7 +91,7 @@ namespace CaseMngmt.Server.Controllers
                 {
                     return BadRequest();
                 }
-                
+
                 var existCustomer = await _service.GetCustomerByNameAndPhoneAsync(customer.Name, customer.PhoneNumber);
                 if (existCustomer != null)
                 {
@@ -123,10 +127,17 @@ namespace CaseMngmt.Server.Controllers
                 {
                     return BadRequest();
                 }
+
                 var currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (string.IsNullOrEmpty(currentUserId))
                 {
                     return BadRequest();
+                }
+
+                var existCustomer = await _service.GetCustomerByNameAndPhoneAsync(model.Name, model.PhoneNumber);
+                if (existCustomer != null && existCustomer.Id != id)
+                {
+                    return BadRequest("Customer is already exists.");
                 }
 
                 model.CompanyId = Guid.Parse(currentCompanyId);
@@ -152,7 +163,19 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                var result = await _service.DeleteAsync(id);
+                var currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId))
+                {
+                    return BadRequest();
+                }
+
+                var caseKeyword = await _caseKeywordService.GetByCustomerIdAsync(id);
+                if (caseKeyword != null)
+                {
+                    return BadRequest("You can't delete this customer because it is still used in one open case.");
+                }
+
+                var result = await _service.DeleteAsync(id, Guid.Parse(currentUserId));
                 return result > 0 ? Ok(result) : BadRequest();
             }
             catch (Exception e)

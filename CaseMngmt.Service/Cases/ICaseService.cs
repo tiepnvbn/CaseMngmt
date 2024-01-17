@@ -8,7 +8,6 @@ namespace CaseMngmt.Service.Cases
         Task<int> AddAsync(string caseName);
         Task<PagedResult<Case>?> GetAllAsync(int pageSize, int pageNumber);
         Task<Case?> GetByIdAsync(Guid id);
-        Task<int> DeleteAsync(Guid id);
-        Task<int> UpdateAsync(Guid Id, string caseName);
+        Task<int> DeleteAsync(Guid id, Guid currentUserId);
     }
 }

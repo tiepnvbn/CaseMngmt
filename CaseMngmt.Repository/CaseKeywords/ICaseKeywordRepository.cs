@@ -17,5 +17,6 @@ namespace CaseMngmt.Repository.CaseKeywords
         Task<int> DeleteByCaseIdAsync(Guid caseId);
         Task<int> UpdateAsync(CaseKeyword caseKey);
         Task<int> UpdateMultiAsync(Guid caseId, List<CaseKeyword> caseKeys);
+        Task<CaseKeyword?> GetByCustomerIdAsync(Guid customerId);
     }
 }

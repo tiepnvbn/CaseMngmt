@@ -29,13 +29,15 @@ namespace CaseMngmt.Repository.Customers
             }
         }
 
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<int> DeleteAsync(Guid id, Guid currentUserId)
         {
             try
             {
                 Customer? customer = await _context.Customer.FindAsync(id);
                 if (customer != null)
                 {
+                    customer.UpdatedBy = currentUserId;
+                    customer.UpdatedDate = DateTime.UtcNow;
                     customer.Deleted = true;
                     await _context.SaveChangesAsync();
                     return 1;

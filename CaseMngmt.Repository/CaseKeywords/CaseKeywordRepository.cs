@@ -196,7 +196,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                 {
                     queryable = queryable.Where(z => searchRequest.KeywordDecimalValues.All(x => z.Any(c => c.caseKeyword.KeywordId.Equals(x.KeywordId)
                         && !string.IsNullOrEmpty(c.caseKeyword.Value)
-                        && (!string.IsNullOrEmpty(x.FromValue) &&  decimal.Parse(c.caseKeyword.Value) >= decimal.Parse(x.FromValue))
+                        && (!string.IsNullOrEmpty(x.FromValue) && decimal.Parse(c.caseKeyword.Value) >= decimal.Parse(x.FromValue))
                         && (!string.IsNullOrEmpty(x.ToValue) && decimal.Parse(c.caseKeyword.Value) <= decimal.Parse(x.ToValue)))));
                 }
 
@@ -211,7 +211,7 @@ namespace CaseMngmt.Repository.CaseKeywords
                 {
                     caseResult = caseResult.Where(x => x.caseKeyword.Keyword.Type.Id == searchRequest.FileTypeId);
                 }
-                
+
                 var query = caseResult
                         .Select(x => new CaseKeywordBaseValue
                         {
@@ -371,6 +371,28 @@ namespace CaseMngmt.Repository.CaseKeywords
             catch (Exception ex)
             {
                 return new List<FileResponse>();
+            }
+        }
+
+        public async Task<CaseKeyword?> GetByCustomerIdAsync(Guid customerId)
+        {
+            try
+            {
+                var queryableCase = from caseKeyword in _context.CaseKeyword
+                                    join tempCase in _context.Case on caseKeyword.Id equals tempCase.Id
+                                    join keyword in _context.Keyword on caseKeyword.KeywordId equals keyword.Id
+                                    where caseKeyword.Case.Status == "Open" 
+                                        && caseKeyword.Value == customerId.ToString() 
+                                        && caseKeyword.Keyword.IsShowOnTemplate 
+                                        && caseKeyword.Keyword.Name == "取引先名"
+                                    select caseKeyword;
+
+                var data = await queryableCase.Where(a => !a.Deleted).FirstOrDefaultAsync();
+                return data;
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
     }

@@ -209,7 +209,13 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                var result = await _caseKeywordService.CloseCaseByAsync(caseId);
+                var currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId))
+                {
+                    return BadRequest();
+                }
+
+                var result = await _caseKeywordService.CloseCaseByAsync(caseId, Guid.Parse(currentUserId));
 
                 return result > 0 ? Ok(result) : BadRequest();
             }
@@ -402,7 +408,13 @@ namespace CaseMngmt.Server.Controllers
 
             try
             {
-                var result = await _caseKeywordService.DeleteAsync(id);
+                var currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId))
+                {
+                    return BadRequest();
+                }
+
+                var result = await _caseKeywordService.DeleteAsync(id, Guid.Parse(currentUserId));
                 return result > 0 ? Ok(result) : BadRequest();
             }
             catch (Exception e)

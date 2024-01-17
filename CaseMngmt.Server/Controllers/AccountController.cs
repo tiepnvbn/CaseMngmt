@@ -66,7 +66,7 @@ namespace CaseMngmt.Server.Controllers
                 var token = new JwtSecurityToken(
                     issuer: _configuration["Jwt:ValidIssuer"],
                     audience: _configuration["Jwt:ValidAudience"],
-                    expires: DateTime.Now.AddHours(3),
+                    expires: DateTime.UtcNow.AddHours(3),
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );

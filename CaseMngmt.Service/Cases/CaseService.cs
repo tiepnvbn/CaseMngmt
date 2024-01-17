@@ -31,11 +31,11 @@ namespace CaseMngmt.Service.Cases
             }
         }
 
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<int> DeleteAsync(Guid id, Guid currentUserId)
         {
             try
             {
-                return await _repository.DeleteAsync(id);
+                return await _repository.DeleteAsync(id, currentUserId);
             }
             catch (Exception ex)
             {
@@ -66,27 +66,6 @@ namespace CaseMngmt.Service.Cases
             catch (Exception ex)
             {
                 return null;
-            }
-        }
-
-        public async Task<int> UpdateAsync(Guid Id, string caseName)
-        {
-            try
-            {
-                var entity = await _repository.GetByIdAsync(Id);
-                if (entity == null)
-                {
-                    return 0;
-                }
-
-                entity.Name = caseName;
-                entity.UpdatedDate = DateTime.UtcNow;
-                await _repository.UpdateAsync(entity);
-                return 1;
-            }
-            catch (Exception ex)
-            {
-                return 0;
             }
         }
     }

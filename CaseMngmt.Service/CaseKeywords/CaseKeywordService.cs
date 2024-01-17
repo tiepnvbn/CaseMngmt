@@ -77,7 +77,7 @@ namespace CaseMngmt.Service.Customers
             {
                 var caseModel = new Models.Cases.Case
                 {
-                    Name = $"{((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds()}",
+                    Name = $"{((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds()}",
                     Status = "Open",
                     CreatedBy = request.CreatedBy.Value,
                     UpdatedBy = request.UpdatedBy.Value,
@@ -120,6 +120,7 @@ namespace CaseMngmt.Service.Customers
                 }
 
                 entity.UpdatedBy = request.UpdatedBy.Value;
+                entity.UpdatedDate = DateTime.UtcNow;
                 await _caseRepository.UpdateAsync(entity);
 
                 var caseKeywords = request.KeywordValues.Select(x => new CaseKeyword
@@ -139,12 +140,12 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<int> DeleteAsync(Guid caseId)
+        public async Task<int> DeleteAsync(Guid caseId, Guid currentUserId)
         {
             try
             {
                 await _caseKeywordRepository.DeleteByCaseIdAsync(caseId);
-                await _caseRepository.DeleteAsync(caseId);
+                await _caseRepository.DeleteAsync(caseId, currentUserId);
 
                 return 1;
             }
@@ -188,7 +189,7 @@ namespace CaseMngmt.Service.Customers
             }
         }
 
-        public async Task<int> CloseCaseByAsync(Guid caseId)
+        public async Task<int> CloseCaseByAsync(Guid caseId, Guid currentUserId)
         {
             try
             {
@@ -199,9 +200,8 @@ namespace CaseMngmt.Service.Customers
                 }
 
                 caseEntity.Status = "Closed";
-                caseEntity.UpdatedDate = DateTime.Now;
-                // TODO
-                caseEntity.UpdatedBy = Guid.Empty;
+                caseEntity.UpdatedDate = DateTime.UtcNow;
+                caseEntity.UpdatedBy = currentUserId;
                 return await _caseRepository.UpdateAsync(caseEntity);
             }
             catch (Exception ex)
@@ -275,6 +275,19 @@ namespace CaseMngmt.Service.Customers
                 return result;
             }
             catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<CaseKeyword?> GetByCustomerIdAsync(Guid customerId)
+        {
+            try
+            {
+                var result = await _caseKeywordRepository.GetByCustomerIdAsync(customerId);
+                return result;
+            }
+            catch (Exception ex)
             {
                 return null;
             }
