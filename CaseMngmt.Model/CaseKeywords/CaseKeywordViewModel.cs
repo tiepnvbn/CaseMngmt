@@ -1,6 +1,4 @@
-﻿using CaseMngmt.Models.Customers;
-
-namespace CaseMngmt.Models.CaseKeywords
+﻿namespace CaseMngmt.Models.CaseKeywords
 {
     public class CaseKeywordViewModel
     {
@@ -8,7 +6,5 @@ namespace CaseMngmt.Models.CaseKeywords
         public string CaseName { get; set; }
         public string Status { get; set; }
         public IEnumerable<CaseKeywordBaseValue> CaseKeywordValues { get; set; }
-
-        public IEnumerable<Customer> Customers { get; set; } = new List<Customer>();
     }
 }

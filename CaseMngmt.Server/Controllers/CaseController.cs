@@ -140,8 +140,8 @@ namespace CaseMngmt.Server.Controllers
                         RoleIds = roles.Select(x => x.Id).ToList(),
                         CompanyId = Guid.Parse(companyId),
                         TemplateId = templateId.Value,
-                        PageNumber = request.PageNumber,
-                        PageSize = request.PageSize,
+                        PageNumber = request.PageNumber ?? 1,
+                        PageSize = request.PageSize ?? 25,
                         KeywordValues = request.KeywordValues,
                         KeywordDateValues = request.KeywordDateValues
                     };

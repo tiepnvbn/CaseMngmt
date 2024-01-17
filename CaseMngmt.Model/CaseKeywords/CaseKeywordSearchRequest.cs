@@ -1,14 +1,11 @@
-﻿
-using System.Globalization;
-
-namespace CaseMngmt.Models.CaseKeywords
+﻿namespace CaseMngmt.Models.CaseKeywords
 {
     public class CaseKeywordSearch
     {
         public List<KeywordValue> KeywordValues { get; set; }
         public List<KeywordSearchRangeValue> KeywordDateValues { get; set; }
-        public int PageSize { get; set; } = 25;
-        public int PageNumber { get; set; } = 1;
+        public int? PageSize { get; set; }
+        public int? PageNumber { get; set; }
 
         public bool IsValidDatetime()
         {

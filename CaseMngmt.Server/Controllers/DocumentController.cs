@@ -105,8 +105,8 @@ namespace CaseMngmt.Server.Controllers
                     CompanyId = Guid.Parse(companyId),
                     TemplateId = templateId.Value,
                     FileTypeId = request.FileTypeId,
-                    PageNumber = request.PageNumber,
-                    PageSize = request.PageSize,
+                    PageNumber = request.PageNumber ?? 1,
+                    PageSize = request.PageSize ?? 25,
                     KeywordValues = request.KeywordValues,
                     KeywordDateValues= request.KeywordDateValues,
                     KeywordDecimalValues = request.KeywordDecimalValues
