@@ -50,20 +50,30 @@ builder.Services
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("LocalhostPolicy", builder =>
-        {
-            builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
-            builder.AllowAnyHeader();
-            builder.AllowAnyMethod();
-            builder.AllowCredentials();
-        });
-    });
-}
+//if (builder.Environment.IsDevelopment())
+//{
+//    builder.Services.AddCors(options =>
+//    {
+//        options.AddPolicy("LocalhostPolicy", builder =>
+//        {
+//            builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
+//            builder.AllowAnyHeader();
+//            builder.AllowAnyMethod();
+//            builder.AllowCredentials();
+//        });
+//    });
+//}
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyHost", builder =>
+    {
+        builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost" || new Uri(origin).Host == "casemngmt.s3-website-ap-northeast-1.amazonaws.com");
+        builder.AllowAnyHeader();
+        builder.AllowAnyMethod();
+        builder.AllowCredentials();
+    });
+});
 
 #region Register Service & Repository
 
@@ -190,11 +200,14 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
@@ -206,7 +219,8 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 
-app.UseCors("LocalhostPolicy");
+//app.UseCors("LocalhostPolicy");
+app.UseCors("AllowAnyHost");
 
 app.Run();
 
